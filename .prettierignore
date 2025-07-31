@@ -9,5 +9,6 @@ build
 coverage
 dist
 dist-ssr
+fixtures
 out
 pnpm-lock.yaml

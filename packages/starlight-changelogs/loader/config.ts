@@ -1,14 +1,18 @@
 import fs from 'node:fs/promises'
-import { fileURLToPath } from 'node:url'
 
 import type { AstroConfig } from 'astro'
 import { z } from 'astro/zod'
 
+import { StarlightChangelogsChangesetLoaderConfigSchema } from '../providers/changeset'
+
 export const StarlightChangelogsLoaderConfigSchema = z
-  .object({
-    // TODO(HiDeoo)
-    type: z.string(),
-  })
+  .discriminatedUnion('type', [
+    StarlightChangelogsChangesetLoaderConfigSchema,
+    // TODO(HiDeoo) move to dedicated file when implemented
+    z.object({
+      type: z.literal('github'),
+    }),
+  ])
   .array()
   .default([])
 
@@ -22,12 +26,12 @@ export async function saveLoaderConfig(astroConfig: AstroConfig, loaderConfig: S
 
   if (oldConfig === newConfig) return
 
-  return fs.writeFile(fileURLToPath(getLoaderConfigUrl(astroConfig)), newConfig)
+  return fs.writeFile(getLoaderConfigUrl(astroConfig), newConfig)
 }
 
 async function readLoaderConfig(astroConfig: AstroConfig): Promise<string> {
   try {
-    return await fs.readFile(fileURLToPath(getLoaderConfigUrl(astroConfig)), 'utf8')
+    return await fs.readFile(getLoaderConfigUrl(astroConfig), 'utf8')
   } catch {
     // Return an empty config if the file does not exist.
     return '[]'

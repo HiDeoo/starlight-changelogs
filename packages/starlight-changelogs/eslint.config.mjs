@@ -7,4 +7,7 @@ export default hideoo({
       project: ['../../tsconfig.json'],
     },
   },
+  rules: {
+    '@typescript-eslint/unbound-method': 'off',
+  },
 })
