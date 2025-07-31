@@ -1,0 +1,39 @@
+{
+  "name": "starlight-changelogs-docs",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "// TODO(HiDeoo)",
+  "author": "HiDeoo <github@hideoo.dev> (https://hideoo.dev)",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "lint": "eslint . --cache --max-warnings=0"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.35.0",
+    "@hideoo/starlight-plugins-docs-components": "^0.4.0",
+    "astro": "^5.12.6",
+    "sharp": "^0.34.3",
+    "starlight-changelogs": "workspace:*"
+  },
+  "engines": {
+    "node": ">=18.17.1"
+  },
+  "packageManager": "pnpm@10.13.1",
+  "private": true,
+  "sideEffects": false,
+  "keywords": [
+    "// TODO(HiDeoo)"
+  ],
+  "homepage": "https://github.com/HiDeoo/starlight-changelogs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HiDeoo/starlight-changelogs.git",
+    "directory": "docs"
+  },
+  "bugs": "https://github.com/HiDeoo/starlight-changelogs/issues"
+}

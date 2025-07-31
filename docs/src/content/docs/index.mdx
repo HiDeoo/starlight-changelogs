@@ -1,0 +1,48 @@
+---
+title: Starlight Changelogs
+description: // TODO(HiDeoo) identical desc
+head:
+  - tag: title
+    content: Starlight Changelogs
+  - tag: style
+    content: |
+      .hero-html {
+        --size: 12rem;
+        font-size: var(--size);
+        justify-content: center;
+        line-height: var(--size);
+      }
+template: splash
+editUrl: false
+lastUpdated: false
+hero:
+  tagline: // TODO(HiDeoo) identical desc
+  image:
+    html: '🪄'
+  actions:
+    - text: Getting Started
+      link: /getting-started/
+      icon: rocket
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components'
+
+// TODO(HiDeoo)
+
+## Next steps
+
+<CardGrid stagger>
+  <Card title="Install the plugin" icon="puzzle">
+    Check the [getting started guide](/getting-started/) for installation instructions.
+  </Card>
+  <Card title="Configure the plugin" icon="setting">
+    Edit your config in `astro.config.mjs`.
+  </Card>
+  <Card title="Add sidebar links to draft pages" icon="document">
+    Add [draft pages](https://starlight.astro.build/reference/frontmatter/#draft) and
+    [links](https://starlight.astro.build/guides/sidebar/#internal-links) to them in your sidebar configuration.
+  </Card>
+  <Card title="Build your project" icon="rocket">
+    Run `astro build` to see the plugin in action. All sidebar links to draft pages will be automatically removed.
+  </Card>
+</CardGrid>
