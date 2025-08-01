@@ -47,32 +47,33 @@ async function syncData(
 ) {
   try {
     const content = await fs.readFile(path, 'utf8')
-    const entries = parseChangelog(config, content)
+    const entries = parseMarkdown(config, content)
 
     for (const entry of entries) {
       const existingEntry = store.get(entry.id)
 
-      const digest = generateDigest({ id: entry.id, content: entry.content })
+      const digest = generateDigest({ id: entry.id, content: entry.body })
       if (existingEntry && existingEntry.digest === digest) continue
 
-      const parsedData = await parseData({ id: entry.id, data: entry })
+      const { body, ...data } = entry
+      const parsedData = await parseData({ id: entry.id, data })
 
-      store.set({ id: entry.id, data: parsedData, rendered: await renderMarkdown(entry.content) })
+      store.set({ id: entry.id, body, data: parsedData, digest, rendered: await renderMarkdown(body) })
     }
   } catch (error) {
     throwLoaderError(`Failed to read the changelog file at ${path}`, error)
   }
 }
 
-function parseChangelog(config: StarlightChangelogsLoaderConfig, content: string) {
-  const entries: StarlightChangelogsEntry[] = []
+function parseMarkdown(config: StarlightChangelogsLoaderConfig, content: string) {
+  const entries: MarkdownEntry[] = []
   const tree = fromMarkdown(content)
 
-  let version: ChangelogVersion | undefined
+  let version: MarkdownVersion | undefined
 
   visit(tree, (node) => {
     if (node.type === 'heading' && node.depth === 2) {
-      if (version) entries.push(createEntry(config, version))
+      if (version) entries.push(parseMarkdownVersion(config, version))
       version = { id: toString(node), nodes: [] }
       return SKIP
     }
@@ -84,16 +85,16 @@ function parseChangelog(config: StarlightChangelogsLoaderConfig, content: string
     return SKIP
   })
 
-  if (version) entries.push(createEntry(config, version))
+  if (version) entries.push(parseMarkdownVersion(config, version))
 
   return entries
 }
 
-function createEntry(config: StarlightChangelogsLoaderConfig, version: ChangelogVersion): StarlightChangelogsEntry {
+function parseMarkdownVersion(config: StarlightChangelogsLoaderConfig, version: MarkdownVersion): MarkdownEntry {
   return {
     id: generateEntryId(config, version.id),
+    body: toMarkdown({ type: 'root', children: version.nodes as RootContent[] }),
     title: version.id,
-    content: toMarkdown({ type: 'root', children: version.nodes as RootContent[] }),
   }
 }
 
@@ -103,7 +104,11 @@ function generateEntryId(config: StarlightChangelogsLoaderConfig, version: strin
 
 type StarlightChangelogsLoaderConfig = z.output<typeof StarlightChangelogsChangesetLoaderConfigSchema>
 
-interface ChangelogVersion {
+interface MarkdownVersion {
   id: string
   nodes: Node[]
+}
+
+interface MarkdownEntry extends StarlightChangelogsEntry {
+  body: string
 }

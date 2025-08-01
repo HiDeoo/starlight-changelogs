@@ -12,7 +12,7 @@ export function changelogsLoader(userConfig: StarlightChangelogsLoaderUserConfig
   const parsedConfig = StarlightChangelogsLoaderConfigSchema.safeParse(userConfig)
 
   return {
-    name: 'starlight-changelogs-loader',
+    name: 'starlight-changelogs',
     load: async (context) => {
       const { config: astroConfig } = context
 

@@ -5,8 +5,6 @@ export const StarlightChangelogsEntrySchema = z.object({
   id: z.string(),
   // TODO(HiDeoo) comment
   title: z.string(),
-  // TODO(HiDeoo) comment
-  content: z.string(),
 })
 
 export type StarlightChangelogsEntry = z.output<typeof StarlightChangelogsEntrySchema>
