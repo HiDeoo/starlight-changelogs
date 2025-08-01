@@ -13,9 +13,19 @@ const trailingSlashTransformer = trailingSlashTransformers[context.trailingSlash
 
 const base = stripTrailingSlash(import.meta.env.BASE_URL)
 
-export function getUrl(path: string) {
+export function getLink(path: string) {
   path = stripLeadingSlash(path)
   path = path ? `${base}/${path}` : `${base}/`
 
   return trailingSlashTransformer(path)
+}
+
+interface PaginationLink {
+  label: string
+  link: string
+}
+
+export interface PaginationLinks {
+  next: PaginationLink | undefined
+  prev: PaginationLink | undefined
 }

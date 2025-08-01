@@ -1,11 +1,12 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
-import type { ChangelogProps } from '../libs/routing'
+import { getVersionPath, type ChangelogProps } from '../libs/routing'
 import Entry from './Entry.astro'
+import { getLink } from '../libs/link'
 
 type Props = ChangelogProps
 
-const { entries, pagination } = Astro.props
+const { entries, locale, pagination } = Astro.props
 
 // TODO(HiDeoo) title
 // TODO(HiDeoo) headings / h1
@@ -16,7 +17,9 @@ const { entries, pagination } = Astro.props
   {
     entries.map((entry) => (
       <>
-        <h1>{entry.data.title}</h1>
+        <h2>
+          <a href={getLink(getVersionPath(entry, locale))}>{entry.data.title}</a>
+        </h2>
         <Entry {entry} />
       </>
     ))

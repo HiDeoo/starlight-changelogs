@@ -11,6 +11,6 @@ const { entry } = Astro.props
 // TODO(HiDeoo) headings
 ---
 
-<StarlightPage frontmatter={{ title: 'My custom page' }}>
+<StarlightPage frontmatter={{ title: 'My custom page', prev: entry.pagination.prev, next: entry.pagination.next }}>
   <Entry {entry} />
 </StarlightPage>
