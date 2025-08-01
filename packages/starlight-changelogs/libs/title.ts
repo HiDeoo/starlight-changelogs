@@ -22,11 +22,3 @@ export function getChangelogTitle(changelog: StarlightChangelogsLoaderBaseConfig
 
   return title
 }
-
-export function getVersionTitle(
-  changelog: StarlightChangelogsLoaderBaseConfig,
-  entry: VersionProps['entry'],
-  locale: Locale,
-) {
-  return `${getChangelogTitle(changelog, locale)} - ${entry.data.title}`
-}

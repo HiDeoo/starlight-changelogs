@@ -1,25 +1,33 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import { getVersionsPath, type VersionProps } from '../libs/routing'
-import Entry from './Entry.astro'
-import { getVersionTitle } from '../libs/title'
+import { getChangelogTitle } from '../libs/title'
 import { getLink } from '../libs/link'
+import { render } from 'astro:content'
 
 type Props = VersionProps
 
 const { changelog, entry, locale } = Astro.props
 
+const { Content, headings } = await render(entry)
+
 // TODO(HiDeoo) title
 // TODO(HiDeoo) headings
+
+// TODO(HiDeoo) update head title to start with the version and use Starlight title separator
+
+// TODO(HiDeoo) Use a UI String for the title? e.g. "Version {version}" but support "{title} - {version}"
 ---
 
 <StarlightPage
   frontmatter={{
-    title: getVersionTitle(changelog, entry, locale),
+    title: getChangelogTitle(changelog, locale),
     prev: entry.pagination.prev,
     next: entry.pagination.next,
   }}
+  headings={[{ depth: 2, slug: entry.data.slug, text: entry.data.title }, ...headings]}
 >
   <a href={getLink(getVersionsPath(changelog, locale))}>Back to changelog</a>
-  <Entry {entry} />
+  <h2 id={entry.data.slug}>{entry.data.title}</h2>
+  <Content />
 </StarlightPage>

@@ -1,9 +1,9 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import { getVersionPath, type VersionsProps } from '../libs/routing'
-import Entry from './Entry.astro'
 import { getLink } from '../libs/link'
 import { getChangelogTitle } from '../libs/title'
+import { render } from 'astro:content'
 
 type Props = VersionsProps
 
@@ -18,13 +18,17 @@ const { changelog, entries, locale, pagination } = Astro.props
   frontmatter={{ title: getChangelogTitle(changelog, locale), prev: pagination.prev, next: pagination.next }}
 >
   {
-    entries.map((entry) => (
-      <>
-        <h2>
-          <a href={getLink(getVersionPath(entry, locale))}>{entry.data.title}</a>
-        </h2>
-        <Entry {entry} />
-      </>
-    ))
+    entries.map(async (entry) => {
+      const { Content } = await render(entry)
+
+      return (
+        <>
+          <h2>
+            <a href={getLink(getVersionPath(entry, locale))}>{entry.data.title}</a>
+          </h2>
+          <Content />
+        </>
+      )
+    })
   }
 </StarlightPage>
