@@ -1,9 +1,10 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import { render } from 'astro:content'
+
+import { getLink } from '../libs/link'
 import { getVersionsPath, type VersionProps } from '../libs/routing'
 import { getChangelogTitle } from '../libs/title'
-import { getLink } from '../libs/link'
-import { render } from 'astro:content'
 
 type Props = VersionProps
 

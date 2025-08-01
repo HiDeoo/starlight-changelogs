@@ -1,7 +1,6 @@
 import type { StarlightChangelogsLoaderBaseConfig } from '../providers'
 
 import { getDefaultLang, getLangFromLocale, type Locale } from './i18n'
-import type { VersionProps } from './routing'
 
 export function getChangelogTitle(changelog: StarlightChangelogsLoaderBaseConfig, locale: Locale): string {
   if (typeof changelog.title === 'string') return changelog.title

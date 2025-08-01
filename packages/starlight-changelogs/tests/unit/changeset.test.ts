@@ -13,9 +13,10 @@ describe('changelog-github', () => {
     await loadChangesetData(
       {
         type: 'changeset',
+        changelog: '../../../../fixtures/changeset/changelog-github-starlight.md',
         pageSize: 5,
         prefix: 'test',
-        changelog: '../../../../fixtures/changeset/changelog-github-starlight.md',
+        title: 'test',
       },
       mockLoaderContext(store),
     )
