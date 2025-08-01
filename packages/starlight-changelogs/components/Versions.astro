@@ -8,14 +8,11 @@ import { render } from 'astro:content'
 type Props = VersionsProps
 
 const { changelog, entries, locale, pagination } = Astro.props
-
-// TODO(HiDeoo) title
-// TODO(HiDeoo) headings / h1
-// TODO(HiDeoo) heading ID
 ---
 
 <StarlightPage
   frontmatter={{ title: getChangelogTitle(changelog, locale), prev: pagination.prev, next: pagination.next }}
+  headings={entries.map((entry) => ({ depth: 2, slug: entry.data.slug, text: entry.data.title }))}
 >
   {
     entries.map(async (entry) => {
@@ -23,7 +20,7 @@ const { changelog, entries, locale, pagination } = Astro.props
 
       return (
         <>
-          <h2>
+          <h2 id={entry.data.slug}>
             <a href={getLink(getVersionPath(entry, locale))}>{entry.data.title}</a>
           </h2>
           <Content />
