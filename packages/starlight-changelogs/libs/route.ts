@@ -5,7 +5,7 @@ import context from 'virtual:starlight-changelogs/context'
 
 import type { StarlightChangelogsLoaderBaseConfig } from '../providers'
 
-import { stripTrailingSlash } from './path'
+import { getPathWithLocale, type Locale } from './i18n'
 
 const config = getLoaderConfig()
 
@@ -19,8 +19,12 @@ export async function getChangelogsStaticPaths() {
     for (const localeKey of Object.keys(context.locales ?? { root: undefined })) {
       const locale = localeKey === 'root' ? undefined : localeKey
 
-      for (const [index] of pages.entries()) {
-        paths.push(getChangelogStaticPath(changelog, index, locale))
+      for (const [index, entries] of pages.entries()) {
+        paths.push(getChangelogStaticPath(changelog, entries, index, locale))
+      }
+
+      for (const entry of entries) {
+        paths.push(getVersionStaticPath(changelog, entry, locale))
       }
     }
   }
@@ -53,7 +57,7 @@ function getPaginatedChangelogEntries(changelog: ChangelogConfig, entries: Chang
   return pages
 }
 
-function getChangelogStaticPath(changelog: ChangelogConfig, index: number, locale: Locale) {
+function getChangelogStaticPath(changelog: ChangelogConfig, entries: ChangelogEntry[], index: number, locale: Locale) {
   // TODO(HiDeoo) next/prev links
 
   return {
@@ -63,25 +67,36 @@ function getChangelogStaticPath(changelog: ChangelogConfig, index: number, local
           ? getPathWithLocale(changelog.prefix, locale)
           : `${getPathWithLocale(changelog.prefix, locale)}/${index + 1}`,
     },
-    // TODO(HiDeoo) props
+    props: {
+      type: 'changelog',
+      entries,
+    } satisfies StarlightChangelogsStaticProps,
   }
 }
 
-function getPathWithLocale(path: string, locale: Locale): string {
-  const pathLocale = getLocaleFromPath(path)
-  if (pathLocale === locale) return path
-  locale = locale ?? ''
-  if (pathLocale === path) return locale
-  if (pathLocale) return stripTrailingSlash(path.replace(`${pathLocale}/`, locale ? `${locale}/` : ''))
-  return path ? `${locale}/${path}` : locale
-}
+function getVersionStaticPath(changelog: ChangelogConfig, entry: ChangelogEntry, locale: Locale) {
+  // TODO(HiDeoo) next/prev links ?
 
-function getLocaleFromPath(path: string): Locale {
-  const baseSegment = path.split('/')[0]
-  return context.locales && baseSegment && baseSegment in context.locales ? baseSegment : undefined
+  return {
+    params: {
+      slug: `${getPathWithLocale(changelog.prefix, locale)}/version/${entry.data.slug}`,
+    },
+    props: {
+      type: 'version',
+      entry,
+    } satisfies StarlightChangelogsStaticProps,
+  }
 }
-
-export type Locale = string | undefined
 
 type ChangelogEntry = CollectionEntry<'changelogs'>
 type ChangelogConfig = StarlightChangelogsLoaderBaseConfig
+
+type StarlightChangelogsStaticProps =
+  | {
+      type: 'changelog'
+      entries: ChangelogEntry[]
+    }
+  | {
+      type: 'version'
+      entry: ChangelogEntry
+    }

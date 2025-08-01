@@ -6,6 +6,8 @@ export const StarlightChangelogsEntrySchema = z.object({
   // TODO(HiDeoo) comment
   id: z.string(),
   // TODO(HiDeoo) comment
+  slug: z.string(),
+  // TODO(HiDeoo) comment
   title: z.string(),
 })
 

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 
 import type { LoaderContext } from 'astro/loaders'
 import { z } from 'astro/zod'
+import { slug } from 'github-slugger'
 import type { Node, RootContent } from 'mdast'
 import { fromMarkdown } from 'mdast-util-from-markdown'
 import { toMarkdown } from 'mdast-util-to-markdown'
@@ -96,11 +97,14 @@ function parseMarkdownVersion(
     id: generateEntryId(config, version.id),
     body: toMarkdown({ type: 'root', children: version.nodes as RootContent[] }),
     prefix: config.prefix,
+    // TODO(HiDeoo) extract
+    slug: slug(version.id.replaceAll('.', ' ')),
     title: version.id,
   }
 }
 
 function generateEntryId(config: StarlightChangelogsChangesetLoaderConfig, version: string): string {
+  // TODO(HiDeoo) use a constant based on the type of the provider
   return `changeset:${config.prefix}:${version}`
 }
 

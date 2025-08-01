@@ -1,0 +1,28 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import type { InferGetStaticPropsType } from 'astro'
+
+import { getChangelogsStaticPaths } from '../libs/route'
+
+import Version from '../components/Version.astro'
+import Changelog from '../components/Changelog.astro'
+
+export const prerender = true
+
+export async function getStaticPaths() {
+  return getChangelogsStaticPaths()
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>
+
+const { type } = Astro.props
+
+// TODO(HiDeoo) make 2 components both rendering StarlightPage
+
+// TODO(HiDeoo) headings
+---
+
+<StarlightPage frontmatter={{ title: 'My custom page' }}>
+  {type === 'changelog' && <Changelog entries={Astro.props.entries} />}
+  {type === 'version' && <Version entry={Astro.props.entry} />}
+</StarlightPage>

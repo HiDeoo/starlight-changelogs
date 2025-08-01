@@ -1,0 +1,22 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import Version from './Version.astro'
+
+interface Props {
+  entries: CollectionEntry<'changelogs'>[]
+}
+
+const { entries } = Astro.props
+
+// TODO(HiDeoo) headings / h1
+// TODO(HiDeoo) heading ID
+---
+
+{
+  entries.map((entry) => (
+    <>
+      <h1>{entry.data.title}</h1>
+      <Version {entry} />
+    </>
+  ))
+}
