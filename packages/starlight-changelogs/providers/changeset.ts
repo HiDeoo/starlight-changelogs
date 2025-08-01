@@ -68,23 +68,12 @@ function parseChangelog(config: StarlightChangelogsLoaderConfig, content: string
   const entries: StarlightChangelogsEntry[] = []
   const tree = fromMarkdown(content)
 
-  let version: { id: string; nodes: Node[] } | undefined
+  let version: ChangelogVersion | undefined
 
   visit(tree, (node) => {
     if (node.type === 'heading' && node.depth === 2) {
-      if (version) {
-        entries.push({
-          id: generateEntryId(config, version.id),
-          title: version.id,
-          content: toMarkdown({ type: 'root', children: version.nodes as RootContent[] }),
-        })
-      }
-
-      version = {
-        id: toString(node),
-        nodes: [],
-      }
-
+      if (version) entries.push(createEntry(config, version))
+      version = { id: toString(node), nodes: [] }
       return SKIP
     }
 
@@ -95,9 +84,17 @@ function parseChangelog(config: StarlightChangelogsLoaderConfig, content: string
     return SKIP
   })
 
-  // TODO(HiDeoo) last version missing
+  if (version) entries.push(createEntry(config, version))
 
   return entries
+}
+
+function createEntry(config: StarlightChangelogsLoaderConfig, version: ChangelogVersion): StarlightChangelogsEntry {
+  return {
+    id: generateEntryId(config, version.id),
+    title: version.id,
+    content: toMarkdown({ type: 'root', children: version.nodes as RootContent[] }),
+  }
 }
 
 function generateEntryId(config: StarlightChangelogsLoaderConfig, version: string): string {
@@ -105,3 +102,8 @@ function generateEntryId(config: StarlightChangelogsLoaderConfig, version: strin
 }
 
 type StarlightChangelogsLoaderConfig = z.output<typeof StarlightChangelogsChangesetLoaderConfigSchema>
+
+interface ChangelogVersion {
+  id: string
+  nodes: Node[]
+}
