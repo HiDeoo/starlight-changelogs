@@ -11,6 +11,19 @@ export function getPathWithLocale(path: string, locale: Locale): string {
   return path ? `${locale}/${path}` : locale
 }
 
+export function getLangFromLocale(locale: Locale): string {
+  const lang = locale ? context.locales?.[locale]?.lang : context.locales?.root?.lang
+  if (lang) return lang
+  if (locale) return locale
+  return getDefaultLang()
+}
+
+export function getDefaultLang() {
+  let defaultLang: string | undefined
+  if (context.defaultLocale) defaultLang = context.locales?.[context.defaultLocale]?.lang ?? context.defaultLocale
+  return defaultLang ?? 'en'
+}
+
 function getLocaleFromPath(path: string): Locale {
   const baseSegment = path.split('/')[0]
   return context.locales && baseSegment && baseSegment in context.locales ? baseSegment : undefined

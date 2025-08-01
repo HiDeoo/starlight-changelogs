@@ -8,6 +8,8 @@ export const StarlightChangelogsLoaderBaseConfigSchema = z.object({
   // TODO(HiDeoo) should it be renamed to `base` or something similar?
   // TODO(HiDeoo)
   prefix: z.string().transform((value) => stripLeadingAndTrailingSlash(value)),
+  // TODO(HiDeoo)
+  title: z.union([z.string(), z.record(z.string())]).default('Changelog'),
 })
 
 export type StarlightChangelogsLoaderBaseConfig = z.output<typeof StarlightChangelogsLoaderBaseConfigSchema>

@@ -24,7 +24,7 @@ export async function getChangelogsStaticPaths() {
         paths.push(getChangelogStaticPath(changelog, pages, entries, index, locale))
 
         for (const entry of entries) {
-          paths.push(getVersionStaticPath(entry, locale))
+          paths.push(getVersionStaticPath(changelog, entry, locale))
         }
       }
     }
@@ -102,6 +102,7 @@ function getChangelogStaticPath(
     },
     props: {
       type: 'changelog',
+      config: changelog,
       entries,
       locale,
       pagination: {
@@ -112,7 +113,7 @@ function getChangelogStaticPath(
   }
 }
 
-function getVersionStaticPath(entry: ChangelogEntry, locale: Locale) {
+function getVersionStaticPath(changelog: ChangelogConfig, entry: ChangelogEntry, locale: Locale) {
   // TODO(HiDeoo) next/prev links ?
 
   return {
@@ -121,12 +122,14 @@ function getVersionStaticPath(entry: ChangelogEntry, locale: Locale) {
     },
     props: {
       type: 'version',
+      config: changelog,
       entry,
+      locale,
     } satisfies StarlightChangelogsStaticProps,
   }
 }
 
-function getChangelogPath(changelog: ChangelogConfig, locale: Locale, index?: number) {
+export function getChangelogPath(changelog: ChangelogConfig, locale: Locale, index?: number) {
   return index
     ? `${getPathWithLocale(changelog.prefix, locale)}/${index + 1}`
     : getPathWithLocale(changelog.prefix, locale)
@@ -136,7 +139,7 @@ export function getVersionPath(entry: CollectionEntry<'changelogs'>, locale: Loc
   return `${getPathWithLocale(entry.data.prefix, locale)}/version/${entry.data.slug}`
 }
 
-type ChangelogConfig = StarlightChangelogsLoaderBaseConfig
+export type ChangelogConfig = StarlightChangelogsLoaderBaseConfig
 
 type ChangelogEntry = CollectionEntry<'changelogs'> & {
   pagination: PaginationLinks
@@ -144,6 +147,7 @@ type ChangelogEntry = CollectionEntry<'changelogs'> & {
 
 export interface ChangelogProps {
   type: 'changelog'
+  config: ChangelogConfig
   entries: ChangelogEntry[]
   locale: Locale
   pagination: PaginationLinks
@@ -151,7 +155,9 @@ export interface ChangelogProps {
 
 export interface VersionProps {
   type: 'version'
+  config: ChangelogConfig
   entry: ChangelogEntry
+  locale: Locale
 }
 
 type StarlightChangelogsStaticProps = ChangelogProps | VersionProps
