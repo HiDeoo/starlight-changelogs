@@ -68,7 +68,7 @@ export default defineConfig({
           label: 'Bluesky',
         },
         {
-          href: 'https://github.com/HiDeoo/starlight-auto-drafts',
+          href: 'https://github.com/HiDeoo/starlight-changelogs',
           icon: 'github',
           label: 'GitHub',
         },

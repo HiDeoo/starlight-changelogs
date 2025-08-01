@@ -16,6 +16,7 @@ export function vitePluginStarlightChangelogs(
       defaultLocale: starlightConfig.defaultLocale,
       isMultilingual: Object.keys(starlightConfig.locales ?? {}).length > 1,
       locales: starlightConfig.locales,
+      trailingSlash: astroConfig.trailingSlash,
     } satisfies StarlightChangelogsContext)}`,
   }
 
@@ -78,6 +79,7 @@ export interface StarlightChangelogsContext {
   defaultLocale: StarlightConfig['defaultLocale']
   isMultilingual: boolean
   locales: StarlightConfig['locales']
+  trailingSlash: AstroConfig['trailingSlash']
 }
 
 type StarlightConfig = StarlightHookParameters<'config:setup'>['config']

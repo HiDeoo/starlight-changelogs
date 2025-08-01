@@ -1,18 +1,18 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
-import type { ChangelogProps } from '../libs/route'
+import type { ChangelogProps } from '../libs/routing'
 import Entry from './Entry.astro'
 
 type Props = ChangelogProps
 
-const { entries } = Astro.props
+const { entries, pagination } = Astro.props
 
 // TODO(HiDeoo) title
 // TODO(HiDeoo) headings / h1
 // TODO(HiDeoo) heading ID
 ---
 
-<StarlightPage frontmatter={{ title: 'My custom page' }}>
+<StarlightPage frontmatter={{ title: 'My custom page', prev: pagination.prev, next: pagination.next }}>
   {
     entries.map((entry) => (
       <>
