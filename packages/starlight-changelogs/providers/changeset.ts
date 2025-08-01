@@ -14,8 +14,6 @@ import { throwLoaderError } from '../loader/utils'
 
 import { StarlightChangelogsLoaderBaseConfigSchema } from '.'
 
-// TODO(HiDeoo) check how matt tests loaders
-
 export const StarlightChangelogsChangesetLoaderConfigSchema = StarlightChangelogsLoaderBaseConfigSchema.extend({
   // TODO(HiDeoo) comment
   type: z.literal('changeset'),
