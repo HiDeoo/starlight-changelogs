@@ -1,19 +1,50 @@
 import { fileURLToPath } from 'node:url'
 
-import type { AstroConfig, HookParameters, ViteUserConfig } from 'astro'
+import type { HookParameters as StarlightHookParameters } from '@astrojs/starlight/types'
+import type { AstroConfig, HookParameters as AstroHookParameters, ViteUserConfig } from 'astro'
 
 import { getLoaderConfigUrl, type StarlightChangelogsLoaderConfig } from '../loader/config'
 
 export function vitePluginStarlightChangelogs(
   astroConfig: AstroConfig,
-  command: HookParameters<'astro:config:setup'>['command'],
+  starlightConfig: StarlightConfig,
+  command: AstroHookParameters<'astro:config:setup'>['command'],
 ): VitePlugin {
-  const moduleId = 'virtual:starlight-changelogs/config'
-  const resolvedModuleId = `\0${moduleId}`
+  const modules = {
+    'virtual:starlight-changelogs/config': getConfigVirtualModule(astroConfig, command),
+    'virtual:starlight-changelogs/context': `export default ${JSON.stringify({
+      defaultLocale: starlightConfig.defaultLocale,
+      isMultilingual: Object.keys(starlightConfig.locales ?? {}).length > 1,
+      locales: starlightConfig.locales,
+    } satisfies StarlightChangelogsContext)}`,
+  }
 
-  const moduleContent =
-    command === 'dev'
-      ? `let loaderConfig = []
+  const moduleResolutionMap = Object.fromEntries(
+    (Object.keys(modules) as (keyof typeof modules)[]).map((key) => [resolveVirtualModuleId(key), key]),
+  )
+
+  return {
+    name: 'vite-plugin-starlight-changelogs',
+    load(id) {
+      const moduleId = moduleResolutionMap[id]
+      return moduleId ? modules[moduleId] : undefined
+    },
+    resolveId(id) {
+      return id in modules ? resolveVirtualModuleId(id) : undefined
+    },
+  }
+}
+
+function resolveVirtualModuleId<TModuleId extends string>(id: TModuleId): `\0${TModuleId}` {
+  return `\0${id}`
+}
+
+function getConfigVirtualModule(
+  astroConfig: AstroConfig,
+  command: AstroHookParameters<'astro:config:setup'>['command'],
+) {
+  return command === 'dev'
+    ? `let loaderConfig = []
 
 export function getLoaderConfig() {
   return loaderConfig
@@ -22,7 +53,7 @@ export function getLoaderConfig() {
 export function setLoaderConfig(newLoaderConfig) {
   loaderConfig = newLoaderConfig
 }`
-      : `import fs from 'node:fs'
+    : `import fs from 'node:fs'
 
 const loaderConfigPath = ${JSON.stringify(fileURLToPath(getLoaderConfigUrl(astroConfig)))}
 let loaderConfig
@@ -36,21 +67,19 @@ export function getLoaderConfig() {
 export function setLoaderConfig() {
   // no-op in production
 }`
-
-  return {
-    name: 'vite-plugin-starlight-changelogs',
-    load(id) {
-      return id === resolvedModuleId ? moduleContent : undefined
-    },
-    resolveId(id) {
-      return id === moduleId ? resolvedModuleId : undefined
-    },
-  }
 }
 
 export interface StarlightChangelogsConfig {
   getLoaderConfig: () => StarlightChangelogsLoaderConfig
   setLoaderConfig: (newLoaderConfig: StarlightChangelogsLoaderConfig) => void
 }
+
+export interface StarlightChangelogsContext {
+  defaultLocale: StarlightConfig['defaultLocale']
+  isMultilingual: boolean
+  locales: StarlightConfig['locales']
+}
+
+type StarlightConfig = StarlightHookParameters<'config:setup'>['config']
 
 type VitePlugin = NonNullable<ViteUserConfig['plugins']>[number]

@@ -13,6 +13,7 @@ describe('changelog-github', () => {
     await loadChangesetData(
       {
         type: 'changeset',
+        pageSize: 5,
         prefix: 'test',
         changelog: '../../../../fixtures/changeset/changelog-github-starlight.md',
       },
@@ -42,6 +43,12 @@ describe('changelog-github', () => {
 
     expect(version?.id).toBe('changeset:test:0.0.1')
     expect(version?.data['title']).toBe('0.0.1')
+  })
+
+  test('includes prefix for each entries', () => {
+    const version = store.values()[0]
+
+    expect(version?.data['prefix']).toBe('test')
   })
 
   test('loads markdown', () => {

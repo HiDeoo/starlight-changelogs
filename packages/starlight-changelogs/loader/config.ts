@@ -9,9 +9,9 @@ export const StarlightChangelogsLoaderConfigSchema = z
   .discriminatedUnion('type', [
     StarlightChangelogsChangesetLoaderConfigSchema,
     // TODO(HiDeoo) move to dedicated file when implemented
-    z.object({
-      type: z.literal('github'),
-    }),
+    // z.object({
+    //   type: z.literal('github'),
+    // }),
   ])
   .array()
   .default([])

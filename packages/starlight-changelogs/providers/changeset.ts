@@ -21,7 +21,7 @@ export const StarlightChangelogsChangesetLoaderConfigSchema = StarlightChangelog
   changelog: z.string(),
 })
 
-export async function loadChangesetData(config: StarlightChangelogsLoaderConfig, context: LoaderContext) {
+export async function loadChangesetData(config: StarlightChangelogsChangesetLoaderConfig, context: LoaderContext) {
   const { config: astroConfig, logger, watcher } = context
 
   const path = fileURLToPath(new URL(config.changelog, astroConfig.root))
@@ -40,7 +40,7 @@ export async function loadChangesetData(config: StarlightChangelogsLoaderConfig,
 
 async function syncData(
   path: string,
-  config: StarlightChangelogsLoaderConfig,
+  config: StarlightChangelogsChangesetLoaderConfig,
   { generateDigest, parseData, renderMarkdown, store }: LoaderContext,
 ) {
   try {
@@ -63,7 +63,7 @@ async function syncData(
   }
 }
 
-function parseMarkdown(config: StarlightChangelogsLoaderConfig, content: string) {
+function parseMarkdown(config: StarlightChangelogsChangesetLoaderConfig, content: string) {
   const entries: MarkdownEntry[] = []
   const tree = fromMarkdown(content)
 
@@ -88,19 +88,23 @@ function parseMarkdown(config: StarlightChangelogsLoaderConfig, content: string)
   return entries
 }
 
-function parseMarkdownVersion(config: StarlightChangelogsLoaderConfig, version: MarkdownVersion): MarkdownEntry {
+function parseMarkdownVersion(
+  config: StarlightChangelogsChangesetLoaderConfig,
+  version: MarkdownVersion,
+): MarkdownEntry {
   return {
     id: generateEntryId(config, version.id),
     body: toMarkdown({ type: 'root', children: version.nodes as RootContent[] }),
+    prefix: config.prefix,
     title: version.id,
   }
 }
 
-function generateEntryId(config: StarlightChangelogsLoaderConfig, version: string): string {
+function generateEntryId(config: StarlightChangelogsChangesetLoaderConfig, version: string): string {
   return `changeset:${config.prefix}:${version}`
 }
 
-type StarlightChangelogsLoaderConfig = z.output<typeof StarlightChangelogsChangesetLoaderConfigSchema>
+type StarlightChangelogsChangesetLoaderConfig = z.output<typeof StarlightChangelogsChangesetLoaderConfigSchema>
 
 interface MarkdownVersion {
   id: string
