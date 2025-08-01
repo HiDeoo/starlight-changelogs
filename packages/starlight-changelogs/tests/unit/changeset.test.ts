@@ -51,6 +51,12 @@ describe('changelog-github', () => {
     expect(version?.data['prefix']).toBe('test')
   })
 
+  test('includes slug for each entries', () => {
+    const version = store.values()[0]
+
+    expect(version?.data['slug']).toBe('0-35-2')
+  })
+
   test('loads markdown', () => {
     const version = store.values()[0]
 
