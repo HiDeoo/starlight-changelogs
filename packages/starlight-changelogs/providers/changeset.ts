@@ -43,7 +43,7 @@ export async function loadChangesetData(config: StarlightChangelogsLoaderConfig,
 async function syncData(
   path: string,
   config: StarlightChangelogsLoaderConfig,
-  { generateDigest, parseData, store }: LoaderContext,
+  { generateDigest, parseData, renderMarkdown, store }: LoaderContext,
 ) {
   try {
     const content = await fs.readFile(path, 'utf8')
@@ -57,7 +57,7 @@ async function syncData(
 
       const parsedData = await parseData({ id: entry.id, data: entry })
 
-      store.set({ id: entry.id, data: parsedData })
+      store.set({ id: entry.id, data: parsedData, rendered: await renderMarkdown(entry.content) })
     }
   } catch (error) {
     throwLoaderError(`Failed to read the changelog file at ${path}`, error)
