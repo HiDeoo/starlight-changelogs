@@ -1,0 +1,12 @@
+---
+import { render, type CollectionEntry } from 'astro:content'
+
+interface Props {
+  entry: CollectionEntry<'changelogs'>
+}
+
+const { entry } = Astro.props
+const { Content } = await render(entry)
+---
+
+<Content />

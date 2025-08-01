@@ -91,12 +91,14 @@ function getVersionStaticPath(changelog: ChangelogConfig, entry: ChangelogEntry,
 type ChangelogEntry = CollectionEntry<'changelogs'>
 type ChangelogConfig = StarlightChangelogsLoaderBaseConfig
 
-type StarlightChangelogsStaticProps =
-  | {
-      type: 'changelog'
-      entries: ChangelogEntry[]
-    }
-  | {
-      type: 'version'
-      entry: ChangelogEntry
-    }
+export interface ChangelogProps {
+  type: 'changelog'
+  entries: ChangelogEntry[]
+}
+
+export interface VersionProps {
+  type: 'version'
+  entry: ChangelogEntry
+}
+
+type StarlightChangelogsStaticProps = ChangelogProps | VersionProps

@@ -1,12 +1,16 @@
 ---
-import { render, type CollectionEntry } from 'astro:content'
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import type { VersionProps } from '../libs/route'
+import Entry from './Entry.astro'
 
-interface Props {
-  entry: CollectionEntry<'changelogs'>
-}
+type Props = VersionProps
 
 const { entry } = Astro.props
-const { Content } = await render(entry)
+
+// TODO(HiDeoo) title
+// TODO(HiDeoo) headings
 ---
 
-<Content />
+<StarlightPage frontmatter={{ title: 'My custom page' }}>
+  <Entry {entry} />
+</StarlightPage>
