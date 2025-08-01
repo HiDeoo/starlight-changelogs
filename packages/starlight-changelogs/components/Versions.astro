@@ -1,20 +1,22 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
-import { getVersionPath, type ChangelogProps } from '../libs/routing'
+import { getVersionPath, type VersionsProps } from '../libs/routing'
 import Entry from './Entry.astro'
 import { getLink } from '../libs/link'
 import { getChangelogTitle } from '../libs/title'
 
-type Props = ChangelogProps
+type Props = VersionsProps
 
-const { config, entries, locale, pagination } = Astro.props
+const { changelog, entries, locale, pagination } = Astro.props
 
 // TODO(HiDeoo) title
 // TODO(HiDeoo) headings / h1
 // TODO(HiDeoo) heading ID
 ---
 
-<StarlightPage frontmatter={{ title: getChangelogTitle(config, locale), prev: pagination.prev, next: pagination.next }}>
+<StarlightPage
+  frontmatter={{ title: getChangelogTitle(changelog, locale), prev: pagination.prev, next: pagination.next }}
+>
   {
     entries.map((entry) => (
       <>

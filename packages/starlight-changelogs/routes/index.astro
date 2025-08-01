@@ -4,7 +4,7 @@ import type { InferGetStaticPropsType } from 'astro'
 import { getChangelogsStaticPaths } from '../libs/routing'
 
 import Version from '../components/Version.astro'
-import Changelog from '../components/Changelog.astro'
+import Versions from '../components/Versions.astro'
 
 export const prerender = true
 
@@ -17,5 +17,5 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>
 const { type } = Astro.props
 ---
 
-{type === 'changelog' && <Changelog {...Astro.props} />}
+{type === 'versions' && <Versions {...Astro.props} />}
 {type === 'version' && <Version {...Astro.props} />}
