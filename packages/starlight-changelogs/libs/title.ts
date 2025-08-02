@@ -1,8 +1,8 @@
-import type { StarlightChangelogsLoaderBaseConfig } from '../providers'
+import type { ProviderBaseConfig } from '../providers'
 
 import { getDefaultLang, getLangFromLocale, type Locale } from './i18n'
 
-export function getChangelogTitle(changelog: StarlightChangelogsLoaderBaseConfig, locale: Locale): string {
+export function getChangelogTitle(changelog: ProviderBaseConfig, locale: Locale): string {
   if (typeof changelog.title === 'string') return changelog.title
 
   let title: string

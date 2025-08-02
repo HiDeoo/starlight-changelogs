@@ -10,23 +10,23 @@ import { toMarkdown } from 'mdast-util-to-markdown'
 import { toString } from 'mdast-util-to-string'
 import { CONTINUE, SKIP, visit } from 'unist-util-visit'
 
-import type { StarlightChangelogsEntry } from '../loader/schema'
+import type { VersionEntry } from '../loader/schema'
 import { throwLoaderError } from '../loader/utils'
 
-import { StarlightChangelogsLoaderBaseConfigSchema } from '.'
+import { ProviderBaseConfigSchema } from '.'
 
-export const StarlightChangelogsChangesetLoaderConfigSchema = StarlightChangelogsLoaderBaseConfigSchema.extend({
+export const ChangesetProviderConfigSchema = ProviderBaseConfigSchema.extend({
   // TODO(HiDeoo) comment
-  type: z.literal('changeset'),
+  path: z.string(),
   // TODO(HiDeoo) comment
-  changelog: z.string(),
+  provider: z.literal('changeset'),
 })
 
-export async function loadChangesetData(config: StarlightChangelogsChangesetLoaderConfig, context: LoaderContext) {
+export async function loadChangesetData(config: ChangesetProviderConfig, context: LoaderContext) {
   const { config: astroConfig, logger, watcher } = context
 
-  const path = fileURLToPath(new URL(config.changelog, astroConfig.root))
-  if (!existsSync(path)) throwLoaderError(`The provided changelog file ${path} does not exist.`)
+  const path = fileURLToPath(new URL(config.path, astroConfig.root))
+  if (!existsSync(path)) throwLoaderError(`The provided changelog file path at ${path} does not exist.`)
 
   await syncData(path, config, context)
 
@@ -41,7 +41,7 @@ export async function loadChangesetData(config: StarlightChangelogsChangesetLoad
 
 async function syncData(
   path: string,
-  config: StarlightChangelogsChangesetLoaderConfig,
+  config: ChangesetProviderConfig,
   { generateDigest, parseData, renderMarkdown, store }: LoaderContext,
 ) {
   try {
@@ -49,23 +49,23 @@ async function syncData(
     const entries = parseMarkdown(config, content)
 
     for (const entry of entries) {
-      const existingEntry = store.get(entry.id)
+      const { id, body, ...data } = entry
+      const existingEntry = store.get(id)
 
-      const digest = generateDigest({ id: entry.id, content: entry.body })
+      const digest = generateDigest({ id, content: body })
       if (existingEntry && existingEntry.digest === digest) continue
 
-      const { body, ...data } = entry
-      const parsedData = await parseData({ id: entry.id, data })
+      const parsedData = await parseData({ id, data })
 
-      store.set({ id: entry.id, body, data: parsedData, digest, rendered: await renderMarkdown(body) })
+      store.set({ id, body, data: parsedData, digest, rendered: await renderMarkdown(body) })
     }
   } catch (error) {
     throwLoaderError(`Failed to read the changelog file at ${path}`, error)
   }
 }
 
-function parseMarkdown(config: StarlightChangelogsChangesetLoaderConfig, content: string) {
-  const entries: MarkdownEntry[] = []
+function parseMarkdown(config: ChangesetProviderConfig, content: string) {
+  const entries: VersionDataEntry[] = []
   const tree = fromMarkdown(content)
 
   let version: MarkdownVersion | undefined
@@ -73,7 +73,7 @@ function parseMarkdown(config: StarlightChangelogsChangesetLoaderConfig, content
   visit(tree, (node) => {
     if (node.type === 'heading' && node.depth === 2) {
       if (version) entries.push(parseMarkdownVersion(config, version))
-      version = { id: toString(node), nodes: [] }
+      version = { title: toString(node), nodes: [] }
       return SKIP
     }
 
@@ -89,32 +89,28 @@ function parseMarkdown(config: StarlightChangelogsChangesetLoaderConfig, content
   return entries
 }
 
-function parseMarkdownVersion(
-  config: StarlightChangelogsChangesetLoaderConfig,
-  version: MarkdownVersion,
-): MarkdownEntry {
+function parseMarkdownVersion(config: ChangesetProviderConfig, version: MarkdownVersion): VersionDataEntry {
+  // TODO(HiDeoo) extract?
+  const versionSlug = slug(version.title.replaceAll('.', ' '))
+
   return {
-    id: generateEntryId(config, version.id),
+    // TODO(HiDeoo) extract?
+    id: `${config.base}/version/${versionSlug}`,
     body: toMarkdown({ type: 'root', children: version.nodes as RootContent[] }),
-    prefix: config.prefix,
-    // TODO(HiDeoo) extract
-    slug: slug(version.id.replaceAll('.', ' ')),
-    title: version.id,
+    base: config.base,
+    slug: versionSlug,
+    title: version.title,
   }
 }
 
-function generateEntryId(config: StarlightChangelogsChangesetLoaderConfig, version: string): string {
-  // TODO(HiDeoo) use a constant based on the type of the provider
-  return `changeset:${config.prefix}:${version}`
-}
-
-type StarlightChangelogsChangesetLoaderConfig = z.output<typeof StarlightChangelogsChangesetLoaderConfigSchema>
+type ChangesetProviderConfig = z.output<typeof ChangesetProviderConfigSchema>
 
 interface MarkdownVersion {
-  id: string
+  title: string
   nodes: Node[]
 }
 
-interface MarkdownEntry extends StarlightChangelogsEntry {
+interface VersionDataEntry extends VersionEntry {
+  id: string
   body: string
 }

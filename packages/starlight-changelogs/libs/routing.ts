@@ -3,7 +3,7 @@ import { getCollection, type CollectionEntry } from 'astro:content'
 import { getLoaderConfig } from 'virtual:starlight-changelogs/config'
 import context from 'virtual:starlight-changelogs/context'
 
-import type { StarlightChangelogsLoaderBaseConfig } from '../providers'
+import type { ProviderBaseConfig } from '../providers'
 
 import { getPathWithLocale, type Locale } from './i18n'
 import { getLink, type PaginationLinks } from './link'
@@ -17,8 +17,8 @@ export async function getChangelogsStaticPaths() {
     for (const localeKey of Object.keys(context.locales ?? { root: undefined })) {
       const locale = localeKey === 'root' ? undefined : localeKey
 
-      const entries = await getChangelogEntries(changelog, locale)
-      const pages = getPaginatedChangelogEntries(changelog, entries)
+      const entries = await getVersionEntries(changelog, locale)
+      const pages = getPaginatedVersionEntries(changelog, entries)
 
       for (const [index, entries] of pages.entries()) {
         paths.push(getVersionsStaticPath(changelog, pages, entries, index, locale))
@@ -33,20 +33,19 @@ export async function getChangelogsStaticPaths() {
   return paths satisfies GetStaticPathsResult
 }
 
-async function getChangelogEntries(changelog: ChangelogConfig, locale: Locale): Promise<ChangelogEntry[]> {
+async function getVersionEntries(changelog: ProviderBaseConfig, locale: Locale): Promise<ChangelogEntry[]> {
+  const entries = await getCollection('changelogs', ({ data }) => data.base === changelog.base)
+
   // TODO(HiDeoo) sort?
-  const entries = await getCollection('changelogs', ({ data }) => data.prefix === changelog.prefix)
 
   return entries.map((entry, index) => {
-    const prevEntry = entries.at(index - 1)
+    const prevEntry = entries[index - 1]
     const prevLink = prevEntry ? { label: 'XXXXX', link: getLink(getVersionPath(prevEntry, locale)) } : undefined
 
-    const nextEntry = entries.at(index + 1)
+    const nextEntry = entries[index + 1]
     const nextLink = nextEntry ? { label: 'XXX', link: getLink(getVersionPath(nextEntry, locale)) } : undefined
 
-    // TODO(HiDeoo)
     return {
-      // TODO(HiDeoo)
       ...entry,
       pagination: {
         next: nextLink,
@@ -56,7 +55,7 @@ async function getChangelogEntries(changelog: ChangelogConfig, locale: Locale): 
   })
 }
 
-function getPaginatedChangelogEntries(changelog: ChangelogConfig, entries: ChangelogEntry[]) {
+function getPaginatedVersionEntries(changelog: ProviderBaseConfig, entries: ChangelogEntry[]) {
   const pages: ChangelogEntry[][] = []
 
   for (const entry of entries) {
@@ -77,20 +76,20 @@ function getPaginatedChangelogEntries(changelog: ChangelogConfig, entries: Chang
 }
 
 function getVersionsStaticPath(
-  changelog: ChangelogConfig,
+  changelog: ProviderBaseConfig,
   pages: ChangelogEntry[][],
   entries: ChangelogEntry[],
   index: number,
   locale: Locale,
 ) {
-  const prevPage = index === 0 ? undefined : pages.at(index - 1)
+  const prevPage = index === 0 ? undefined : pages[index - 1]
   const prevLink = prevPage
     ? // TODO(HiDeoo) i18n? Use a middleware to generate the label?
       // TODO(HiDeoo) label
       { label: `Page ${index}`, link: getLink(getVersionsPath(changelog, locale, index - 1)) }
     : undefined
 
-  const nextPage = pages.at(index + 1)
+  const nextPage = pages[index + 1]
   const nextLink = nextPage
     ? // TODO(HiDeoo) label
       { label: `Page ${index + 2}`, link: getLink(getVersionsPath(changelog, locale, index + 1)) }
@@ -109,13 +108,11 @@ function getVersionsStaticPath(
         next: nextLink,
         prev: prevLink,
       },
-    } satisfies StarlightChangelogsStaticProps,
+    } satisfies StaticProps,
   }
 }
 
-function getVersionStaticPath(changelog: ChangelogConfig, entry: ChangelogEntry, locale: Locale) {
-  // TODO(HiDeoo) next/prev links ?
-
+function getVersionStaticPath(changelog: ProviderBaseConfig, entry: ChangelogEntry, locale: Locale) {
   return {
     params: {
       slug: getVersionPath(entry, locale),
@@ -125,28 +122,24 @@ function getVersionStaticPath(changelog: ChangelogConfig, entry: ChangelogEntry,
       changelog,
       entry,
       locale,
-    } satisfies StarlightChangelogsStaticProps,
+    } satisfies StaticProps,
   }
 }
 
-export function getVersionsPath(changelog: ChangelogConfig, locale: Locale, index?: number) {
-  return index
-    ? `${getPathWithLocale(changelog.prefix, locale)}/${index + 1}`
-    : getPathWithLocale(changelog.prefix, locale)
+export function getVersionsPath(changelog: ProviderBaseConfig, locale: Locale, index?: number) {
+  return index ? `${getPathWithLocale(changelog.base, locale)}/${index + 1}` : getPathWithLocale(changelog.base, locale)
 }
 
 export function getVersionPath(entry: CollectionEntry<'changelogs'>, locale: Locale) {
-  return `${getPathWithLocale(entry.data.prefix, locale)}/version/${entry.data.slug}`
+  return getPathWithLocale(entry.id, locale)
 }
-
-export type ChangelogConfig = StarlightChangelogsLoaderBaseConfig
 
 type ChangelogEntry = CollectionEntry<'changelogs'> & {
   pagination: PaginationLinks
 }
 
 interface CommonProps {
-  changelog: ChangelogConfig
+  changelog: ProviderBaseConfig
   locale: Locale
 }
 
@@ -161,4 +154,4 @@ export interface VersionProps extends CommonProps {
   entry: ChangelogEntry
 }
 
-type StarlightChangelogsStaticProps = VersionsProps | VersionProps
+type StaticProps = VersionsProps | VersionProps

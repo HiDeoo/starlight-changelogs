@@ -12,11 +12,11 @@ describe('changelog-github', () => {
 
     await loadChangesetData(
       {
-        type: 'changeset',
-        changelog: '../../../../fixtures/changeset/changelog-github-starlight.md',
+        provider: 'changeset',
+        path: '../../../../fixtures/changeset/changelog-github-starlight.md',
         pageSize: 5,
-        prefix: 'test',
-        title: 'test',
+        base: 'test',
+        title: 'Test',
       },
       mockLoaderContext(store),
     )
@@ -29,27 +29,27 @@ describe('changelog-github', () => {
   test('loads versions in reverse chronological order', () => {
     const versions = store.values()
 
-    expect(versions[0]?.id).toBe('changeset:test:0.35.2')
+    expect(versions[0]?.id).toBe('test/version/0-35-2')
     expect(versions[0]?.data['title']).toBe('0.35.2')
 
-    expect(versions[1]?.id).toBe('changeset:test:0.35.1')
+    expect(versions[1]?.id).toBe('test/version/0-35-1')
     expect(versions[1]?.data['title']).toBe('0.35.1')
 
-    expect(versions[2]?.id).toBe('changeset:test:0.35.0')
+    expect(versions[2]?.id).toBe('test/version/0-35-0')
     expect(versions[2]?.data['title']).toBe('0.35.0')
   })
 
   test('loads the first version', () => {
     const version = store.values().at(-1)
 
-    expect(version?.id).toBe('changeset:test:0.0.1')
+    expect(version?.id).toBe('test/version/0-0-1')
     expect(version?.data['title']).toBe('0.0.1')
   })
 
-  test('includes prefix for each entries', () => {
+  test('includes the base for each entries', () => {
     const version = store.values()[0]
 
-    expect(version?.data['prefix']).toBe('test')
+    expect(version?.data['base']).toBe('test')
   })
 
   test('includes slug for each entries', () => {

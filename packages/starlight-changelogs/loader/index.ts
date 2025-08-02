@@ -5,7 +5,7 @@ import { saveLoaderConfig } from '../loader/config'
 import { loadChangesetData } from '../providers/changeset'
 
 import { StarlightChangelogsLoaderConfigSchema, type StarlightChangelogsLoaderUserConfig } from './config'
-import { StarlightChangelogsEntrySchema } from './schema'
+import { VersionEntrySchema } from './schema'
 import { throwLoaderError } from './utils'
 
 export function changelogsLoader(userConfig: StarlightChangelogsLoaderUserConfig): Loader {
@@ -28,21 +28,19 @@ export function changelogsLoader(userConfig: StarlightChangelogsLoaderUserConfig
       await saveLoaderConfig(astroConfig, config)
 
       for (const changelog of config) {
-        switch (changelog.type) {
+        switch (changelog.provider) {
           case 'changeset': {
             await loadChangesetData(changelog, context)
             break
           }
           default: {
             throwLoaderError(
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              `Missing loader implementation for changelog type '${changelog.type}'. This is a bug in the starlight-changelogs plugin.`,
+              `Missing loader implementation for changelog type '${changelog.provider}'. This is a bug in the starlight-changelogs plugin.`,
             )
           }
         }
       }
     },
-    schema: StarlightChangelogsEntrySchema,
+    schema: VersionEntrySchema,
   }
 }

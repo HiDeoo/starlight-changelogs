@@ -3,11 +3,11 @@ import fs from 'node:fs/promises'
 import type { AstroConfig } from 'astro'
 import { z } from 'astro/zod'
 
-import { StarlightChangelogsChangesetLoaderConfigSchema } from '../providers/changeset'
+import { ChangesetProviderConfigSchema } from '../providers/changeset'
 
 export const StarlightChangelogsLoaderConfigSchema = z
-  .discriminatedUnion('type', [
-    StarlightChangelogsChangesetLoaderConfigSchema,
+  .discriminatedUnion('provider', [
+    ChangesetProviderConfigSchema,
     // TODO(HiDeoo) move to dedicated file when implemented
     // z.object({
     //   type: z.literal('github'),

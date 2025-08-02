@@ -8,9 +8,9 @@ export const collections = {
   changelogs: defineCollection({
     loader: changelogsLoader([
       {
-        type: 'changeset',
-        prefix: 'test',
-        changelog: '../fixtures/changeset/changelog-github-starlight.md',
+        provider: 'changeset',
+        base: 'test',
+        path: '../fixtures/changeset/changelog-github-starlight.md',
       },
     ]),
   }),
