@@ -20,7 +20,7 @@ export function getLink(path: string) {
   return trailingSlashTransformer(path)
 }
 
-interface PaginationLink {
+export interface PaginationLink {
   label: string
   link: string
 }

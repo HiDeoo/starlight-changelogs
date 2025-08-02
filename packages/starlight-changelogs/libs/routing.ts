@@ -36,14 +36,16 @@ export async function getChangelogsStaticPaths() {
 async function getVersionEntries(changelog: ProviderBaseConfig, locale: Locale): Promise<ChangelogEntry[]> {
   const entries = await getCollection('changelogs', ({ data }) => data.base === changelog.base)
 
-  // TODO(HiDeoo) sort?
-
   return entries.map((entry, index) => {
     const prevEntry = entries[index - 1]
-    const prevLink = prevEntry ? { label: 'XXXXX', link: getLink(getVersionPath(prevEntry, locale)) } : undefined
+    const prevLink = prevEntry
+      ? { label: prevEntry.data.title, link: getLink(getVersionPath(prevEntry, locale)) }
+      : undefined
 
     const nextEntry = entries[index + 1]
-    const nextLink = nextEntry ? { label: 'XXX', link: getLink(getVersionPath(nextEntry, locale)) } : undefined
+    const nextLink = nextEntry
+      ? { label: nextEntry.data.title, link: getLink(getVersionPath(nextEntry, locale)) }
+      : undefined
 
     return {
       ...entry,
@@ -84,15 +86,12 @@ function getVersionsStaticPath(
 ) {
   const prevPage = index === 0 ? undefined : pages[index - 1]
   const prevLink = prevPage
-    ? // TODO(HiDeoo) i18n? Use a middleware to generate the label?
-      // TODO(HiDeoo) label
-      { label: `Page ${index}`, link: getLink(getVersionsPath(changelog, locale, index - 1)) }
+    ? { label: 'Newer versions', link: getLink(getVersionsPath(changelog, locale, index - 1)) }
     : undefined
 
   const nextPage = pages[index + 1]
   const nextLink = nextPage
-    ? // TODO(HiDeoo) label
-      { label: `Page ${index + 2}`, link: getLink(getVersionsPath(changelog, locale, index + 1)) }
+    ? { label: 'Older versions', link: getLink(getVersionsPath(changelog, locale, index + 1)) }
     : undefined
 
   return {

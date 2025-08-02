@@ -2,17 +2,31 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import { render } from 'astro:content'
 
-import { getLink } from '../libs/link'
+import { getLink, type PaginationLink } from '../libs/link'
 import { getVersionPath, type VersionsProps } from '../libs/routing'
 import { getChangelogTitle } from '../libs/title'
 
 type Props = VersionsProps
 
 const { changelog, entries, locale, pagination } = Astro.props
+
+function translatePaginationLink(type: 'prev' | 'next', link: PaginationLink | undefined): PaginationLink | undefined {
+  if (!link) return link
+  return {
+    ...link,
+    label: Astro.locals.t(
+      type === 'next' ? 'starlightChangelogs.pagination.next' : 'starlightChangelogs.pagination.prev',
+    ),
+  }
+}
 ---
 
 <StarlightPage
-  frontmatter={{ title: getChangelogTitle(changelog, locale), prev: pagination.prev, next: pagination.next }}
+  frontmatter={{
+    title: getChangelogTitle(changelog, locale),
+    prev: translatePaginationLink('prev', pagination.prev),
+    next: translatePaginationLink('next', pagination.next),
+  }}
   headings={entries.map((entry) => ({ depth: 2, slug: entry.data.slug, text: entry.data.title }))}
 >
   {
