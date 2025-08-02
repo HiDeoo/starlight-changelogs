@@ -16,6 +16,8 @@ export function vitePluginStarlightChangelogs(
       defaultLocale: starlightConfig.defaultLocale,
       isMultilingual: Object.keys(starlightConfig.locales ?? {}).length > 1,
       locales: starlightConfig.locales,
+      title: starlightConfig.title,
+      titleDelimiter: starlightConfig.titleDelimiter ?? '|',
       trailingSlash: astroConfig.trailingSlash,
     } satisfies StarlightChangelogsContext)}`,
   }
@@ -79,6 +81,8 @@ export interface StarlightChangelogsContext {
   defaultLocale: StarlightConfig['defaultLocale']
   isMultilingual: boolean
   locales: StarlightConfig['locales']
+  title: StarlightConfig['title']
+  titleDelimiter: StarlightConfig['titleDelimiter']
   trailingSlash: AstroConfig['trailingSlash']
 }
 

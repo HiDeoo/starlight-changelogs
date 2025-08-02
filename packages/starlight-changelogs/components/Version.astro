@@ -1,18 +1,17 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import { render } from 'astro:content'
+import context from 'virtual:starlight-changelogs/context'
 
 import { getLink } from '../libs/link'
 import { getVersionsPath, type VersionProps } from '../libs/routing'
-import { getChangelogTitle } from '../libs/title'
+import { getChangelogTitle, getSiteTitle } from '../libs/title'
 
 type Props = VersionProps
 
 const { changelog, entry, locale } = Astro.props
 
 const { Content, headings } = await render(entry)
-
-// TODO(HiDeoo) update head title to start with the version and use Starlight title separator
 
 const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
   title: changelog.title,
@@ -22,9 +21,15 @@ const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
 
 <StarlightPage
   frontmatter={{
-    title: getChangelogTitle(changelog, locale),
-    prev: entry.pagination.prev,
+    head: [
+      {
+        tag: 'title',
+        content: `${entry.data.title} ${context.titleDelimiter} ${changelog.title} ${context.titleDelimiter} ${getSiteTitle(Astro.currentLocale)}`,
+      },
+    ],
     next: entry.pagination.next,
+    prev: entry.pagination.prev,
+    title: getChangelogTitle(changelog, locale),
   }}
   headings={[{ depth: 2, slug: entry.data.slug, text: versionTitle }, ...headings]}
 >

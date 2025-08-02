@@ -23,9 +23,9 @@ function translatePaginationLink(type: 'prev' | 'next', link: PaginationLink | u
 
 <StarlightPage
   frontmatter={{
-    title: getChangelogTitle(changelog, locale),
-    prev: translatePaginationLink('prev', pagination.prev),
     next: translatePaginationLink('next', pagination.next),
+    prev: translatePaginationLink('prev', pagination.prev),
+    title: getChangelogTitle(changelog, locale),
   }}
   headings={entries.map((entry) => ({ depth: 2, slug: entry.data.slug, text: entry.data.title }))}
 >

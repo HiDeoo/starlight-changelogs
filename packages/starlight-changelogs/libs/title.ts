@@ -1,3 +1,5 @@
+import context from 'virtual:starlight-changelogs/context'
+
 import type { ProviderBaseConfig } from '../providers'
 
 import { getDefaultLang, getLangFromLocale, type Locale } from './i18n'
@@ -20,4 +22,10 @@ export function getChangelogTitle(changelog: ProviderBaseConfig, locale: Locale)
   }
 
   return title
+}
+
+export function getSiteTitle(lang: string | undefined): string {
+  if (typeof context.title === 'string') return context.title
+  if (lang && context.title[lang]) return context.title[lang]
+  return context.title[getDefaultLang()] as string
 }
