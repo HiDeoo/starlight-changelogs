@@ -14,7 +14,10 @@ const { Content, headings } = await render(entry)
 
 // TODO(HiDeoo) update head title to start with the version and use Starlight title separator
 
-// TODO(HiDeoo) Use a UI String for the title? e.g. "Version {version}" but support "{title} - {version}"
+const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
+  title: changelog.title,
+  version: entry.data.title,
+})
 ---
 
 <StarlightPage
@@ -23,9 +26,9 @@ const { Content, headings } = await render(entry)
     prev: entry.pagination.prev,
     next: entry.pagination.next,
   }}
-  headings={[{ depth: 2, slug: entry.data.slug, text: entry.data.title }, ...headings]}
+  headings={[{ depth: 2, slug: entry.data.slug, text: versionTitle }, ...headings]}
 >
   <a href={getLink(getVersionsPath(changelog, locale))}>Back to changelog</a>
-  <h2 id={entry.data.slug}>{entry.data.title}</h2>
+  <h2 id={entry.data.slug}>{versionTitle}</h2>
   <Content />
 </StarlightPage>
