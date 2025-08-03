@@ -51,8 +51,7 @@ async function fetchGitHubReleases(config: GitHubProviderConfig, { meta }: Loade
     const headers = new Headers()
     headers.set('Accept', 'application/vnd.github+json')
     headers.set('X-GitHub-Api-Version', '2022-11-28')
-    // TODO(HiDeoo)
-    // headers.set('Authorization', 'Bearer <YOUR-TOKEN>')
+    if (config.token) headers.set('Authorization', `Bearer ${config.token}`)
 
     const response = await fetch(url, { headers: getConditionalHeaders({ init: headers, meta }) })
 

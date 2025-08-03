@@ -110,6 +110,32 @@ describe('api', () => {
   })
 })
 
+describe('api - auth', () => {
+  beforeAll(async () => {
+    store.clear()
+
+    const token = 'test_token'
+    const fixture = await import('../../../../fixtures/github/starlight-blog.json')
+
+    server.use(
+      http.get('https://api.github.com/repos/hideoo/starlight-blog/releases', ({ request }) => {
+        const url = new URL(request.url)
+
+        expect(url.searchParams.get('page')).toBe('1')
+        expect(request.headers.get('Authorization')).toBe(`Bearer ${token}`)
+
+        return HttpResponse.json(fixture.default)
+      }),
+    )
+
+    await loadGitHubData({ ...baseConfig, token }, mockLoaderContext(store))
+  })
+
+  test('loads all versions with auth', () => {
+    expect(store.values().length).toBe(30)
+  })
+})
+
 describe('cache', () => {
   let requestCount = 0
 
