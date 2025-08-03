@@ -11,7 +11,7 @@ export function throwLoaderError(message: string, error?: unknown): never {
 }
 
 export function slugifyVersion(config: ProviderBaseConfig, version: string): [id: string, slug: string] {
-  const versionSlug = slug(version.replaceAll('.', ' '))
+  const versionSlug = slug(version.replaceAll('.', ' ').replaceAll('@', ' '))
 
   return [`${config.base}/version/${versionSlug}`, versionSlug]
 }

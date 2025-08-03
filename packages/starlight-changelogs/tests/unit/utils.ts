@@ -41,8 +41,30 @@ export function mockLoaderContext(store: ReturnType<typeof mockStore>): LoaderCo
       root: new URL('.', import.meta.url),
     } as AstroConfig,
     generateDigest: () => 'mock-digest',
+    meta: mockMeta(),
     parseData: ({ data }: { data: unknown }) => Promise.resolve(data),
     renderMarkdown: (body: string) => Promise.resolve({ html: body }),
     store: store as unknown as LoaderContext['store'],
   } as unknown as LoaderContext
+}
+
+function mockMeta() {
+  return {
+    data: new Map<string, unknown>(),
+    clear() {
+      this.data.clear()
+    },
+    delete(key: string) {
+      this.data.delete(key)
+    },
+    get(key: string) {
+      return this.data.get(key)
+    },
+    has(key: string) {
+      return this.data.has(key)
+    },
+    set(key: string, value: unknown) {
+      this.data.set(key, value)
+    },
+  }
 }
