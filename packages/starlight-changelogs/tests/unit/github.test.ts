@@ -9,6 +9,15 @@ import { mockLoaderContext, mockStore } from './utils'
 const store = mockStore()
 const server = setupServer()
 
+const baseConfig = {
+  provider: 'github',
+  owner: 'hideoo',
+  repo: 'starlight-blog',
+  pageSize: 5,
+  base: 'test',
+  title: 'Test',
+} as const
+
 beforeAll(() => server.listen())
 afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
@@ -29,17 +38,7 @@ describe('api', () => {
       }),
     )
 
-    await loadGitHubData(
-      {
-        provider: 'github',
-        owner: 'hideoo',
-        repo: 'starlight-blog',
-        pageSize: 5,
-        base: 'test',
-        title: 'Test',
-      },
-      mockLoaderContext(store),
-    )
+    await loadGitHubData(baseConfig, mockLoaderContext(store))
   })
 
   test('loads all versions', () => {
@@ -123,32 +122,12 @@ describe('cache', () => {
   })
 
   test('uses cache', async () => {
-    await loadGitHubData(
-      {
-        provider: 'github',
-        owner: 'hideoo',
-        repo: 'starlight-blog',
-        pageSize: 5,
-        base: 'test',
-        title: 'Test',
-      },
-      mockLoaderContext(store),
-    )
+    await loadGitHubData(baseConfig, mockLoaderContext(store))
 
     expect(requestCount).toBe(1)
     expect(store.values().length).toBe(30)
 
-    await loadGitHubData(
-      {
-        provider: 'github',
-        owner: 'hideoo',
-        repo: 'starlight-blog',
-        pageSize: 5,
-        base: 'test',
-        title: 'Test',
-      },
-      mockLoaderContext(store),
-    )
+    await loadGitHubData(baseConfig, mockLoaderContext(store))
 
     expect(requestCount).toBe(2)
     expect(store.values().length).toBe(30)
