@@ -85,6 +85,8 @@ function parseGitHubReleaseVersion(
   config: GitHubProviderConfig,
   release: GitHubApiReleases[number],
 ): VersionDataEntry | undefined {
+  if (release.draft || release.prerelease) return
+
   let title = release.name
 
   if (config.process) {
@@ -108,7 +110,6 @@ function parseGitHubReleaseVersion(
 
 const GitHubApiResponseNextPageRegex = /(?<=<)(?:[\S]*?)[&|?]page=(\d+)(?:[\S]*?)(?=>; rel="next")/i
 
-// TODO(HiDeoo) unhandled fields
 const GitHubApiReleasesSchema = z
   .object({
     body: z.string(),
@@ -116,6 +117,7 @@ const GitHubApiReleasesSchema = z
     html_url: z.string(),
     name: z.string(),
     prerelease: z.boolean(),
+    // TODO(HiDeoo) unhandled fields
     published_at: z.string().datetime(),
   })
   .array()
