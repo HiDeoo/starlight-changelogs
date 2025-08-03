@@ -3,6 +3,7 @@ import fs from 'node:fs/promises'
 import type { AstroConfig } from 'astro'
 import { z } from 'astro/zod'
 
+import { SerializedProviderBaseConfigSchema, type ProviderBaseConfig } from '../providers'
 import { ChangesetProviderConfigSchema } from '../providers/changeset'
 import { GitHubProviderConfigSchema } from '../providers/github'
 
@@ -15,13 +16,17 @@ export function getLoaderConfigUrl(astroConfig: AstroConfig): URL {
   return new URL('.astro/starlight-changelogs.json', astroConfig.root)
 }
 
-export async function saveLoaderConfig(astroConfig: AstroConfig, loaderConfig: StarlightChangelogsLoaderConfig) {
+export async function saveLoaderConfig(astroConfig: AstroConfig, loaderConfig: ProviderBaseConfig[]) {
   const oldConfig = await readLoaderConfig(astroConfig)
   const newConfig = JSON.stringify(loaderConfig)
 
   if (oldConfig === newConfig) return
 
   return fs.writeFile(getLoaderConfigUrl(astroConfig), newConfig)
+}
+
+export function serializeLoaderConfig(loaderConfig: StarlightChangelogsLoaderConfig): ProviderBaseConfig[] {
+  return loaderConfig.map((config) => SerializedProviderBaseConfigSchema.parse(config))
 }
 
 async function readLoaderConfig(astroConfig: AstroConfig): Promise<string> {

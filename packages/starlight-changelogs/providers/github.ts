@@ -14,6 +14,8 @@ export const GitHubProviderConfigSchema = ProviderBaseConfigSchema.extend({
   repo: z.string(),
   // TODO(HiDeoo) comment
   provider: z.literal('github'),
+  // TODO(HiDeoo) comment
+  token: z.string().optional(),
 })
 
 const provider = { name: 'github', label: 'GitHub' } as const

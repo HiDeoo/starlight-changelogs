@@ -3,7 +3,8 @@ import { fileURLToPath } from 'node:url'
 import type { HookParameters as StarlightHookParameters } from '@astrojs/starlight/types'
 import type { AstroConfig, HookParameters as AstroHookParameters, ViteUserConfig } from 'astro'
 
-import { getLoaderConfigUrl, type StarlightChangelogsLoaderConfig } from '../loader/config'
+import { getLoaderConfigUrl } from '../loader/config'
+import type { ProviderBaseConfig } from '../providers'
 
 export function vitePluginStarlightChangelogs(
   astroConfig: AstroConfig,
@@ -73,8 +74,8 @@ export function setLoaderConfig() {
 }
 
 export interface StarlightChangelogsConfig {
-  getLoaderConfig: () => StarlightChangelogsLoaderConfig
-  setLoaderConfig: (newLoaderConfig: StarlightChangelogsLoaderConfig) => void
+  getLoaderConfig: () => ProviderBaseConfig[]
+  setLoaderConfig: (newLoaderConfig: ProviderBaseConfig[]) => void
 }
 
 export interface StarlightChangelogsContext {

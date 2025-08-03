@@ -22,4 +22,10 @@ export const ProviderBaseConfigSchema = z.object({
     .optional(),
 })
 
-export type ProviderBaseConfig = z.output<typeof ProviderBaseConfigSchema>
+export const SerializedProviderBaseConfigSchema = ProviderBaseConfigSchema.pick({
+  base: true,
+  pageSize: true,
+  title: true,
+})
+
+export type ProviderBaseConfig = z.output<typeof SerializedProviderBaseConfigSchema>

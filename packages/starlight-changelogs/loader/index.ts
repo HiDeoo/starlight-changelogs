@@ -1,7 +1,7 @@
 import type { Loader } from 'astro/loaders'
 import { setLoaderConfig } from 'virtual:starlight-changelogs/config'
 
-import { saveLoaderConfig } from '../loader/config'
+import { saveLoaderConfig, serializeLoaderConfig } from '../loader/config'
 import { loadChangesetData } from '../providers/changeset'
 import { loadGitHubData } from '../providers/github'
 
@@ -24,9 +24,10 @@ export function changelogsLoader(userConfig: StarlightChangelogsLoaderUserConfig
       }
 
       const config = parsedConfig.data
+      const serializedConfig = serializeLoaderConfig(config)
 
-      setLoaderConfig(config)
-      await saveLoaderConfig(astroConfig, config)
+      setLoaderConfig(serializedConfig)
+      await saveLoaderConfig(astroConfig, serializedConfig)
 
       for (const changelog of config) {
         switch (changelog.provider) {
