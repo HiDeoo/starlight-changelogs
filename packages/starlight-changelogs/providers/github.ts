@@ -16,6 +16,8 @@ export const GitHubProviderConfigSchema = ProviderBaseConfigSchema.extend({
   provider: z.literal('github'),
 })
 
+const provider = { name: 'github', label: 'GitHub' } as const
+
 export async function loadGitHubData(config: GitHubProviderConfig, context: LoaderContext) {
   const result = await fetchGitHubReleases(config, context)
   if (!result.modified) return
@@ -97,6 +99,8 @@ function parseGitHubReleaseVersion(
     id,
     body: release.body,
     base: config.base,
+    link: release.html_url,
+    provider,
     slug,
     title,
   }

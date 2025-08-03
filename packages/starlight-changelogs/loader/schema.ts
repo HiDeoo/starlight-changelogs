@@ -9,6 +9,15 @@ export const VersionEntrySchema = z.object({
   slug: z.string(),
   // TODO(HiDeoo) comment
   title: z.string(),
+  // TODO(HiDeoo) comment
+  provider: z.object({
+    // TODO(HiDeoo) comment
+    name: z.string(),
+    // TODO(HiDeoo) comment
+    label: z.string(),
+  }),
+  // TODO(HiDeoo) comment
+  link: z.string().url().optional(),
 })
 
 type VersionEntry = z.output<typeof VersionEntrySchema>

@@ -34,6 +34,13 @@ const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
   headings={[{ depth: 2, slug: entry.data.slug, text: versionTitle }, ...headings]}
 >
   <a href={getLink(getVersionsPath(changelog, locale))}>Back to changelog</a>
+  {
+    entry.data.link && (
+      <a href={entry.data.link}>
+        {Astro.locals.t('starlightChangelogs.version.open', { provider: entry.data.provider.label })}
+      </a>
+    )
+  }
   <h2 id={entry.data.slug}>{versionTitle}</h2>
   <Content />
 </StarlightPage>

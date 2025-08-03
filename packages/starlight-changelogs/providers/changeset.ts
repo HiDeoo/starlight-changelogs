@@ -21,6 +21,8 @@ export const ChangesetProviderConfigSchema = ProviderBaseConfigSchema.extend({
   provider: z.literal('changeset'),
 })
 
+const provider = { name: 'changeset', label: 'Changeset' } as const
+
 export async function loadChangesetData(config: ChangesetProviderConfig, context: LoaderContext) {
   const { config: astroConfig, logger, watcher } = context
 
@@ -108,6 +110,7 @@ function parseMarkdownVersion(config: ChangesetProviderConfig, version: Markdown
     id,
     body: toMarkdown({ type: 'root', children: version.nodes as RootContent[] }),
     base: config.base,
+    provider,
     slug,
     title,
   }
