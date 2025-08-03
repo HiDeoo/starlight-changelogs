@@ -10,6 +10,8 @@ export const ProviderBaseConfigSchema = z.object({
   // TODO(HiDeoo)
   title: z.union([z.string(), z.record(z.string())]).default('Changelog'),
   // TODO(HiDeoo)
+  pagefind: z.boolean().default(true),
+  // TODO(HiDeoo)
   process: z
     .function()
     .args(
@@ -24,6 +26,7 @@ export const ProviderBaseConfigSchema = z.object({
 
 export const SerializedProviderBaseConfigSchema = ProviderBaseConfigSchema.pick({
   base: true,
+  pagefind: true,
   pageSize: true,
   title: true,
 })

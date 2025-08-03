@@ -30,6 +30,7 @@ const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
       },
     ],
     next: entry.pagination.next,
+    pagefind: changelog.pagefind,
     prev: entry.pagination.prev,
     title: getChangelogTitle(changelog, locale),
   }}

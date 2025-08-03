@@ -8,9 +8,10 @@ const store = mockStore()
 
 const baseConfig = {
   provider: 'changeset',
-  path: '../../../../fixtures/changeset/changelog-github-starlight.md',
-  pageSize: 5,
   base: 'test',
+  path: '../../../../fixtures/changeset/changelog-github-starlight.md',
+  pagefind: false,
+  pageSize: 5,
   title: 'Test',
 } as const
 

@@ -11,10 +11,11 @@ const server = setupServer()
 
 const baseConfig = {
   provider: 'github',
+  base: 'test',
   owner: 'hideoo',
   repo: 'starlight-blog',
+  pagefind: false,
   pageSize: 5,
-  base: 'test',
   title: 'Test',
 } as const
 

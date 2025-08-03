@@ -26,6 +26,7 @@ function translatePaginationLink(type: 'prev' | 'next', link: PaginationLink | u
 <StarlightPage
   frontmatter={{
     next: translatePaginationLink('next', pagination.next),
+    pagefind: changelog.pagefind,
     prev: translatePaginationLink('prev', pagination.prev),
     title: getChangelogTitle(changelog, locale),
   }}
