@@ -3,6 +3,7 @@ import { setLoaderConfig } from 'virtual:starlight-changelogs/config'
 
 import { saveLoaderConfig } from '../loader/config'
 import { loadChangesetData } from '../providers/changeset'
+import { loadGitHubData } from '../providers/github'
 
 import { StarlightChangelogsLoaderConfigSchema, type StarlightChangelogsLoaderUserConfig } from './config'
 import { VersionEntrySchema } from './schema'
@@ -33,9 +34,14 @@ export function changelogsLoader(userConfig: StarlightChangelogsLoaderUserConfig
             await loadChangesetData(changelog, context)
             break
           }
+          case 'github': {
+            await loadGitHubData(changelog, context)
+            break
+          }
           default: {
             throwLoaderError(
-              `Missing loader implementation for changelog type '${changelog.provider}'. This is a bug in the starlight-changelogs plugin.`,
+              // @ts-expect-error - error when all known providers are supported.
+              `Missing loader implementation for provider '${changelog.provider}'. This is a bug in the starlight-changelogs plugin.`,
             )
           }
         }

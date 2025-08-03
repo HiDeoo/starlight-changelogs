@@ -3,15 +3,14 @@ import { fileURLToPath } from 'node:url'
 
 import type { LoaderContext } from 'astro/loaders'
 import { z } from 'astro/zod'
-import { slug } from 'github-slugger'
 import type { Node, RootContent } from 'mdast'
 import { fromMarkdown } from 'mdast-util-from-markdown'
 import { toMarkdown } from 'mdast-util-to-markdown'
 import { toString } from 'mdast-util-to-string'
 import { CONTINUE, SKIP, visit } from 'unist-util-visit'
 
-import type { VersionEntry } from '../loader/schema'
-import { throwLoaderError } from '../loader/utils'
+import type { VersionDataEntry } from '../loader/schema'
+import { slugifyVersion, throwLoaderError } from '../loader/utils'
 
 import { ProviderBaseConfigSchema } from '.'
 
@@ -90,15 +89,13 @@ function parseMarkdown(config: ChangesetProviderConfig, content: string) {
 }
 
 function parseMarkdownVersion(config: ChangesetProviderConfig, version: MarkdownVersion): VersionDataEntry {
-  // TODO(HiDeoo) extract?
-  const versionSlug = slug(version.title.replaceAll('.', ' '))
+  const [id, slug] = slugifyVersion(config, version.title)
 
   return {
-    // TODO(HiDeoo) extract?
-    id: `${config.base}/version/${versionSlug}`,
+    id,
     body: toMarkdown({ type: 'root', children: version.nodes as RootContent[] }),
     base: config.base,
-    slug: versionSlug,
+    slug,
     title: version.title,
   }
 }
@@ -108,9 +105,4 @@ type ChangesetProviderConfig = z.output<typeof ChangesetProviderConfigSchema>
 interface MarkdownVersion {
   title: string
   nodes: Node[]
-}
-
-interface VersionDataEntry extends VersionEntry {
-  id: string
-  body: string
 }

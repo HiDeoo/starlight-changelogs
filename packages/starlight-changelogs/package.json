@@ -17,6 +17,7 @@
     "lint": "eslint . --cache --max-warnings=0"
   },
   "dependencies": {
+    "@ascorbic/loader-utils": "^1.0.2",
     "github-slugger": "^2.0.0",
     "mdast-util-from-markdown": "^2.0.2",
     "mdast-util-to-markdown": "^2.1.2",

@@ -4,15 +4,10 @@ import type { AstroConfig } from 'astro'
 import { z } from 'astro/zod'
 
 import { ChangesetProviderConfigSchema } from '../providers/changeset'
+import { GitHubProviderConfigSchema } from '../providers/github'
 
 export const StarlightChangelogsLoaderConfigSchema = z
-  .discriminatedUnion('provider', [
-    ChangesetProviderConfigSchema,
-    // TODO(HiDeoo) move to dedicated file when implemented
-    // z.object({
-    //   type: z.literal('github'),
-    // }),
-  ])
+  .discriminatedUnion('provider', [ChangesetProviderConfigSchema, GitHubProviderConfigSchema])
   .array()
   .default([])
 

@@ -7,10 +7,16 @@ export const collections = {
   docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
   changelogs: defineCollection({
     loader: changelogsLoader([
+      // {
+      //   provider: 'changeset',
+      //   base: 'test',
+      //   path: '../fixtures/changeset/changelog-github-starlight.md',
+      // },
       {
-        provider: 'changeset',
+        provider: 'github',
         base: 'test',
-        path: '../fixtures/changeset/changelog-github-starlight.md',
+        owner: 'hideoo',
+        repo: 'starlight-blog',
       },
     ]),
   }),

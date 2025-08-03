@@ -11,4 +11,9 @@ export const VersionEntrySchema = z.object({
   title: z.string(),
 })
 
-export type VersionEntry = z.output<typeof VersionEntrySchema>
+type VersionEntry = z.output<typeof VersionEntrySchema>
+
+export interface VersionDataEntry extends VersionEntry {
+  id: string
+  body: string
+}

@@ -62,6 +62,9 @@ importers:
 
   packages/starlight-changelogs:
     dependencies:
+      '@ascorbic/loader-utils':
+        specifier: ^1.0.2
+        version: 1.0.2(astro@5.12.6(@types/node@18.19.121)(rollup@4.46.2)(typescript@5.8.3)(yaml@2.8.0))
       '@astrojs/starlight':
         specifier: '>=0.35.0'
         version: 0.35.2(astro@5.12.6(@types/node@18.19.121)(rollup@4.46.2)(typescript@5.8.3)(yaml@2.8.0))
@@ -92,6 +95,11 @@ importers:
         version: 3.2.4(@types/debug@4.1.12)(@types/node@18.19.121)(yaml@2.8.0)
 
 packages:
+
+  '@ascorbic/loader-utils@1.0.2':
+    resolution: {integrity: sha512-pg43g83gojVtEsAkXfjWuzJhuXneJp4wM/leBftGkCPV3yxKgB92EWA+nWu735BgbBMph3P7DrVqVc3ikt+dJA==}
+    peerDependencies:
+      astro: ^4.14.0 || ^5.0.0-beta.0
 
   '@astro-community/astro-embed-twitter@0.5.8':
     resolution: {integrity: sha512-O2ptQPw+DfipukK8czjJcTcyVgDsrs3OmrHbc3YmWRglaUTOpSTImzPo076POyNBSWjLaRKloul81DFiAMNjTA==}
@@ -4003,6 +4011,10 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
 snapshots:
+
+  '@ascorbic/loader-utils@1.0.2(astro@5.12.6(@types/node@18.19.121)(rollup@4.46.2)(typescript@5.8.3)(yaml@2.8.0))':
+    dependencies:
+      astro: 5.12.6(@types/node@18.19.121)(rollup@4.46.2)(typescript@5.8.3)(yaml@2.8.0)
 
   '@astro-community/astro-embed-twitter@0.5.8(astro@5.12.6(@types/node@18.19.121)(rollup@4.46.2)(typescript@5.8.3)(yaml@2.8.0))':
     dependencies:
