@@ -69,10 +69,15 @@ function parseMarkdown(config: ChangesetProviderConfig, content: string) {
 
   let version: MarkdownVersion | undefined
 
+  function addEntry(version: MarkdownVersion) {
+    const parsedVersion = parseMarkdownVersion(config, version)
+    if (parsedVersion) entries.push(parsedVersion)
+  }
+
   visit(tree, (node) => {
     if (node.type === 'heading' && node.depth === 2) {
-      if (version) entries.push(parseMarkdownVersion(config, version))
-      version = { title: toString(node), nodes: [] }
+      if (version) addEntry(version)
+      version = { title: toString(node).trim(), nodes: [] }
       return SKIP
     }
 
@@ -83,20 +88,28 @@ function parseMarkdown(config: ChangesetProviderConfig, content: string) {
     return SKIP
   })
 
-  if (version) entries.push(parseMarkdownVersion(config, version))
+  if (version) addEntry(version)
 
   return entries
 }
 
-function parseMarkdownVersion(config: ChangesetProviderConfig, version: MarkdownVersion): VersionDataEntry {
-  const [id, slug] = slugifyVersion(config, version.title)
+function parseMarkdownVersion(config: ChangesetProviderConfig, version: MarkdownVersion): VersionDataEntry | undefined {
+  let title = version.title
+
+  if (config.process) {
+    const processedTitle = config.process({ title })
+    if (!processedTitle) return
+    title = processedTitle
+  }
+
+  const [id, slug] = slugifyVersion(config, title)
 
   return {
     id,
     body: toMarkdown({ type: 'root', children: version.nodes as RootContent[] }),
     base: config.base,
     slug,
-    title: version.title,
+    title,
   }
 }
 

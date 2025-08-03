@@ -9,6 +9,17 @@ export const ProviderBaseConfigSchema = z.object({
   base: z.string().transform((value) => stripLeadingAndTrailingSlash(value)),
   // TODO(HiDeoo)
   title: z.union([z.string(), z.record(z.string())]).default('Changelog'),
+  // TODO(HiDeoo)
+  process: z
+    .function()
+    .args(
+      z.object({
+        // TODO(HiDeoo)
+        title: z.string(),
+      }),
+    )
+    .returns(z.union([z.string(), z.undefined(), z.void()]))
+    .optional(),
 })
 
 export type ProviderBaseConfig = z.output<typeof ProviderBaseConfigSchema>

@@ -11,12 +11,20 @@ export const collections = {
       //   provider: 'changeset',
       //   base: 'test',
       //   path: '../fixtures/changeset/changelog-github-starlight.md',
+      //   // process: ({ name }) => {
+      //   //   if (!name.endsWith('.0')) return
+      //   //   return name + ' processed'
+      //   // },
       // },
       {
         provider: 'github',
         base: 'test',
         owner: 'hideoo',
         repo: 'starlight-blog',
+        process: ({ title }) => {
+          // if (!title.endsWith('.0')) return
+          return title.replace('starlight-blog@', '')
+        },
       },
     ]),
   }),

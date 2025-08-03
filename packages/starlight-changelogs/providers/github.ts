@@ -63,7 +63,10 @@ async function fetchGitHubReleases(config: GitHubProviderConfig, { meta }: Loade
 
       storeConditionalHeaders({ headers: response.headers, meta })
 
-      entries.push(...parsedData.map((release) => parseGitHubReleaseVersion(config, release)))
+      for (const release of parsedData) {
+        const parsedVersion = parseGitHubReleaseVersion(config, release)
+        if (parsedVersion) entries.push(parsedVersion)
+      }
     } catch (error) {
       throwLoaderError('Failed to parse GitHub data.', error)
     }
@@ -76,20 +79,32 @@ function getGitHubApiResponseNextPage(response: Response): string | null {
   return response.headers.get('Link')?.match(GitHubApiResponseNextPageRegex)?.[1] ?? null
 }
 
-function parseGitHubReleaseVersion(config: GitHubProviderConfig, release: GitHubApiReleases[number]): VersionDataEntry {
-  const [id, slug] = slugifyVersion(config, release.name)
+function parseGitHubReleaseVersion(
+  config: GitHubProviderConfig,
+  release: GitHubApiReleases[number],
+): VersionDataEntry | undefined {
+  let title = release.name
+
+  if (config.process) {
+    const processedTitle = config.process({ title })
+    if (!processedTitle) return
+    title = processedTitle
+  }
+
+  const [id, slug] = slugifyVersion(config, title)
 
   return {
     id,
     body: release.body,
     base: config.base,
     slug,
-    title: release.name,
+    title,
   }
 }
 
 const GitHubApiResponseNextPageRegex = /(?<=<)(?:[\S]*?)[&|?]page=(\d+)(?:[\S]*?)(?=>; rel="next")/i
 
+// TODO(HiDeoo) unhandled fields
 const GitHubApiReleasesSchema = z
   .object({
     body: z.string(),
