@@ -2,6 +2,7 @@ export const Translations = {
   en: {
     'starlightChangelogs.pagination.next': 'Older versions',
     'starlightChangelogs.pagination.prev': 'Newer versions',
+    'starlightChangelogs.version.date': '{{date, datetime(dateStyle: medium)}}',
     'starlightChangelogs.version.open': 'View on {{provider}}',
     'starlightChangelogs.version.title': 'Version {{version}}',
   },

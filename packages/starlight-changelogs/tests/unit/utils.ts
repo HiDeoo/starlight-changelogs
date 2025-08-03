@@ -2,9 +2,11 @@ import type { AstroConfig } from 'astro'
 import type { LoaderContext } from 'astro/loaders'
 import type { DataEntry } from 'astro:content'
 
+import type { VersionEntry } from '../../loader/schema'
+
 export function mockStore() {
   return {
-    data: new Map<string, DataEntry>(),
+    data: new Map<string, MockEntry>(),
     addModuleImport() {
       // Skip in tests
     },
@@ -26,10 +28,10 @@ export function mockStore() {
     keys() {
       return this.data.keys()
     },
-    set(entry: DataEntry) {
+    set(entry: MockEntry) {
       this.data.set(entry.id, entry)
     },
-    values(): DataEntry[] {
+    values(): MockEntry[] {
       return [...this.data.values()]
     },
   }
@@ -67,4 +69,8 @@ function mockMeta() {
       this.data.set(key, value)
     },
   }
+}
+
+type MockEntry = DataEntry & {
+  data: VersionEntry
 }

@@ -19,6 +19,8 @@ function translatePaginationLink(type: 'prev' | 'next', link: PaginationLink | u
     ),
   }
 }
+
+// TODO(HiDeoo) refactor date in component
 ---
 
 <StarlightPage
@@ -38,6 +40,11 @@ function translatePaginationLink(type: 'prev' | 'next', link: PaginationLink | u
           <h2 id={entry.data.slug}>
             <a href={getLink(getVersionPath(entry, locale))}>{entry.data.title}</a>
           </h2>
+          {entry.data.date && (
+            <time datetime={entry.data.date.toISOString()}>
+              {Astro.locals.t('starlightChangelogs.version.date', { date: entry.data.date })}
+            </time>
+          )}
           <Content />
         </>
       )

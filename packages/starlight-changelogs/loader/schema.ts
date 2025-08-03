@@ -18,9 +18,11 @@ export const VersionEntrySchema = z.object({
   }),
   // TODO(HiDeoo) comment
   link: z.string().url().optional(),
+  // TODO(HiDeoo) comment
+  date: z.date().optional(),
 })
 
-type VersionEntry = z.output<typeof VersionEntrySchema>
+export type VersionEntry = z.output<typeof VersionEntrySchema>
 
 export interface VersionDataEntry extends VersionEntry {
   id: string

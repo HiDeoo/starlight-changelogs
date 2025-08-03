@@ -17,6 +17,8 @@ const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
   title: changelog.title,
   version: entry.data.title,
 })
+
+// TODO(HiDeoo) refactor date in component
 ---
 
 <StarlightPage
@@ -39,6 +41,13 @@ const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
       <a href={entry.data.link}>
         {Astro.locals.t('starlightChangelogs.version.open', { provider: entry.data.provider.label })}
       </a>
+    )
+  }
+  {
+    entry.data.date && (
+      <time datetime={entry.data.date.toISOString()}>
+        {Astro.locals.t('starlightChangelogs.version.date', { date: entry.data.date })}
+      </time>
     )
   }
   <h2 id={entry.data.slug}>{versionTitle}</h2>

@@ -30,32 +30,39 @@ describe('changelog-github', () => {
     const versions = store.values()
 
     expect(versions[0]?.id).toBe('test/version/0-35-2')
-    expect(versions[0]?.data['title']).toBe('0.35.2')
+    expect(versions[0]?.data.title).toBe('0.35.2')
 
     expect(versions[1]?.id).toBe('test/version/0-35-1')
-    expect(versions[1]?.data['title']).toBe('0.35.1')
+    expect(versions[1]?.data.title).toBe('0.35.1')
 
     expect(versions[2]?.id).toBe('test/version/0-35-0')
-    expect(versions[2]?.data['title']).toBe('0.35.0')
+    expect(versions[2]?.data.title).toBe('0.35.0')
   })
 
   test('loads the first version', () => {
     const version = store.values().at(-1)
 
     expect(version?.id).toBe('test/version/0-0-1')
-    expect(version?.data['title']).toBe('0.0.1')
+    expect(version?.data.title).toBe('0.0.1')
+  })
+
+  test('includes the provider for each entries', () => {
+    const version = store.values()[0]
+
+    expect(version?.data.provider.name).toBe('changeset')
+    expect(version?.data.provider.label).toBe('Changeset')
   })
 
   test('includes the base for each entries', () => {
     const version = store.values()[0]
 
-    expect(version?.data['base']).toBe('test')
+    expect(version?.data.base).toBe('test')
   })
 
-  test('includes slug for each entries', () => {
+  test('includes the slug for each entries', () => {
     const version = store.values()[0]
 
-    expect(version?.data['slug']).toBe('0-35-2')
+    expect(version?.data.slug).toBe('0-35-2')
   })
 
   test('loads markdown', () => {

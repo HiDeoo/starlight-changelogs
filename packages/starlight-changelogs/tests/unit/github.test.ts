@@ -49,32 +49,45 @@ describe('api', () => {
     const versions = store.values()
 
     expect(versions[0]?.id).toBe('test/version/starlight-blog-0-24-0')
-    expect(versions[0]?.data['title']).toBe('starlight-blog@0.24.0')
+    expect(versions[0]?.data.title).toBe('starlight-blog@0.24.0')
 
     expect(versions[1]?.id).toBe('test/version/starlight-blog-0-23-2')
-    expect(versions[1]?.data['title']).toBe('starlight-blog@0.23.2')
+    expect(versions[1]?.data.title).toBe('starlight-blog@0.23.2')
 
     expect(versions[2]?.id).toBe('test/version/starlight-blog-0-23-1')
-    expect(versions[2]?.data['title']).toBe('starlight-blog@0.23.1')
+    expect(versions[2]?.data.title).toBe('starlight-blog@0.23.1')
   })
 
   test('loads the first version', () => {
     const version = store.values().at(-1)
 
     expect(version?.id).toBe('test/version/v0-7-1')
-    expect(version?.data['title']).toBe('v0.7.1')
+    expect(version?.data.title).toBe('v0.7.1')
+  })
+
+  test('includes the provider for each entries', () => {
+    const version = store.values()[0]
+
+    expect(version?.data.provider.name).toBe('github')
+    expect(version?.data.provider.label).toBe('GitHub')
   })
 
   test('includes the base for each entries', () => {
     const version = store.values()[0]
 
-    expect(version?.data['base']).toBe('test')
+    expect(version?.data.base).toBe('test')
   })
 
-  test('includes slug for each entries', () => {
+  test('includes the slug for each entries', () => {
     const version = store.values()[0]
 
-    expect(version?.data['slug']).toBe('starlight-blog-0-24-0')
+    expect(version?.data.slug).toBe('starlight-blog-0-24-0')
+  })
+
+  test('includes the link for each entries', () => {
+    const version = store.values()[0]
+
+    expect(version?.data.link).toBe('https://github.com/HiDeoo/starlight-blog/releases/tag/starlight-blog%400.24.0')
   })
 
   test('loads markdown', () => {

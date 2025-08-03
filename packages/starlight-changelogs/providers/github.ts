@@ -101,6 +101,7 @@ function parseGitHubReleaseVersion(
     id,
     body: release.body,
     base: config.base,
+    date: release.published_at ? new Date(release.published_at) : undefined,
     link: release.html_url,
     provider,
     slug,
@@ -117,7 +118,6 @@ const GitHubApiReleasesSchema = z
     html_url: z.string(),
     name: z.string(),
     prerelease: z.boolean(),
-    // TODO(HiDeoo) unhandled fields
     published_at: z.string().datetime(),
   })
   .array()
