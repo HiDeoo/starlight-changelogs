@@ -1,0 +1,60 @@
+---
+import type { CommonProps } from '../libs/routing'
+
+interface Props {
+  versions: CommonProps['versions']
+}
+
+const { versions } = Astro.props
+// TODO(HiDeoo) LABEL
+---
+
+<starlight-changelogs-versions-list>
+  <form onsubmit="return false">
+    <label for="find-version">LABEL</label>
+    <input
+      autocomplete="off"
+      id="find-version"
+      list="starlight-changelogs-versions"
+      placeholder="LABEL"
+      type="text"
+      required
+    />
+    <datalist id="starlight-changelogs-versions">
+      {versions.map(({ link, title }) => <option data-link={link} value={title} />)}
+    </datalist>
+  </form>
+</starlight-changelogs-versions-list>
+
+<script>
+  customElements.define(
+    'starlight-changelogs-versions-list',
+    class StarlightChangelogsVersionSelect extends HTMLElement {
+      constructor() {
+        super()
+
+        const input = this.querySelector('input')
+        const list = this.querySelector('datalist')
+        if (!input || !list) return
+
+        input.addEventListener('input', (event) => {
+          if (!(event.target instanceof HTMLInputElement)) return
+
+          if (
+            (event instanceof InputEvent && event.inputType === 'insertReplacementText') ||
+            !(event instanceof InputEvent)
+          ) {
+            const value = event.target.value
+            const options = Array.from(list.options)
+
+            const option = options.find((option) => option.value === value)
+            if (!option) return
+
+            const link = option.dataset['link']
+            if (link) window.location.pathname = link
+          }
+        })
+      }
+    },
+  )
+</script>

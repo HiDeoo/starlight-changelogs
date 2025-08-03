@@ -7,9 +7,11 @@ import { getLink } from '../libs/link'
 import { getVersionsPath, type VersionProps } from '../libs/routing'
 import { getChangelogTitle, getSiteTitle } from '../libs/title'
 
+import VersionList from './VersionList.astro'
+
 type Props = VersionProps
 
-const { changelog, entry, locale } = Astro.props
+const { changelog, entry, locale, versions } = Astro.props
 
 const { Content, headings } = await render(entry)
 
@@ -19,6 +21,7 @@ const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
 })
 
 // TODO(HiDeoo) refactor date in component
+// TODO(HiDeoo) Back to changelog UI String
 ---
 
 <StarlightPage
@@ -51,6 +54,7 @@ const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
       </time>
     )
   }
+  <VersionList {versions} />
   <h2 id={entry.data.slug}>{versionTitle}</h2>
   <Content />
 </StarlightPage>

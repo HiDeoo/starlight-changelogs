@@ -19,18 +19,26 @@ export async function getChangelogsStaticPaths() {
 
       const entries = await getVersionEntries(changelog, locale)
       const pages = getPaginatedVersionEntries(changelog, entries)
+      const versions = getAllVersions(entries, locale)
 
       for (const [index, entries] of pages.entries()) {
-        paths.push(getVersionsStaticPath(changelog, pages, entries, index, locale))
+        paths.push(getVersionsStaticPath(changelog, pages, entries, index, locale, versions))
 
         for (const entry of entries) {
-          paths.push(getVersionStaticPath(changelog, entry, locale))
+          paths.push(getVersionStaticPath(changelog, entry, locale, versions))
         }
       }
     }
   }
 
   return paths satisfies GetStaticPathsResult
+}
+
+function getAllVersions(entries: ChangelogEntry[], locale: Locale): CommonProps['versions'] {
+  return entries.map((entry) => ({
+    link: getLink(getVersionPath(entry, locale)),
+    title: entry.data.title,
+  }))
 }
 
 async function getVersionEntries(changelog: ProviderBaseConfig, locale: Locale): Promise<ChangelogEntry[]> {
@@ -83,6 +91,7 @@ function getVersionsStaticPath(
   entries: ChangelogEntry[],
   index: number,
   locale: Locale,
+  versions: CommonProps['versions'],
 ) {
   const prevPage = index === 0 ? undefined : pages[index - 1]
   const prevLink = prevPage
@@ -107,11 +116,17 @@ function getVersionsStaticPath(
         next: nextLink,
         prev: prevLink,
       },
+      versions,
     } satisfies StaticProps,
   }
 }
 
-function getVersionStaticPath(changelog: ProviderBaseConfig, entry: ChangelogEntry, locale: Locale) {
+function getVersionStaticPath(
+  changelog: ProviderBaseConfig,
+  entry: ChangelogEntry,
+  locale: Locale,
+  versions: CommonProps['versions'],
+) {
   return {
     params: {
       slug: getVersionPath(entry, locale),
@@ -121,6 +136,7 @@ function getVersionStaticPath(changelog: ProviderBaseConfig, entry: ChangelogEnt
       changelog,
       entry,
       locale,
+      versions,
     } satisfies StaticProps,
   }
 }
@@ -137,9 +153,10 @@ type ChangelogEntry = CollectionEntry<'changelogs'> & {
   pagination: PaginationLinks
 }
 
-interface CommonProps {
+export interface CommonProps {
   changelog: ProviderBaseConfig
   locale: Locale
+  versions: { link: string; title: string }[]
 }
 
 export interface VersionsProps extends CommonProps {

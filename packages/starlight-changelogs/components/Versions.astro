@@ -6,9 +6,11 @@ import { getLink, type PaginationLink } from '../libs/link'
 import { getVersionPath, type VersionsProps } from '../libs/routing'
 import { getChangelogTitle } from '../libs/title'
 
+import VersionList from './VersionList.astro'
+
 type Props = VersionsProps
 
-const { changelog, entries, locale, pagination } = Astro.props
+const { changelog, entries, locale, pagination, versions } = Astro.props
 
 function translatePaginationLink(type: 'prev' | 'next', link: PaginationLink | undefined): PaginationLink | undefined {
   if (!link) return link
@@ -32,6 +34,7 @@ function translatePaginationLink(type: 'prev' | 'next', link: PaginationLink | u
   }}
   headings={entries.map((entry) => ({ depth: 2, slug: entry.data.slug, text: entry.data.title }))}
 >
+  <VersionList {versions} />
   {
     entries.map(async (entry) => {
       const { Content } = await render(entry)
