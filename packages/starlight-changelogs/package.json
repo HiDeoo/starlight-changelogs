@@ -2,7 +2,7 @@
   "name": "starlight-changelogs",
   "version": "0.0.1",
   "license": "MIT",
-  "description": "// TODO(HiDeoo)",
+  "description": "Starlight plugin to display changelogs alongside your documentation.",
   "author": "HiDeoo <github@hideoo.dev> (https://hideoo.dev)",
   "type": "module",
   "exports": {

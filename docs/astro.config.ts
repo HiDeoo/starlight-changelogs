@@ -5,8 +5,7 @@ import starlightChangelogs, { makeChangelogsSidebarLinks } from 'starlight-chang
 export default defineConfig({
   integrations: [
     starlight({
-      locales: { root: { label: 'English', lang: 'en' }, fr: { label: 'French' } },
-      description: '// TODO(HiDeoo) ',
+      description: 'Starlight plugin to display changelogs alongside your documentation.',
       editLink: {
         baseUrl: 'https://github.com/HiDeoo/starlight-changelogs/edit/main/docs/',
       },
