@@ -24,11 +24,18 @@ export async function loadGitHubData(config: GitHubProviderConfig, context: Load
   const result = await fetchGitHubReleases(config, context)
   if (!result.modified) return
 
-  await syncData(result.entries, context)
+  await syncData(config, result.entries, context)
 }
 
-async function syncData(entries: VersionDataEntry[], { parseData, renderMarkdown, store }: LoaderContext) {
-  store.clear()
+async function syncData(
+  config: GitHubProviderConfig,
+  entries: VersionDataEntry[],
+  { parseData, renderMarkdown, store }: LoaderContext,
+) {
+  // Delete all existing entries in the store for this provider/base combination
+  for (const entry of store.values()) {
+    if (entry.data['base'] === config.base) store.delete(entry.id)
+  }
 
   for (const entry of entries) {
     const { id, body, ...data } = entry
