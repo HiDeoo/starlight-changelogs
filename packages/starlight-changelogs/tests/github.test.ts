@@ -2,7 +2,7 @@ import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { beforeAll, afterEach, afterAll, describe, expect, test } from 'vitest'
 
-import { loadGitHubData } from '../../providers/github'
+import { loadGitHubData } from '../providers/github'
 
 import { mockLoaderContext, mockStore } from './utils'
 
@@ -27,7 +27,7 @@ describe('api', () => {
   beforeAll(async () => {
     store.clear()
 
-    const fixture = await import('../../../../fixtures/github/starlight-blog.json')
+    const fixture = await import('../../../fixtures/github/starlight-blog.json')
 
     server.use(
       http.get('https://api.github.com/repos/hideoo/starlight-blog/releases', ({ request }) => {
@@ -116,7 +116,7 @@ describe('api - auth', () => {
     store.clear()
 
     const token = 'test_token'
-    const fixture = await import('../../../../fixtures/github/starlight-blog.json')
+    const fixture = await import('../../../fixtures/github/starlight-blog.json')
 
     server.use(
       http.get('https://api.github.com/repos/hideoo/starlight-blog/releases', ({ request }) => {
@@ -143,7 +143,7 @@ describe('cache', () => {
   beforeAll(async () => {
     store.clear()
 
-    const fixture = await import('../../../../fixtures/github/starlight-blog.json')
+    const fixture = await import('../../../fixtures/github/starlight-blog.json')
 
     server.use(
       http.get('https://api.github.com/repos/hideoo/starlight-blog/releases', () => {

@@ -2,7 +2,7 @@ import type { AstroConfig } from 'astro'
 import type { LoaderContext } from 'astro/loaders'
 import type { DataEntry } from 'astro:content'
 
-import type { VersionEntry } from '../../loader/schema'
+import type { VersionEntry } from '../loader/schema'
 
 export function mockStore() {
   return {

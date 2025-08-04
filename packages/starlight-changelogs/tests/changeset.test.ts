@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, test } from 'vitest'
 
-import { loadChangesetData } from '../../providers/changeset'
+import { loadChangesetData } from '../providers/changeset'
 
 import { mockLoaderContext, mockStore } from './utils'
 
@@ -14,7 +14,7 @@ describe('changelog-github', () => {
       {
         provider: 'changeset',
         base: 'test',
-        path: '../../../../fixtures/changeset/changelog-github-starlight.md',
+        path: '../../../fixtures/changeset/changelog-github-starlight.md',
         pagefind: false,
         pageSize: 5,
         title: 'Test',
@@ -75,6 +75,78 @@ describe('changelog-github', () => {
       * [#3341](https://github.com/withastro/starlight/pull/3341) [\`10f6fe2\`](https://github.com/withastro/starlight/commit/10f6fe22a981247293ee4de106736f1a6ae24b6a) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Prevents potential build issues with the Astro Cloudflare adapter due to the dependency on Node.js builtins.
 
       * [#3327](https://github.com/withastro/starlight/pull/3327) [\`bf58c60\`](https://github.com/withastro/starlight/commit/bf58c60b9c3d5f5efdafbdba83cefa0566a367dc) Thanks [@delucis](https://github.com/delucis)! - Fixes a routing bug for docs pages with a slug authored with non-normalized composition. This could occur for filenames containing diacritics in some circumstances, causing 404s.
+      "
+    `)
+  })
+})
+
+describe('changelog-git', () => {
+  beforeAll(async () => {
+    store.clear()
+
+    await loadChangesetData(
+      {
+        provider: 'changeset',
+        base: 'test',
+        path: '../../../fixtures/changeset/changelog-git-react-three-test-renderer.md',
+        pagefind: false,
+        pageSize: 5,
+        title: 'Test',
+      },
+      mockLoaderContext(store),
+    )
+  })
+
+  test('loads all versions', () => {
+    expect(store.values().length).toBe(62)
+  })
+
+  test('loads versions in reverse chronological order', () => {
+    const versions = store.values()
+
+    expect(versions[0]?.id).toBe('test/version/9-1-0')
+    expect(versions[0]?.data.title).toBe('9.1.0')
+
+    expect(versions[1]?.id).toBe('test/version/9-0-1')
+    expect(versions[1]?.data.title).toBe('9.0.1')
+
+    expect(versions[2]?.id).toBe('test/version/9-0-0')
+    expect(versions[2]?.data.title).toBe('9.0.0')
+  })
+
+  test('loads the first version', () => {
+    const version = store.values().at(-1)
+
+    expect(version?.id).toBe('test/version/6-1-1')
+    expect(version?.data.title).toBe('6.1.1')
+  })
+
+  test('includes the provider for each entries', () => {
+    const version = store.values()[0]
+
+    expect(version?.data.provider.name).toBe('changeset')
+    expect(version?.data.provider.label).toBe('Changeset')
+  })
+
+  test('includes the base for each entries', () => {
+    const version = store.values()[0]
+
+    expect(version?.data.base).toBe('test')
+  })
+
+  test('includes the slug for each entries', () => {
+    const version = store.values()[0]
+
+    expect(version?.data.slug).toBe('9-1-0')
+  })
+
+  test('loads markdown', () => {
+    const version = store.values()[0]
+
+    expect(version?.body).toMatchInlineSnapshot(`
+      "### Minor Changes
+
+      * 31781e5a1fdc464cb67617cc3d7bc5d8690cd4cd: feat(RTTR): handle primitives in test-renderer and fix queries in TestInstances
       "
     `)
   })

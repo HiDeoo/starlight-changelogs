@@ -1,6 +1,6 @@
 import { beforeEach, expect, test } from 'vitest'
 
-import { loadChangesetData } from '../../providers/changeset'
+import { loadChangesetData } from '../providers/changeset'
 
 import { mockLoaderContext, mockStore } from './utils'
 
@@ -9,7 +9,7 @@ const store = mockStore()
 const baseConfig = {
   provider: 'changeset',
   base: 'test',
-  path: '../../../../fixtures/changeset/changelog-github-starlight.md',
+  path: '../../../fixtures/changeset/changelog-github-starlight.md',
   pagefind: false,
   pageSize: 5,
   title: 'Test',
