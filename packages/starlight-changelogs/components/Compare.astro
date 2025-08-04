@@ -45,6 +45,7 @@ const compareTitle = Astro.locals.t('starlightChangelogs.compare.title', {
           <Title
             date={entry.data.date}
             id={entry.data.slug}
+            latest={entry.latest}
             link={getLink(getVersionPath(entry, locale))}
             title={entry.data.title}
           />

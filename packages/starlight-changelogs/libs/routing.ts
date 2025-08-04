@@ -67,6 +67,7 @@ async function getVersionEntries(changelog: ProviderBaseConfig, locale: Locale):
           prev: comparePrevLink,
         },
       },
+      latest: index === 0,
       pagination: {
         next: nextLink,
         prev: prevLink,
@@ -190,6 +191,7 @@ export function getComparePath(entry: CollectionEntry<'changelogs'>, locale: Loc
 }
 
 type ChangelogEntry = CollectionEntry<'changelogs'> & {
+  latest: boolean
   pagination: PaginationLinks
   compare: {
     pagination: PaginationLinks

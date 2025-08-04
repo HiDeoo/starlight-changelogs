@@ -43,6 +43,7 @@ function translatePaginationLink(type: 'prev' | 'next', link: PaginationLink | u
           <Title
             date={entry.data.date}
             id={entry.data.slug}
+            latest={entry.latest}
             link={getLink(getVersionPath(entry, locale))}
             title={entry.data.title}
           />

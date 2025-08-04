@@ -21,8 +21,6 @@ const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
   title: changelog.title,
   version: entry.data.title,
 })
-
-// TODO(HiDeoo) compare link should be hidden for the latest version
 ---
 
 <StarlightPage
@@ -42,10 +40,10 @@ const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
 >
   <Toolbar
     backLink={getLink(getVersionsPath(changelog, locale))}
-    compareLink={getLink(getComparePath(entry, locale))}
+    compareLink={entry.latest ? undefined : getLink(getComparePath(entry, locale))}
     link={entry.data.link ? { href: entry.data.link, provider: entry.data.provider.label } : undefined}
     {versions}
   />
-  <Title date={entry.data.date} id={entry.data.slug} title={versionTitle} />
+  <Title date={entry.data.date} id={entry.data.slug} latest={entry.latest} title={versionTitle} />
   <Content />
 </StarlightPage>
