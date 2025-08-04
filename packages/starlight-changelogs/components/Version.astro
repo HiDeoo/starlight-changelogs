@@ -42,7 +42,7 @@ const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
     backLink={getLink(getVersionsPath(changelog, locale))}
     compareLink={entry.latest ? undefined : getLink(getComparePath(entry, locale))}
     link={entry.data.link ? { href: entry.data.link, provider: entry.data.provider.label } : undefined}
-    {versions}
+    versions={versions.filter((version) => version.title !== entry.data.title)}
   />
   <Title date={entry.data.date} id={entry.data.slug} latest={entry.latest} title={versionTitle} />
   <Content />
