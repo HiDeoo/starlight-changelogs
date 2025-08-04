@@ -12,6 +12,11 @@ export function stripLeadingAndTrailingSlash(path: string) {
   return stripLeadingSlash(stripTrailingSlash(path))
 }
 
+export function ensureLeadingSlash(path: string): string {
+  if (path.startsWith('/')) return path
+  return `/${path}`
+}
+
 export function ensureTrailingSlash(path: string): string {
   if (path.endsWith('/')) return path
   return `${path}/`

@@ -3,6 +3,8 @@ import type { StarlightPlugin } from '@astrojs/starlight/types'
 import { vitePluginStarlightChangelogs } from './libs/vite'
 import { Translations } from './translations'
 
+export { makeChangelogsSidebarLinks } from './libs/sidebar'
+
 export default function starlightChangelogs(): StarlightPlugin {
   return {
     name: 'starlight-changelogs',
@@ -10,7 +12,7 @@ export default function starlightChangelogs(): StarlightPlugin {
       'i18n:setup': ({ injectTranslations }) => {
         injectTranslations(Translations)
       },
-      'config:setup': ({ addIntegration, config: starlightConfig }) => {
+      'config:setup': ({ addIntegration, addRouteMiddleware, config: starlightConfig }) => {
         addIntegration({
           name: 'starlight-changelogs-integration',
           hooks: {
@@ -29,6 +31,8 @@ export default function starlightChangelogs(): StarlightPlugin {
             },
           },
         })
+
+        addRouteMiddleware({ entrypoint: 'starlight-changelogs/middleware' })
       },
     },
   }

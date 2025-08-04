@@ -8,6 +8,7 @@
   "exports": {
     ".": "./index.ts",
     "./loader": "./loader/index.ts",
+    "./middleware": "./middleware.ts",
     "./routes/index.astro": "./routes/index.astro",
     "./package.json": "./package.json"
   },

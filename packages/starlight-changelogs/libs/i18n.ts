@@ -1,6 +1,27 @@
+import { AstroError } from 'astro/errors'
 import context from 'virtual:starlight-changelogs/context'
 
 import { stripTrailingSlash } from './path'
+
+export function getI18nLabel(i18nLabel: string | Record<string, string>, locale: Locale): string {
+  if (typeof i18nLabel === 'string') return i18nLabel
+
+  let label: string
+  const lang = getLangFromLocale(locale)
+
+  if (i18nLabel[lang]) {
+    label = i18nLabel[lang]
+  } else {
+    const defaultLang = getDefaultLang()
+    label = defaultLang ? (i18nLabel[defaultLang] ?? '') : ''
+  }
+
+  if (label.length === 0) {
+    throw new AstroError('Missing label for the default language.')
+  }
+
+  return label
+}
 
 export function getPathWithLocale(path: string, locale: Locale): string {
   const pathLocale = getLocaleFromPath(path)

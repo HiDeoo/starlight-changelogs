@@ -9,8 +9,9 @@ import { toMarkdown } from 'mdast-util-to-markdown'
 import { toString } from 'mdast-util-to-string'
 import { CONTINUE, SKIP, visit } from 'unist-util-visit'
 
+import { throwPluginError } from '../libs/plugin'
 import type { VersionDataEntry } from '../loader/schema'
-import { slugifyVersion, throwLoaderError } from '../loader/utils'
+import { slugifyVersion } from '../loader/utils'
 
 import { ProviderBaseConfigSchema } from '.'
 
@@ -27,7 +28,7 @@ export async function loadChangesetData(config: ChangesetProviderConfig, context
   const { config: astroConfig, logger, watcher } = context
 
   const path = fileURLToPath(new URL(config.path, astroConfig.root))
-  if (!existsSync(path)) throwLoaderError(`The provided changelog file path at ${path} does not exist.`)
+  if (!existsSync(path)) throwPluginError(`The provided changelog file path at ${path} does not exist.`)
 
   await syncData(path, config, context)
 
@@ -61,7 +62,7 @@ async function syncData(
       store.set({ id, body, data: parsedData, digest, rendered: await renderMarkdown(body) })
     }
   } catch (error) {
-    throwLoaderError(`Failed to read the changelog file at ${path}`, error)
+    throwPluginError(`Failed to read the changelog file at ${path}`, error)
   }
 }
 

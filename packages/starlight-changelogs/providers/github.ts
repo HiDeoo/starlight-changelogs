@@ -2,8 +2,9 @@ import { getConditionalHeaders, storeConditionalHeaders } from '@ascorbic/loader
 import type { LoaderContext } from 'astro/loaders'
 import { z } from 'astro/zod'
 
+import { throwPluginError } from '../libs/plugin'
 import type { VersionDataEntry } from '../loader/schema'
-import { slugifyVersion, throwLoaderError } from '../loader/utils'
+import { slugifyVersion } from '../loader/utils'
 
 import { ProviderBaseConfigSchema } from '.'
 
@@ -63,7 +64,7 @@ async function fetchGitHubReleases(config: GitHubProviderConfig, { meta }: Loade
     const response = await fetch(url, { headers: getConditionalHeaders({ init: headers, meta }) })
 
     if (response.status === 304) return { modified: false }
-    if (!response.ok) throwLoaderError(`Failed to fetch GitHub data: ${response.status} - ${response.statusText}`)
+    if (!response.ok) throwPluginError(`Failed to fetch GitHub data: ${response.status} - ${response.statusText}`)
 
     page = getGitHubApiResponseNextPage(response)
 
@@ -78,7 +79,7 @@ async function fetchGitHubReleases(config: GitHubProviderConfig, { meta }: Loade
         if (parsedVersion) entries.push(parsedVersion)
       }
     } catch (error) {
-      throwLoaderError('Failed to parse GitHub data.', error)
+      throwPluginError('Failed to parse GitHub data.', error)
     }
   }
 

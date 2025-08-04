@@ -1,13 +1,13 @@
 import type { Loader } from 'astro/loaders'
 import { setLoaderConfig } from 'virtual:starlight-changelogs/config'
 
+import { throwPluginError } from '../libs/plugin'
 import { saveLoaderConfig, serializeLoaderConfig } from '../loader/config'
 import { loadChangesetData } from '../providers/changeset'
 import { loadGitHubData } from '../providers/github'
 
 import { StarlightChangelogsLoaderConfigSchema, type StarlightChangelogsLoaderUserConfig } from './config'
 import { VersionEntrySchema } from './schema'
-import { throwLoaderError } from './utils'
 
 export function changelogsLoader(userConfig: StarlightChangelogsLoaderUserConfig): Loader {
   const parsedConfig = StarlightChangelogsLoaderConfigSchema.safeParse(userConfig)
@@ -18,7 +18,7 @@ export function changelogsLoader(userConfig: StarlightChangelogsLoaderUserConfig
       const { config: astroConfig } = context
 
       if (!parsedConfig.success) {
-        throwLoaderError(
+        throwPluginError(
           `The provided starlight-changelogs loader configuration is invalid.\n${parsedConfig.error.issues.map((issue) => issue.message).join('\n')}`,
         )
       }
@@ -40,7 +40,7 @@ export function changelogsLoader(userConfig: StarlightChangelogsLoaderUserConfig
             break
           }
           default: {
-            throwLoaderError(
+            throwPluginError(
               // @ts-expect-error - error when all known providers are supported.
               `Missing loader implementation for provider '${changelog.provider}'. This is a bug in the starlight-changelogs plugin.`,
             )
