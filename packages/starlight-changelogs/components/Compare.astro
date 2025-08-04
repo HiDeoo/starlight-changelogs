@@ -2,39 +2,30 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import { render } from 'astro:content'
 
-import { getLink, type PaginationLink } from '../libs/link'
-import { getVersionPath, type VersionsProps } from '../libs/routing'
+import { getLink } from '../libs/link'
+import { getVersionPath, getVersionsPath, type CompareProps } from '../libs/routing'
 import { getChangelogTitle } from '../libs/title'
 
 import Toolbar from './Toolbar.astro'
 
-type Props = VersionsProps
+type Props = CompareProps
 
-const { changelog, entries, locale, pagination, versions } = Astro.props
-
-function translatePaginationLink(type: 'prev' | 'next', link: PaginationLink | undefined): PaginationLink | undefined {
-  if (!link) return link
-  return {
-    ...link,
-    label: Astro.locals.t(
-      type === 'next' ? 'starlightChangelogs.pagination.next' : 'starlightChangelogs.pagination.prev',
-    ),
-  }
-}
+const { changelog, entries, entry, locale, versions } = Astro.props
 
 // TODO(HiDeoo) refactor date in component
 ---
 
 <StarlightPage
   frontmatter={{
-    next: translatePaginationLink('next', pagination.next),
+    next: entry.compare.pagination.next,
     pagefind: changelog.pagefind,
-    prev: translatePaginationLink('prev', pagination.prev),
+    prev: entry.compare.pagination.prev,
+    // TODO(HiDeoo)
     title: getChangelogTitle(changelog, locale),
   }}
   headings={entries.map((entry) => ({ depth: 2, slug: entry.data.slug, text: entry.data.title }))}
 >
-  <Toolbar {versions} />
+  <Toolbar backLink={getLink(getVersionsPath(changelog, locale))} {versions} />
   {
     entries.map(async (entry) => {
       const { Content } = await render(entry)

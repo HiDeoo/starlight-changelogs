@@ -1,6 +1,7 @@
 ---
 import type { InferGetStaticPropsType } from 'astro'
 
+import Compare from '../components/Compare.astro'
 import Version from '../components/Version.astro'
 import Versions from '../components/Versions.astro'
 import { getChangelogsStaticPaths } from '../libs/routing'
@@ -18,3 +19,4 @@ const { type } = Astro.props
 
 {type === 'versions' && <Versions {...Astro.props} />}
 {type === 'version' && <Version {...Astro.props} />}
+{type === 'compare' && <Compare {...Astro.props} />}

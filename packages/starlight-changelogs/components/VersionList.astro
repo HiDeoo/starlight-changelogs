@@ -51,6 +51,7 @@ const { versions } = Astro.props
             if (!option) return
 
             const link = option.dataset['link']
+            // TODO(HiDeoo) what to do if link is the current page?
             if (link) window.location.pathname = link
           }
         })

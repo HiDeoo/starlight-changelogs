@@ -21,24 +21,22 @@ export async function getChangelogsStaticPaths() {
       const pages = getPaginatedVersionEntries(changelog, entries)
       const versions = getAllVersions(entries, locale)
 
+      const context: StaticPropsContext = { locale, versions }
+      const accumulatedEntries: ChangelogEntry[] = []
+
       for (const [index, entries] of pages.entries()) {
-        paths.push(getVersionsStaticPath(changelog, pages, entries, index, locale, versions))
+        paths.push(getVersionsStaticPath(changelog, pages, entries, index, context))
 
         for (const entry of entries) {
-          paths.push(getVersionStaticPath(changelog, entry, locale, versions))
+          paths.push(getVersionStaticPath(changelog, entry, context))
+          accumulatedEntries.push(entry)
+          paths.push(getCompareStaticPath(changelog, accumulatedEntries, entry, context))
         }
       }
     }
   }
 
   return paths satisfies GetStaticPathsResult
-}
-
-function getAllVersions(entries: ChangelogEntry[], locale: Locale): CommonProps['versions'] {
-  return entries.map((entry) => ({
-    link: getLink(getVersionPath(entry, locale)),
-    title: entry.data.title,
-  }))
 }
 
 async function getVersionEntries(changelog: ProviderBaseConfig, locale: Locale): Promise<ChangelogEntry[]> {
@@ -49,14 +47,26 @@ async function getVersionEntries(changelog: ProviderBaseConfig, locale: Locale):
     const prevLink = prevEntry
       ? { label: prevEntry.data.title, link: getLink(getVersionPath(prevEntry, locale)) }
       : undefined
+    const comparePrevLink = prevEntry
+      ? { label: prevEntry.data.title, link: getLink(getComparePath(prevEntry, locale)) }
+      : undefined
 
     const nextEntry = entries[index + 1]
     const nextLink = nextEntry
       ? { label: nextEntry.data.title, link: getLink(getVersionPath(nextEntry, locale)) }
       : undefined
+    const compareNextLink = nextEntry
+      ? { label: nextEntry.data.title, link: getLink(getComparePath(nextEntry, locale)) }
+      : undefined
 
     return {
       ...entry,
+      compare: {
+        pagination: {
+          next: compareNextLink,
+          prev: comparePrevLink,
+        },
+      },
       pagination: {
         next: nextLink,
         prev: prevLink,
@@ -90,8 +100,7 @@ function getVersionsStaticPath(
   pages: ChangelogEntry[][],
   entries: ChangelogEntry[],
   index: number,
-  locale: Locale,
-  versions: CommonProps['versions'],
+  { locale, versions }: StaticPropsContext,
 ) {
   const prevPage = index === 0 ? undefined : pages[index - 1]
   const prevLink = prevPage
@@ -117,15 +126,14 @@ function getVersionsStaticPath(
         prev: prevLink,
       },
       versions,
-    } satisfies StaticProps,
+    } satisfies VersionsProps,
   }
 }
 
 function getVersionStaticPath(
   changelog: ProviderBaseConfig,
   entry: ChangelogEntry,
-  locale: Locale,
-  versions: CommonProps['versions'],
+  { locale, versions }: StaticPropsContext,
 ) {
   return {
     params: {
@@ -137,8 +145,36 @@ function getVersionStaticPath(
       entry,
       locale,
       versions,
-    } satisfies StaticProps,
+    } satisfies VersionProps,
   }
+}
+
+function getCompareStaticPath(
+  changelog: ProviderBaseConfig,
+  entries: ChangelogEntry[],
+  entry: ChangelogEntry,
+  { locale, versions }: StaticPropsContext,
+) {
+  return {
+    params: {
+      slug: getComparePath(entry, locale),
+    },
+    props: {
+      type: 'compare',
+      changelog,
+      entries: entries.toReversed(),
+      entry,
+      locale,
+      versions,
+    } satisfies CompareProps,
+  }
+}
+
+function getAllVersions(entries: ChangelogEntry[], locale: Locale): CommonProps['versions'] {
+  return entries.map((entry) => ({
+    link: getLink(getVersionPath(entry, locale)),
+    title: entry.data.title,
+  }))
 }
 
 export function getVersionsPath(changelog: ProviderBaseConfig, locale: Locale, index?: number) {
@@ -149,8 +185,20 @@ export function getVersionPath(entry: CollectionEntry<'changelogs'>, locale: Loc
   return getPathWithLocale(entry.id, locale)
 }
 
+export function getComparePath(entry: CollectionEntry<'changelogs'>, locale: Locale) {
+  return getPathWithLocale(`${entry.id}...latest`, locale)
+}
+
 type ChangelogEntry = CollectionEntry<'changelogs'> & {
   pagination: PaginationLinks
+  compare: {
+    pagination: PaginationLinks
+  }
+}
+
+interface StaticPropsContext {
+  locale: Locale
+  versions: CommonProps['versions']
 }
 
 export interface CommonProps {
@@ -170,4 +218,8 @@ export interface VersionProps extends CommonProps {
   entry: ChangelogEntry
 }
 
-type StaticProps = VersionsProps | VersionProps
+export interface CompareProps extends CommonProps {
+  type: 'compare'
+  entries: ChangelogEntry[]
+  entry: ChangelogEntry
+}

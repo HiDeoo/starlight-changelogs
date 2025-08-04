@@ -4,10 +4,10 @@ import { render } from 'astro:content'
 import context from 'virtual:starlight-changelogs/context'
 
 import { getLink } from '../libs/link'
-import { getVersionsPath, type VersionProps } from '../libs/routing'
+import { getComparePath, getVersionsPath, type VersionProps } from '../libs/routing'
 import { getChangelogTitle, getSiteTitle } from '../libs/title'
 
-import VersionList from './VersionList.astro'
+import Toolbar from './Toolbar.astro'
 
 type Props = VersionProps
 
@@ -21,7 +21,7 @@ const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
 })
 
 // TODO(HiDeoo) refactor date in component
-// TODO(HiDeoo) Back to changelog UI String
+// TODO(HiDeoo) should date be in the toolbar?
 ---
 
 <StarlightPage
@@ -39,14 +39,12 @@ const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
   }}
   headings={[{ depth: 2, slug: entry.data.slug, text: versionTitle }, ...headings]}
 >
-  <a href={getLink(getVersionsPath(changelog, locale))}>Back to changelog</a>
-  {
-    entry.data.link && (
-      <a href={entry.data.link}>
-        {Astro.locals.t('starlightChangelogs.version.open', { provider: entry.data.provider.label })}
-      </a>
-    )
-  }
+  <Toolbar
+    backLink={getLink(getVersionsPath(changelog, locale))}
+    compareLink={getLink(getComparePath(entry, locale))}
+    link={entry.data.link ? { href: entry.data.link, provider: entry.data.provider.label } : undefined}
+    {versions}
+  />
   {
     entry.data.date && (
       <time datetime={entry.data.date.toISOString()}>
@@ -54,7 +52,6 @@ const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
       </time>
     )
   }
-  <VersionList {versions} />
   <h2 id={entry.data.slug}>{versionTitle}</h2>
   <Content />
 </StarlightPage>

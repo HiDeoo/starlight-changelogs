@@ -1,0 +1,35 @@
+---
+import type { CommonProps } from '../libs/routing'
+
+import VersionList from './VersionList.astro'
+
+interface Props {
+  backLink?: string
+  compareLink?: string
+  link?:
+    | {
+        href: string
+        provider: string
+      }
+    | undefined
+  versions: CommonProps['versions']
+}
+
+const { backLink, compareLink, link, versions } = Astro.props
+
+// TODO(HiDeoo) Back to changelog UI String
+// TODO(HiDeoo) compare UI String
+---
+
+<div>
+  {backLink && <a href={backLink}>Back to changelog</a>}
+  <VersionList {versions} />
+  {link && <a href={link.href}>{Astro.locals.t('starlightChangelogs.version.open', { provider: link.provider })}</a>}
+  {compareLink && <a href={compareLink}>Compare to latest version</a>}
+</div>
+
+<style>
+  div {
+    background-color: red;
+  }
+</style>
