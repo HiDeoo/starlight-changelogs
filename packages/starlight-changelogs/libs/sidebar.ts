@@ -4,28 +4,45 @@ import { ensureLeadingSlash } from './path'
 import { throwPluginError } from './plugin'
 
 const sidebarLinkBaseConfigSchema = z.object({
-  // TODO(HiDeoo)
+  /**
+   * The base path used for the changelog this link points to.
+   * This should match the `base` used in the changelog loader configuration.
+   */
   base: z.string(),
 })
 
 const sidebarLinkConfigSchema = z
   .discriminatedUnion('type', [
     sidebarLinkBaseConfigSchema.extend({
-      // TODO(HiDeoo)
+      /** The type of link, `all` in this case to link to the changelog version list. */
       type: z.literal('all'),
-      // TODO(HiDeoo)
+      /**
+       * The label of the sidebar link.
+       *
+       * The value can be a string, or for multilingual sites, an object with values for each different locale. When
+       * using the object form, the keys must be BCP-47 tags (e.g. `en`, `fr`, or `zh-CN`).
+       */
       label: z.union([z.string(), z.record(z.string())]),
     }),
     sidebarLinkBaseConfigSchema.extend({
-      // TODO(HiDeoo)
+      /** The type of link, `all` in this case to link to the changelog latest version. */
       type: z.literal('latest'),
-      // TODO(HiDeoo)
+      /**
+       * The label of the sidebar link.
+       *
+       * The value can be a string, or for multilingual sites, an object with values for each different locale. When
+       * using the object form, the keys must be BCP-47 tags (e.g. `en`, `fr`, or `zh-CN`).
+       */
       label: z.union([z.string(), z.record(z.string())]),
     }),
     sidebarLinkBaseConfigSchema.extend({
-      // TODO(HiDeoo)
+      /** The type of links, `recent` in this case to link to multiple recent versions. */
       type: z.literal('recent'),
-      // TODO(HiDeoo)
+      /**
+       * The number of recent versions to display in the sidebar.
+       *
+       * @default 5
+       */
       count: z.number().default(5),
     }),
   ])

@@ -9,13 +9,20 @@ import { slugifyVersion } from '../loader/utils'
 import { ProviderBaseConfigSchema } from '.'
 
 export const GitHubProviderConfigSchema = ProviderBaseConfigSchema.extend({
-  // TODO(HiDeoo) comment
+  /** The owner of the GitHub repository containing releases to load. */
   owner: z.string(),
-  // TODO(HiDeoo) comment
-  repo: z.string(),
-  // TODO(HiDeoo) comment
+  /** The type of provider used to load the changelog, `github` in this case. */
   provider: z.literal('github'),
-  // TODO(HiDeoo) comment
+  /** The name of the GitHub repository containing releases to load. */
+  repo: z.string(),
+  /**
+   * An optional GitHub fine-grained access token to use for loading releases.
+   * This can be used to access private repositories or to increase the rate limit for public repositories.
+   *
+   * The token should have the `Contents` repository permission (read).
+   *
+   * @see https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#list-releases--fine-grained-access-tokens
+   */
   token: z.string().optional(),
 })
 
