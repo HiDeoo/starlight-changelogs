@@ -6,6 +6,7 @@ import { getLink, type PaginationLink } from '../libs/link'
 import { getVersionPath, type VersionsProps } from '../libs/routing'
 import { getChangelogTitle } from '../libs/title'
 
+import Title from './Title.astro'
 import Toolbar from './Toolbar.astro'
 
 type Props = VersionsProps
@@ -21,8 +22,6 @@ function translatePaginationLink(type: 'prev' | 'next', link: PaginationLink | u
     ),
   }
 }
-
-// TODO(HiDeoo) refactor date in component
 ---
 
 <StarlightPage
@@ -41,14 +40,12 @@ function translatePaginationLink(type: 'prev' | 'next', link: PaginationLink | u
 
       return (
         <>
-          <h2 id={entry.data.slug}>
-            <a href={getLink(getVersionPath(entry, locale))}>{entry.data.title}</a>
-          </h2>
-          {entry.data.date && (
-            <time datetime={entry.data.date.toISOString()}>
-              {Astro.locals.t('starlightChangelogs.version.date', { date: entry.data.date })}
-            </time>
-          )}
+          <Title
+            date={entry.data.date}
+            id={entry.data.slug}
+            link={getLink(getVersionPath(entry, locale))}
+            title={entry.data.title}
+          />
           <Content />
         </>
       )

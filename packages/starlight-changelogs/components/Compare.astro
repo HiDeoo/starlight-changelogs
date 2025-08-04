@@ -7,6 +7,7 @@ import { getLink } from '../libs/link'
 import { getVersionPath, getVersionsPath, type CompareProps } from '../libs/routing'
 import { getChangelogTitle, getSiteTitle } from '../libs/title'
 
+import Title from './Title.astro'
 import Toolbar from './Toolbar.astro'
 
 type Props = CompareProps
@@ -17,8 +18,6 @@ const changelogTitle = getChangelogTitle(changelog, locale)
 const compareTitle = Astro.locals.t('starlightChangelogs.compare.title', {
   version: entry.data.title,
 })
-
-// TODO(HiDeoo) refactor date in component
 ---
 
 <StarlightPage
@@ -43,14 +42,12 @@ const compareTitle = Astro.locals.t('starlightChangelogs.compare.title', {
 
       return (
         <>
-          <h2 id={entry.data.slug}>
-            <a href={getLink(getVersionPath(entry, locale))}>{entry.data.title}</a>
-          </h2>
-          {entry.data.date && (
-            <time datetime={entry.data.date.toISOString()}>
-              {Astro.locals.t('starlightChangelogs.version.date', { date: entry.data.date })}
-            </time>
-          )}
+          <Title
+            date={entry.data.date}
+            id={entry.data.slug}
+            link={getLink(getVersionPath(entry, locale))}
+            title={entry.data.title}
+          />
           <Content />
         </>
       )

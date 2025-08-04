@@ -7,6 +7,7 @@ import { getLink } from '../libs/link'
 import { getComparePath, getVersionsPath, type VersionProps } from '../libs/routing'
 import { getChangelogTitle, getSiteTitle } from '../libs/title'
 
+import Title from './Title.astro'
 import Toolbar from './Toolbar.astro'
 
 type Props = VersionProps
@@ -22,9 +23,6 @@ const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
 })
 
 // TODO(HiDeoo) compare link should be hidden for the latest version
-
-// TODO(HiDeoo) refactor date in component
-// TODO(HiDeoo) should date be in the toolbar? NO
 ---
 
 <StarlightPage
@@ -48,13 +46,6 @@ const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
     link={entry.data.link ? { href: entry.data.link, provider: entry.data.provider.label } : undefined}
     {versions}
   />
-  {
-    entry.data.date && (
-      <time datetime={entry.data.date.toISOString()}>
-        {Astro.locals.t('starlightChangelogs.version.date', { date: entry.data.date })}
-      </time>
-    )
-  }
-  <h2 id={entry.data.slug}>{versionTitle}</h2>
+  <Title date={entry.data.date} id={entry.data.slug} title={versionTitle} />
   <Content />
 </StarlightPage>

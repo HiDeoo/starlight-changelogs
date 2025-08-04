@@ -1,0 +1,24 @@
+---
+interface Props {
+  date?: Date | undefined
+  id: string
+  link?: string
+  title: string
+}
+
+const { date, id, link, title } = Astro.props
+---
+
+<h2 id={id}>{link ? <a href={link}>{title}</a> : title}</h2>
+{date && <time datetime={date.toISOString()}>{Astro.locals.t('starlightChangelogs.version.date', { date })}</time>}
+
+<style>
+  a {
+    text-decoration: none;
+  }
+
+  time {
+    color: var(--sl-color-text);
+    font-size: var(--sl-text-sm);
+  }
+</style>
