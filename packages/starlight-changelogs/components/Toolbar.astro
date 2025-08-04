@@ -22,7 +22,7 @@ const { backLink, compareLink, link, versions } = Astro.props
 ---
 
 <div>
-  {backLink && <a href={backLink}>Back to changelog</a>}
+  {backLink && <a href={backLink}>{Astro.locals.t('starlightChangelogs.versions.all')}</a>}
   <VersionList {versions} />
   {link && <a href={link.href}>{Astro.locals.t('starlightChangelogs.version.open', { provider: link.provider })}</a>}
   {compareLink && <a href={compareLink}>Compare to latest version</a>}

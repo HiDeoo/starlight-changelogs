@@ -5,6 +5,7 @@ export const Translations = {
     'starlightChangelogs.version.date': '{{date, datetime(dateStyle: medium)}}',
     'starlightChangelogs.version.open': 'View on {{provider}}',
     'starlightChangelogs.version.title': 'Version {{version}}',
+    'starlightChangelogs.versions.all': 'All versions',
   },
   fr: {
     'starlightChangelogs.pagination.next': 'Versions plus anciennes',
@@ -12,5 +13,6 @@ export const Translations = {
     'starlightChangelogs.version.date': '{{date, datetime(dateStyle: medium)}}',
     'starlightChangelogs.version.open': 'Voir sur {{provider}}',
     'starlightChangelogs.version.title': 'Version {{version}}',
+    'starlightChangelogs.versions.all': 'Toutes les versions',
   },
 }
