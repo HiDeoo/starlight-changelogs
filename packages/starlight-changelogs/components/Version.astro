@@ -15,13 +15,14 @@ const { changelog, entry, locale, versions } = Astro.props
 
 const { Content, headings } = await render(entry)
 
+const changelogTitle = getChangelogTitle(changelog, locale)
 const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
   title: changelog.title,
   version: entry.data.title,
 })
 
 // TODO(HiDeoo) refactor date in component
-// TODO(HiDeoo) should date be in the toolbar?
+// TODO(HiDeoo) should date be in the toolbar? NO
 ---
 
 <StarlightPage
@@ -29,13 +30,13 @@ const versionTitle = Astro.locals.t('starlightChangelogs.version.title', {
     head: [
       {
         tag: 'title',
-        content: `${entry.data.title} ${context.titleDelimiter} ${changelog.title} ${context.titleDelimiter} ${getSiteTitle(Astro.currentLocale)}`,
+        content: `${entry.data.title} ${context.titleDelimiter} ${changelogTitle} ${context.titleDelimiter} ${getSiteTitle(Astro.currentLocale)}`,
       },
     ],
     next: entry.pagination.next,
     pagefind: changelog.pagefind,
     prev: entry.pagination.prev,
-    title: getChangelogTitle(changelog, locale),
+    title: changelogTitle,
   }}
   headings={[{ depth: 2, slug: entry.data.slug, text: versionTitle }, ...headings]}
 >

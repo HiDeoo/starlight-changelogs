@@ -19,7 +19,7 @@ export const collections = {
       },
       // {
       //   provider: 'github',
-      //   base: 'test',
+      //   base: 'test2',
       //   owner: 'hideoo',
       //   repo: 'starlight-blog',
       //   token: import.meta.env.GITHUB_API_TOKEN,

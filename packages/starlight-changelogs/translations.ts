@@ -1,5 +1,7 @@
 export const Translations = {
   en: {
+    'starlightChangelogs.compare.label': 'All versions forward',
+    'starlightChangelogs.compare.title': 'All versions since {{version}}',
     'starlightChangelogs.pagination.next': 'Older versions',
     'starlightChangelogs.pagination.prev': 'Newer versions',
     'starlightChangelogs.version.date': '{{date, datetime(dateStyle: medium)}}',
@@ -8,6 +10,8 @@ export const Translations = {
     'starlightChangelogs.versions.all': 'All versions',
   },
   fr: {
+    'starlightChangelogs.compare.label': 'Toutes les versions suivantes',
+    'starlightChangelogs.compare.title': 'Toutes les versions depuis {{version}}',
     'starlightChangelogs.pagination.next': 'Versions plus anciennes',
     'starlightChangelogs.pagination.prev': 'Versions plus récentes',
     'starlightChangelogs.version.date': '{{date, datetime(dateStyle: medium)}}',

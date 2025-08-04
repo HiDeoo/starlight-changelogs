@@ -1,10 +1,11 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import { render } from 'astro:content'
+import context from 'virtual:starlight-changelogs/context'
 
 import { getLink } from '../libs/link'
 import { getVersionPath, getVersionsPath, type CompareProps } from '../libs/routing'
-import { getChangelogTitle } from '../libs/title'
+import { getChangelogTitle, getSiteTitle } from '../libs/title'
 
 import Toolbar from './Toolbar.astro'
 
@@ -12,16 +13,26 @@ type Props = CompareProps
 
 const { changelog, entries, entry, locale, versions } = Astro.props
 
+const changelogTitle = getChangelogTitle(changelog, locale)
+const compareTitle = Astro.locals.t('starlightChangelogs.compare.title', {
+  version: entry.data.title,
+})
+
 // TODO(HiDeoo) refactor date in component
 ---
 
 <StarlightPage
   frontmatter={{
+    head: [
+      {
+        tag: 'title',
+        content: `${compareTitle} ${context.titleDelimiter} ${changelogTitle} ${context.titleDelimiter} ${getSiteTitle(Astro.currentLocale)}`,
+      },
+    ],
     next: entry.compare.pagination.next,
     pagefind: changelog.pagefind,
     prev: entry.compare.pagination.prev,
-    // TODO(HiDeoo)
-    title: getChangelogTitle(changelog, locale),
+    title: compareTitle,
   }}
   headings={entries.map((entry) => ({ depth: 2, slug: entry.data.slug, text: entry.data.title }))}
 >
