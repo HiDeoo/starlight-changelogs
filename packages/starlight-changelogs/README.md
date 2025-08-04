@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>starlight-changelogs 🚧</h1>
+  <h1>starlight-changelogs 📜</h1>
   <p>starlight-changelogs description</p>
   <p>
     <a href="https://dummyimage.com/520x350/121212/cdc8be.png&text=screenshot" title="Screenshot of starlight-changelogs">
