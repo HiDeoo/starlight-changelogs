@@ -17,7 +17,7 @@ export default function starlightChangelogs(): StarlightPlugin {
           name: 'starlight-changelogs-integration',
           hooks: {
             'astro:config:setup': ({ command, config: astroConfig, injectRoute, updateConfig }) => {
-              if (command !== 'dev' && command !== 'build') return
+              if (command !== 'dev' && command !== 'build' && command !== 'sync') return
 
               injectRoute({
                 entrypoint: 'starlight-changelogs/routes/index.astro',
