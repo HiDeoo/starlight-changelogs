@@ -47,10 +47,17 @@ function getConfigVirtualModule(
   astroConfig: AstroConfig,
   command: AstroHookParameters<'astro:config:setup'>['command'],
 ) {
+  const loaderConfigPath = fileURLToPath(getLoaderConfigUrl(astroConfig))
+
   return command === 'dev'
-    ? `let loaderConfig = []
+    ? `import fs from 'node:fs'
+
+const loaderConfigPath = ${JSON.stringify(loaderConfigPath)}
+let loaderConfig
 
 export function getLoaderConfig() {
+  if (loaderConfig) return loaderConfig
+  loaderConfig = JSON.parse(fs.readFileSync(loaderConfigPath, 'utf8'))
   return loaderConfig
 }
 
@@ -59,7 +66,7 @@ export function setLoaderConfig(newLoaderConfig) {
 }`
     : `import fs from 'node:fs'
 
-const loaderConfigPath = ${JSON.stringify(fileURLToPath(getLoaderConfigUrl(astroConfig)))}
+const loaderConfigPath = ${JSON.stringify(loaderConfigPath)}
 let loaderConfig
 
 export function getLoaderConfig() {
