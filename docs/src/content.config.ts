@@ -20,7 +20,7 @@ export const collections = {
         owner: 'hideoo',
         repo: 'starlight-blog',
         title: 'Starlight Blog Changelog',
-        token: import.meta.env.GITHUB_API_TOKEN,
+        token: import.meta.env.GH_API_TOKEN,
         pagefind: false,
         process: ({ title }) => {
           return title.replace(/^(?:starlight-blog@|v)/, '')
