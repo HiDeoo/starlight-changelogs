@@ -6,7 +6,7 @@
   "author": "HiDeoo <github@hideoo.dev> (https://hideoo.dev)",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test implemented.\" && exit 1",
+    "test": "pnpm --stream -r test",
     "lint": "astro check --noSync && pnpm -r lint",
     "format": "prettier -w --cache --ignore-unknown .",
     "version": "pnpm changeset version && pnpm i --no-frozen-lockfile"
