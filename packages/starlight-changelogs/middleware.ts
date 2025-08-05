@@ -5,22 +5,23 @@ import { getLoaderConfig } from 'virtual:starlight-changelogs/config'
 
 import { getI18nLabel, getPathWithLocale, type Locale } from './libs/i18n'
 import { getLink } from './libs/link'
+import { stripLeadingAndTrailingSlash } from './libs/path'
 import type { SidebarLinkConfig } from './libs/sidebar'
 
 const entries = await getCollection('changelogs')
 
-export const onRequest = defineRouteMiddleware(({ locals }) => {
+export const onRequest = defineRouteMiddleware(({ locals, url }) => {
   const { starlightRoute } = locals
 
-  starlightRoute.sidebar = updateSidebar(starlightRoute.sidebar, starlightRoute.locale)
+  starlightRoute.sidebar = updateSidebar(url, starlightRoute.sidebar, starlightRoute.locale)
 })
 
-function updateSidebar(items: StarlightRouteData['sidebar'], locale: Locale): StarlightRouteData['sidebar'] {
+function updateSidebar(url: URL, items: StarlightRouteData['sidebar'], locale: Locale): StarlightRouteData['sidebar'] {
   const updatedItems: StarlightRouteData['sidebar'] = []
 
   for (const item of items) {
     if (item.type === 'group') {
-      updatedItems.push({ ...item, entries: updateSidebar(item.entries, locale) })
+      updatedItems.push({ ...item, entries: updateSidebar(url, item.entries, locale) })
       continue
     }
 
@@ -40,12 +41,16 @@ function updateSidebar(items: StarlightRouteData['sidebar'], locale: Locale): St
     if (config.type === 'recent') {
       const baseEntries = entries.filter((entry) => entry.data.base === config.base)
       updatedItems.push(
-        ...baseEntries.slice(0, config.count).map((entry) => ({
-          ...item,
-          attrs: {},
-          href: getLink(getPathWithLocale(entry.id, locale)),
-          label: entry.data.title,
-        })),
+        ...baseEntries.slice(0, config.count).map((entry) => {
+          const href = getLink(getPathWithLocale(entry.id, locale))
+          return {
+            ...item,
+            attrs: {},
+            href,
+            label: entry.data.title,
+            isCurrent: stripLeadingAndTrailingSlash(url.pathname) === stripLeadingAndTrailingSlash(href),
+          }
+        }),
       )
       continue
     }
@@ -62,6 +67,7 @@ function updateSidebar(items: StarlightRouteData['sidebar'], locale: Locale): St
       attrs: {},
       href,
       label: config.label,
+      isCurrent: stripLeadingAndTrailingSlash(url.pathname) === stripLeadingAndTrailingSlash(href),
     })
   }
 
