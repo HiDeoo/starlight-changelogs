@@ -1,0 +1,133 @@
+---
+title: GitHub
+description: Lean how to display changelogs generated from GitHub releases with the Starlight Changelogs plugin.
+---
+
+The Starlight Changelogs plugin uses Astro’s [content collections](https://docs.astro.build/en/guides/content-collections/), which are configured in the `src/content.config.ts` file.
+The provided `changelogsLoader()` loader can be used to load one or more changelog files from different providers, including [GitHub releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases).
+
+GitHub releases can be loaded by using the `provider: 'github'` option.
+Note that the GitHub API can return a maximum of 1000 releases so if you have more versions than this limit, you will need to use another provider.
+
+```ts title="src/content.config.ts" {10-13}
+import { docsLoader } from '@astrojs/starlight/loaders'
+import { docsSchema } from '@astrojs/starlight/schema'
+import { defineCollection } from 'astro:content'
+import { changelogsLoader } from 'starlight-changelogs/loader'
+
+export const collections = {
+  docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
+  changelogs: defineCollection({
+    loader: changelogsLoader([
+      {
+        provider: 'github',
+        // Changelog options go here.
+      },
+    ]),
+  }),
+}
+```
+
+## Provider configuration
+
+The GitHub provider accepts the following configuration options:
+
+### `provider`
+
+**Required**  
+**Type:** `'github'`
+
+Defines the provider to use for loading the changelog file.
+This should always be set to `'github'` for the GitHub provider.
+
+```ts
+changelogsLoader([
+  {
+    provider: 'github',
+  },
+])
+```
+
+import {
+  ProviderBase,
+  ProviderPagefind,
+  ProviderPageSize,
+  ProviderProcess,
+  ProviderTitle,
+} from '../../../partials/index.astro'
+
+<ProviderBase>
+
+### `base`
+
+</ProviderBase>
+
+### `owner`
+
+**Required**  
+**Type:** `string`
+
+The owner of the GitHub repository containing releases to load.
+
+```ts
+changelogsLoader([
+  {
+    owner: 'hideoo',
+  },
+])
+```
+
+### `repo`
+
+**Required**  
+**Type:** `string`
+
+The name of the GitHub repository containing releases to load.
+
+```ts
+changelogsLoader([
+  {
+    repo: 'starlight-changelogs',
+  },
+])
+```
+
+### `token`
+
+**Type:** `string`
+
+An optional GitHub fine-grained access token to use for loading releases which can be used to access private repositories or to increase the rate limit for public repositories.
+
+The token should have the [`Contents` repository permission (read)](https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#list-releases--fine-grained-access-tokens).
+
+```ts
+changelogsLoader([
+  {
+    token: import.meta.env.GH_API_TOKEN,
+  },
+])
+```
+
+<ProviderTitle>
+
+### `title`
+
+</ProviderTitle>
+
+<ProviderPageSize>
+
+### `pageSize`
+
+</ProviderPageSize>
+
+<ProviderPagefind>
+
+### `pagefind`
+
+</ProviderPagefind>
+
+<ProviderProcess>
+
+### `process`
+
+</ProviderProcess>

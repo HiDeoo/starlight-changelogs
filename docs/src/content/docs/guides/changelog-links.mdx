@@ -1,0 +1,187 @@
+---
+title: Linking to changelogs
+description: Learn how to link to changelog pages in your Starlight documentation.
+---
+
+Every changelog configured using the `changelogsLoader()` loader defines a `base` option that sets the base path to use for the changelog.
+
+For example, setting this option to `changelog` will result in the changelog version list being available at `/changelog/` and a version entry at `/changelog/versions/0.1.0/`.
+
+```ts title="src/content.config.ts" {11}
+import { docsLoader } from '@astrojs/starlight/loaders'
+import { docsSchema } from '@astrojs/starlight/schema'
+import { defineCollection } from 'astro:content'
+import { changelogsLoader } from 'starlight-changelogs/loader'
+
+export const collections = {
+  docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
+  changelogs: defineCollection({
+    loader: changelogsLoader([
+      {
+        base: 'changelog',
+      },
+    ]),
+  }),
+}
+```
+
+This base path can be used to link to the changelog version list in your documentation content, in your sidebar configuration, or anywhere else in your Starlight site.
+
+```md title="src/content/docs/example.md"
+---
+title: My page title
+---
+
+Check out the [changelog](/changelog/) for more information.
+```
+
+## Sidebar links
+
+The Starlight Changelogs plugin provides a `makeChangelogsSidebarLinks()` helper function to easily generate one or multiple sidebar links to changelogs.
+
+This helper function can be used in your Starlight [`sidebar`](https://starlight.astro.build/reference/configuration/#sidebar) configuration in the `astro.config.mjs` file:
+
+```js title="astro.config.mjs" /({ makeChangelogsSidebarLinks })/ {12-14}
+// @ts-check
+import starlight from '@astrojs/starlight'
+import { defineConfig } from 'astro/config'
+import starlightChangelogs, { makeChangelogsSidebarLinks } from 'starlight-changelogs'
+
+export default defineConfig({
+  integrations: [
+    starlight({
+      plugins: [starlightChangelogs()],
+      title: 'My Docs',
+      sidebar: [
+        ...makeChangelogsSidebarLinks([
+          // Sidebar links and options go here.
+        ]),
+      ],
+    }),
+  ],
+})
+```
+
+### Link to version list
+
+Use the `makeChangelogsSidebarLinks()` helper function with the `type: 'all'` option to generate a sidebar link to a changelog version list.
+
+The `base` option is required and should match the `base` option used in the `changelogsLoader()` loader in the `src/content.config.ts` file for the changelog you want to link to.
+The `label` option defines the text to display for the sidebar link.
+
+The following example generates a sidebar link to the version list for the changelog with the base set to `changelog` with the label "All versions":
+
+```js
+sidebar: [
+  {
+    label: 'About',
+    items: [
+      ...makeChangelogsSidebarLinks([
+        {
+          type: 'all',
+          base: 'changelog',
+          label: 'All versions',
+        },
+      ]),
+    ],
+  },
+]
+```
+
+With the above configuration, the following sidebar will be generated:
+
+import SidebarPreview from '../../../components/SidebarPreview.astro'
+
+<SidebarPreview
+  config={[
+    {
+      label: 'About',
+      items: [{ label: 'All versions' }],
+    },
+  ]}
+/>
+
+### Link to latest version
+
+Use the `makeChangelogsSidebarLinks()` helper function with the `type: 'latest'` option to generate a sidebar link to a changelog latest version.
+
+The `base` option is required and should match the `base` option used in the `changelogsLoader()` loader in the `src/content.config.ts` file for the changelog you want to link to.
+The `label` option defines the text to display for the sidebar link.
+
+The following example generates a sidebar link to the latest version for the changelog with the base set to `changelog` with the label "Latest version":
+
+```js
+sidebar: [
+  {
+    label: 'About',
+    items: [
+      ...makeChangelogsSidebarLinks([
+        {
+          type: 'latest',
+          base: 'changelog',
+          label: 'Latest version',
+        },
+      ]),
+    ],
+  },
+]
+```
+
+With the above configuration, the following sidebar will be generated:
+
+<SidebarPreview
+  config={[
+    {
+      label: 'About',
+      items: [{ label: 'Latest version' }],
+    },
+  ]}
+/>
+
+### Links to recent versions
+
+Use the `makeChangelogsSidebarLinks()` helper function with the `type: 'recent'` option to generate multiple sidebar links to the most recent versions of a changelog.
+
+The `base` option is required and should match the `base` option used in the `changelogsLoader()` loader in the `src/content.config.ts` file for the changelog you want to link to.
+The optional `count` option defines the number of recent versions to link to, defaulting to `5`.
+
+The following example generates 10 sidebar links to the 10 most recent versions for the changelog with the base set to `changelog`:
+
+```js
+sidebar: [
+  {
+    label: 'Recent versions',
+    items: [
+      ...makeChangelogsSidebarLinks([
+        {
+          type: 'recent',
+          base: 'changelog',
+          count: 10,
+        },
+      ]),
+    ],
+  },
+]
+```
+
+With the above configuration, the following sidebar will be generated:
+
+<SidebarPreview
+  config={[
+    {
+      label: 'Recent versions',
+      items: [
+        { label: '1.0.1' },
+        { label: '1.0.0' },
+        { label: '0.9.2' },
+        { label: '0.9.1' },
+        { label: '0.9.0' },
+        { label: '0.8.0' },
+        { label: '0.7.0' },
+        { label: '0.6.1' },
+        { label: '0.6.0' },
+        { label: '0.5.0' },
+      ],
+    },
+  ]}
+/>

@@ -1,0 +1,29 @@
+{props.children}
+
+**Type:** `string | Record<string, string>`  
+**Default:** `'Changelog'`
+
+The title of the changelog.
+
+The value can be a string, or for multilingual sites, an object with values for each different locale.
+
+```ts
+changelogsLoader([
+  {
+    title: 'Version History',
+  },
+])
+```
+
+When using the object form, the keys must be BCP-47 tags (e.g. `en`, `fr`, or `zh-CN`).
+
+```ts
+changelogsLoader([
+  {
+    title: {
+      en: 'Version History',
+      fr: 'Historique des versions',
+    },
+  },
+])
+```

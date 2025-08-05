@@ -1,0 +1,14 @@
+.astro
+.changeset
+.github/blocks
+.next
+.vercel
+.vscode-test
+.vscode-test-web
+build
+coverage
+dist
+dist-ssr
+fixtures
+out
+pnpm-lock.yaml

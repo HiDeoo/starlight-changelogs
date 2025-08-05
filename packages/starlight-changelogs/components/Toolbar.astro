@@ -1,0 +1,70 @@
+---
+import { LinkButton } from '@astrojs/starlight/components'
+
+import type { CommonProps } from '../libs/routing'
+
+import VersionList from './VersionList.astro'
+
+interface Props {
+  backLink?: string
+  compareLink?: string | undefined
+  link?:
+    | {
+        href: string
+        provider: string
+      }
+    | undefined
+  versions: CommonProps['versions']
+}
+
+const { backLink, compareLink, link, versions } = Astro.props
+---
+
+<div class="not-content">
+  <VersionList {versions} />
+
+  {
+    (backLink || compareLink || link) && (
+      <div class="links sl-flex">
+        {backLink && (
+          <LinkButton href={backLink} variant="secondary" icon="left-arrow" iconPlacement="start">
+            {Astro.locals.t('starlightChangelogs.versions.all')}
+          </LinkButton>
+        )}
+        {compareLink && (
+          <LinkButton class="compare" href={compareLink} variant="secondary" icon="external" iconPlacement="start">
+            {Astro.locals.t('starlightChangelogs.compare.label')}
+          </LinkButton>
+        )}
+        {link && (
+          <LinkButton href={link.href} variant="secondary" icon="external" iconPlacement="start">
+            {Astro.locals.t('starlightChangelogs.version.open', { provider: link.provider })}
+          </LinkButton>
+        )}
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .links {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-block-start: 1rem;
+  }
+
+  .links :global(a) {
+    font-size: var(--sl-text-sm);
+    margin-block: 0;
+    margin-inline-end: 0;
+    padding: 0.4375rem 1.125rem;
+  }
+
+  .links :global(a:not(:is(:hover, :focus))) {
+    color: var(--sl-color-text);
+  }
+
+  a.compare :global(svg) {
+    transform: rotate(135deg);
+  }
+</style>

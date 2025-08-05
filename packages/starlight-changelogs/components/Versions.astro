@@ -1,0 +1,55 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import { render } from 'astro:content'
+
+import { getLink, type PaginationLink } from '../libs/link'
+import { getVersionPath, type VersionsProps } from '../libs/routing'
+import { getChangelogTitle } from '../libs/title'
+
+import Title from './Title.astro'
+import Toolbar from './Toolbar.astro'
+
+type Props = VersionsProps
+
+const { changelog, entries, locale, pagination, versions } = Astro.props
+
+function translatePaginationLink(type: 'prev' | 'next', link: PaginationLink | undefined): PaginationLink | undefined {
+  if (!link) return link
+  return {
+    ...link,
+    label: Astro.locals.t(
+      type === 'next' ? 'starlightChangelogs.pagination.next' : 'starlightChangelogs.pagination.prev',
+    ),
+  }
+}
+---
+
+<StarlightPage
+  frontmatter={{
+    next: translatePaginationLink('next', pagination.next),
+    pagefind: changelog.pagefind,
+    prev: translatePaginationLink('prev', pagination.prev),
+    title: getChangelogTitle(changelog, locale),
+  }}
+  headings={entries.map((entry) => ({ depth: 2, slug: entry.data.slug, text: entry.data.title }))}
+>
+  <Toolbar {versions} />
+  {
+    entries.map(async (entry) => {
+      const { Content } = await render(entry)
+
+      return (
+        <>
+          <Title
+            date={entry.data.date}
+            id={entry.data.slug}
+            latest={entry.latest}
+            link={getLink(getVersionPath(entry, locale))}
+            title={entry.data.title}
+          />
+          <Content />
+        </>
+      )
+    })
+  }
+</StarlightPage>

@@ -1,0 +1,41 @@
+---
+import { Badge } from '@astrojs/starlight/components'
+
+interface Props {
+  date?: Date | undefined
+  id: string
+  latest: boolean
+  link?: string
+  title: string
+}
+
+const { date, id, latest, link, title } = Astro.props
+---
+
+<h2 id={id}>
+  {link ? <a href={link}>{title}</a> : title}{
+    latest && (
+      <>
+        {' '}
+        <Badge text="Latest" variant="note" />
+      </>
+    )
+  }
+</h2>
+{date && <time datetime={date.toISOString()}>{Astro.locals.t('starlightChangelogs.version.date', { date })}</time>}
+
+<style>
+  a {
+    text-decoration: none;
+  }
+
+  h2 :global(.sl-badge) {
+    font-size: var(--sl-text-sm);
+    overflow-wrap: anywhere;
+  }
+
+  time {
+    color: var(--sl-color-text);
+    font-size: var(--sl-text-sm);
+  }
+</style>

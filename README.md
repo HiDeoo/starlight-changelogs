@@ -1,1 +1,1 @@
-# starlight-changelogs
+packages/starlight-changelogs/README.md

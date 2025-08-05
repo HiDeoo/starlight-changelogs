@@ -1,0 +1,57 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import { render } from 'astro:content'
+import context from 'virtual:starlight-changelogs/context'
+
+import { getLink } from '../libs/link'
+import { getVersionPath, getVersionsPath, type CompareProps } from '../libs/routing'
+import { getChangelogTitle, getSiteTitle } from '../libs/title'
+
+import Title from './Title.astro'
+import Toolbar from './Toolbar.astro'
+
+type Props = CompareProps
+
+const { changelog, entries, entry, locale, versions } = Astro.props
+
+const changelogTitle = getChangelogTitle(changelog, locale)
+const compareTitle = Astro.locals.t('starlightChangelogs.compare.title', {
+  version: entry.data.title,
+})
+---
+
+<StarlightPage
+  frontmatter={{
+    head: [
+      {
+        tag: 'title',
+        content: `${compareTitle} ${context.titleDelimiter} ${changelogTitle} ${context.titleDelimiter} ${getSiteTitle(Astro.currentLocale)}`,
+      },
+    ],
+    next: entry.compare.pagination.next,
+    pagefind: changelog.pagefind,
+    prev: entry.compare.pagination.prev,
+    title: compareTitle,
+  }}
+  headings={entries.map((entry) => ({ depth: 2, slug: entry.data.slug, text: entry.data.title }))}
+>
+  <Toolbar backLink={getLink(getVersionsPath(changelog, locale))} {versions} />
+  {
+    entries.map(async (entry) => {
+      const { Content } = await render(entry)
+
+      return (
+        <>
+          <Title
+            date={entry.data.date}
+            id={entry.data.slug}
+            latest={entry.latest}
+            link={getLink(getVersionPath(entry, locale))}
+            title={entry.data.title}
+          />
+          <Content />
+        </>
+      )
+    })
+  }
+</StarlightPage>

@@ -1,0 +1,92 @@
+---
+import { Icon } from '@astrojs/starlight/components'
+
+import type { CommonProps } from '../libs/routing'
+
+interface Props {
+  versions: CommonProps['versions']
+}
+
+const { versions } = Astro.props
+---
+
+<starlight-changelogs-versions-list>
+  <form onsubmit="return false">
+    <label class="sr-only" for="find-version">{Astro.locals.t('starlightChangelogs.version.find')}</label>
+    <Icon class="sl-changelogs-version-list-icon" name="magnifier" />
+    <input
+      autocomplete="off"
+      id="find-version"
+      list="starlight-changelogs-versions"
+      placeholder={Astro.locals.t('starlightChangelogs.version.find')}
+      type="text"
+      required
+    />
+    <datalist id="starlight-changelogs-versions">
+      {versions.map(({ link, title }) => <option data-link={link} value={title} />)}
+    </datalist>
+  </form>
+</starlight-changelogs-versions-list>
+
+<style>
+  form {
+    position: relative;
+  }
+
+  .sl-changelogs-version-list-icon {
+    inset-block: 50%;
+    inset-inline-start: 0.625rem;
+    position: absolute;
+    transform: translateY(-50%);
+  }
+
+  input {
+    background-color: var(--sl-color-black);
+    background-color: var(--sl-color-gray-7, var(--sl-color-gray-6));
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.375rem;
+    color: var(--sl-color-white);
+    font-size: var(--sl-text-sm);
+    height: 2.5rem;
+    line-height: 1rem;
+    padding-inline: 2rem 0.5rem;
+    width: 100%;
+  }
+
+  input::placeholder {
+    color: var(--sl-color-gray-2);
+  }
+</style>
+
+<script>
+  customElements.define(
+    'starlight-changelogs-versions-list',
+    class StarlightChangelogsVersionSelect extends HTMLElement {
+      constructor() {
+        super()
+
+        const input = this.querySelector('input')
+        const list = this.querySelector('datalist')
+        if (!input || !list) return
+
+        input.addEventListener('input', (event) => {
+          if (!(event.target instanceof HTMLInputElement)) return
+
+          if (
+            (event instanceof InputEvent && event.inputType === 'insertReplacementText') ||
+            !(event instanceof InputEvent)
+          ) {
+            const value = event.target.value
+            const options = Array.from(list.options)
+
+            const option = options.find((option) => option.value === value)
+            if (!option) return
+
+            const link = option.dataset['link']
+            if (link) window.location.pathname = link
+          }
+        })
+      }
+    },
+  )
+</script>

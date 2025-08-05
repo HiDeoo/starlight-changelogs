@@ -1,0 +1,34 @@
+{props.children}
+
+**Type:** `({ name }: { name: string }) => string | undefined`
+
+Sets an optional function called for every version entry in the changelog which can be used to either modify the version title or filter out certain versions.
+
+The function receives the version title found in the changelog and can use it to return an updated title or `undefined` to filter out this specific version.
+
+Filtering out versions can be useful for example when using the GitHub provider on a monorepo publishing releases for multiple packages, and only changes for a specific package should be shown in the changelog.
+
+For example, considering a changelog with the following version titles:
+
+- `v1.0.1`
+- `v1.0.1-beta.1`
+- `v1.0.0`
+- `v0.1.1`
+- `v0.1.0`
+
+The following example will filter out the beta version and strip the `v` prefix from the version titles:
+
+```ts
+changelogsLoader([
+  {
+    process: ({ title }) => {
+      // If the version title contains "-beta", filter it out.
+      if (title.includes('-beta')) return
+
+      // Otherwise, strip the "v" prefix from the version title,
+      // e.g. "v1.0.0" becomes "1.0.0".
+      return title.replace(/^v/, '')
+    },
+  },
+])
+```

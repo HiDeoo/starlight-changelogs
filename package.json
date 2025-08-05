@@ -1,0 +1,48 @@
+{
+  "name": "starlight-changelogs-monorepo",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "Starlight plugin to display changelogs alongside your project documentation.",
+  "author": "HiDeoo <github@hideoo.dev> (https://hideoo.dev)",
+  "type": "module",
+  "scripts": {
+    "test": "pnpm --stream -r test",
+    "lint": "astro check --noSync && pnpm -r lint",
+    "format": "prettier -w --cache --ignore-unknown .",
+    "version": "pnpm changeset version && pnpm i --no-frozen-lockfile"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@changesets/changelog-github": "^0.5.1",
+    "@changesets/cli": "^2.29.5",
+    "@hideoo/eslint-config": "^4.0.0",
+    "@hideoo/prettier-config": "^2.0.0",
+    "@hideoo/tsconfig": "^2.0.1",
+    "astro": "^5.12.6",
+    "eslint": "^9.32.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=18.17.1"
+  },
+  "packageManager": "pnpm@10.13.1",
+  "private": true,
+  "sideEffects": false,
+  "keywords": [
+    "starlight",
+    "changelogs",
+    "changesets",
+    "github",
+    "release",
+    "documentation",
+    "astro"
+  ],
+  "homepage": "https://github.com/HiDeoo/starlight-changelogs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HiDeoo/starlight-changelogs.git"
+  },
+  "bugs": "https://github.com/HiDeoo/starlight-changelogs/issues"
+}

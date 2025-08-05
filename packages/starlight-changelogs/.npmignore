@@ -1,0 +1,4 @@
+.eslintcache
+eslint.config.mjs
+tests
+vitest.config.ts
