@@ -79,7 +79,7 @@ async function fetchGitHubReleases(config: GitHubProviderConfig, { meta }: Loade
       const data: unknown = await response.json()
       const parsedData = GitHubApiReleasesSchema.parse(data)
 
-      storeConditionalHeaders({ headers: response.headers, meta })
+      if (!page) storeConditionalHeaders({ headers: response.headers, meta })
 
       for (const release of parsedData) {
         const parsedVersion = parseGitHubReleaseVersion(config, release)

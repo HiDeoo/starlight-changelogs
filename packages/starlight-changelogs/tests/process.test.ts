@@ -9,7 +9,7 @@ const store = mockStore()
 const baseConfig = {
   provider: 'changeset',
   base: 'test',
-  path: '../../../fixtures/changeset/changelog-github-starlight.md',
+  changelog: '../../../fixtures/changeset/changelog-github-starlight.md',
   pagefind: false,
   pageSize: 5,
   title: 'Test',
