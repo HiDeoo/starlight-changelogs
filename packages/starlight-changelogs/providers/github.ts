@@ -16,8 +16,8 @@ export const GitHubProviderConfigSchema = ProviderBaseConfigSchema.extend({
   /** The name of the GitHub repository containing releases to load. */
   repo: z.string(),
   /**
-   * An optional GitHub fine-grained access token to use for loading releases.
-   * This can be used to access private repositories or to increase the rate limit for public repositories.
+   * An optional GitHub fine-grained access token to use for loading releases which can be used to access private
+   * repositories or to increase the rate limit for public repositories.
    *
    * The token should have the `Contents` repository permission (read).
    *

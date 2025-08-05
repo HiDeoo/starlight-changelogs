@@ -1,0 +1,16 @@
+{props.children}
+
+**Required**  
+**Type:** `string`
+
+Set the base path to use for this changelog.
+
+For example, setting this option to `changelog` will result in the changelog version list being available at `/changelog/` and a version entry at `/changelog/versions/0.1.0/`.
+
+```ts
+changelogsLoader([
+  {
+    base: 'changelog',
+  },
+])
+```

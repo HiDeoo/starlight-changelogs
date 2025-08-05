@@ -31,7 +31,7 @@ export const ProviderBaseConfigSchema = z.object({
    * `undefined` to filter out this specific version.
    *
    * Filtering out versions can be useful for example when using the GitHub provider on a monorepo publishing releases
-   * for multiple packages, but you only want to show the changelog for a specific package.
+   * for multiple packages, and only changes for a specific package should be shown in the changelog.
    */
   process: z
     .function()

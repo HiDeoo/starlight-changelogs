@@ -1,0 +1,79 @@
+---
+title: Internationalization (i18n)
+description: Learn how internationalization works with the Starlight Changelogs plugin.
+---
+
+Starlight Changelogs relies on Starlight's built-in support for [internationalization](https://starlight.astro.build/guides/i18n/) to provide multilingual support for changelogs in your documentation.
+
+See the [Starlight internationalization documentation](https://starlight.astro.build/guides/i18n/) for more information on how to configure i18n in your Starlight website.
+
+## Translate changelog titles
+
+By default, changelog titles default to `'Changelog'` and can be customized using the `title` property in the configuration of the provider used to load the changelog file.
+To provide a different title for different languages, you can pass an object to the `title` configuration option.
+
+```ts title="src/content.config.ts" del={14} ins={15-18}
+import { docsLoader } from '@astrojs/starlight/loaders'
+import { docsSchema } from '@astrojs/starlight/schema'
+import { defineCollection } from 'astro:content'
+import { changelogsLoader } from 'starlight-changelogs/loader'
+
+export const collections = {
+  docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
+  changelogs: defineCollection({
+    loader: changelogsLoader([
+      {
+        provider: 'changeset',
+        base: 'changelog',
+        changelog: '../packages/my-packages/CHANGELOG.md',
+        title: 'Version History',
+        title: {
+          en: 'Version History',
+          fr: 'Historique des versions',
+        },
+      },
+    ]),
+  }),
+}
+```
+
+## Translate changelog sidebar links
+
+[Changelog sidebar links](/guides/changelog-links/#sidebar-links) generated using the `makeChangelogsSidebarLinks()` helper function can also be translated by passing an object to the `title` property of the sidebar link configuration.
+
+```js title="astro.config.mjs"  del={16} ins={17-20}
+// @ts-check
+import starlight from '@astrojs/starlight'
+import { defineConfig } from 'astro/config'
+import starlightChangelogs, { makeChangelogsSidebarLinks } from 'starlight-changelogs'
+
+export default defineConfig({
+  integrations: [
+    starlight({
+      plugins: [starlightChangelogs()],
+      title: 'My Docs',
+      sidebar: [
+        ...makeChangelogsSidebarLinks([
+          {
+            type: 'all',
+            base: 'changelog',
+            label: 'Version History',
+            label: {
+              en: 'Version History',
+              fr: 'Historique des versions',
+            },
+          },
+        ]),
+      ],
+    }),
+  ],
+})
+```
+
+## Translate the UI
+
+The Starlight Changelogs plugin allows you to translate the default UI strings used by the plugin so that generated changelog pages can be fully localized and readers can enjoy a seamless experience in their preferred language.
+
+import { I18n } from '@hideoo/starlight-plugins-docs-components'
+
+<I18n label="Starlight Changelogs" translations={import('../../../../../packages/starlight-changelogs/translations')} />

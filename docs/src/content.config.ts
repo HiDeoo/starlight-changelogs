@@ -9,22 +9,20 @@ export const collections = {
     loader: changelogsLoader([
       {
         provider: 'changeset',
-        base: 'test',
+        base: 'demo/starlight',
+        changelog: '../fixtures/changeset/changelog-github-starlight.md',
+        title: 'Starlight Changelog',
         pagefind: false,
-        path: '../fixtures/changeset/changelog-github-starlight.md',
-        process: ({ title }) => {
-          if (!title.endsWith('.0')) return
-          return title + ' processed'
-        },
       },
       {
         provider: 'github',
-        base: 'test2',
+        base: 'demo/starlight-blog',
         owner: 'hideoo',
         repo: 'starlight-blog',
+        title: 'Starlight Blog Changelog',
         token: import.meta.env.GITHUB_API_TOKEN,
+        pagefind: false,
         process: ({ title }) => {
-          // if (!title.endsWith('.0')) return
           return title.replace(/^(?:starlight-blog@|v)/, '')
         },
       },
