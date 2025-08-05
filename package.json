@@ -31,7 +31,13 @@
   "private": true,
   "sideEffects": false,
   "keywords": [
-    "// TODO(HiDeoo)"
+    "starlight",
+    "changelogs",
+    "changesets",
+    "github",
+    "release",
+    "documentation",
+    "astro"
   ],
   "homepage": "https://github.com/HiDeoo/starlight-changelogs",
   "repository": {
