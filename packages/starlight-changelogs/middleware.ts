@@ -14,7 +14,17 @@ export const onRequest = defineRouteMiddleware(({ locals, url }) => {
   const { starlightRoute } = locals
 
   starlightRoute.sidebar = updateSidebar(url, starlightRoute.sidebar, starlightRoute.locale)
+
+  if (starlightRoute.pagination.prev) updatePaginationLink(starlightRoute.pagination.prev, starlightRoute.locale)
+  if (starlightRoute.pagination.next) updatePaginationLink(starlightRoute.pagination.next, starlightRoute.locale)
 })
+
+function updatePaginationLink(link: NonNullable<StarlightRouteData['pagination']['prev']>, locale: Locale) {
+  const config = getChangelogsSidebarLinkConfig(link, locale)
+  if (!config || config.type === 'recent') return
+
+  link.label = config.label
+}
 
 function updateSidebar(url: URL, items: StarlightRouteData['sidebar'], locale: Locale): StarlightRouteData['sidebar'] {
   const updatedItems: StarlightRouteData['sidebar'] = []

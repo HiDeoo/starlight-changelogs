@@ -31,18 +31,25 @@ export default defineConfig({
           label: 'Demo',
           items: [
             'demo/overview',
-            ...makeChangelogsSidebarLinks([{ base: 'demo/starlight', label: 'Starlight Changelog', type: 'all' }]),
             {
-              label: 'Starlight Blog',
+              label: 'Starlight',
               items: [
                 ...makeChangelogsSidebarLinks([
-                  { base: 'demo/starlight-blog', label: 'Latest version', type: 'latest' },
+                  {
+                    base: 'demo/starlight',
+                    label: {
+                      en: 'Version History',
+                      fr: 'Historique des versions',
+                    },
+                    type: 'all',
+                  },
+                  { base: 'demo/starlight', label: 'Latest version', type: 'latest' },
                 ]),
-                {
-                  label: 'Recent versions',
-                  items: [...makeChangelogsSidebarLinks([{ base: 'demo/starlight-blog', type: 'recent' }])],
-                },
               ],
+            },
+            {
+              label: 'Starlight Blog',
+              items: [...makeChangelogsSidebarLinks([{ base: 'demo/starlight-blog', type: 'recent' }])],
             },
           ],
         },
