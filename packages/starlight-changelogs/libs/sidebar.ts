@@ -58,7 +58,12 @@ export function makeChangelogsSidebarLinks(userConfig: SidebarLinkUserConfig) {
   }
 
   return parsedConfig.data.map((config) => ({
-    label: JSON.stringify(config.type === 'recent' ? 'Recent' : config.label),
+    label:
+      config.type === 'recent'
+        ? 'Recent'
+        : typeof config.label === 'string'
+          ? config.label
+          : JSON.stringify(config.label),
     link: ensureLeadingSlash(config.base),
     attrs: {
       'data-sl-changelogs-link-base': config.base,
