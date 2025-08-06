@@ -21,4 +21,15 @@ export const Translations = {
     'starlightChangelogs.version.title': 'Version {{version}}',
     'starlightChangelogs.versions.all': 'Toutes les versions',
   },
+  de: {
+    'starlightChangelogs.compare.label': 'Alle Versionen ab jetzt',
+    'starlightChangelogs.compare.title': 'Alle Versionen seit {{version}}',
+    'starlightChangelogs.pagination.next': 'Ältere Versionen',
+    'starlightChangelogs.pagination.prev': 'Neuere Versionen',
+    'starlightChangelogs.version.date': '{{date, datetime(dateStyle: medium)}}',
+    'starlightChangelogs.version.find': 'Eine Version finden',
+    'starlightChangelogs.version.open': 'Auf {{provider}} anschauen',
+    'starlightChangelogs.version.title': 'Version {{version}}',
+    'starlightChangelogs.versions.all': 'Alle Versionen',
+  },
 }
