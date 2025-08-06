@@ -1,5 +1,13 @@
 # starlight-changelogs
 
+## 0.1.1
+
+### Patch Changes
+
+- [#3](https://github.com/HiDeoo/starlight-changelogs/pull/3) [`d4a21ef`](https://github.com/HiDeoo/starlight-changelogs/commit/d4a21ef63507b75fe5f33b5d29a43782f63e171f) Thanks [@trueberryless](https://github.com/trueberryless)! - Adds German UI translations.
+
+- [#4](https://github.com/HiDeoo/starlight-changelogs/pull/4) [`9a075e2`](https://github.com/HiDeoo/starlight-changelogs/commit/9a075e292e108bfa981acd9482e03febdb15c59a) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Fixes an a pagination issue with changelog sidebar links in multilingual projects.
+
 ## 0.1.0
 
 ### Minor Changes
