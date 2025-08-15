@@ -14,6 +14,7 @@ const baseConfig = {
   base: 'test',
   owner: 'hideoo',
   repo: 'starlight-blog',
+  enabled: true,
   pagefind: false,
   pageSize: 5,
   title: 'Test',

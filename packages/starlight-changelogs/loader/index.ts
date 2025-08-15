@@ -30,6 +30,8 @@ export function changelogsLoader(userConfig: StarlightChangelogsLoaderUserConfig
       await saveLoaderConfig(astroConfig, serializedConfig)
 
       for (const changelog of config) {
+        if (!changelog.enabled) continue
+
         switch (changelog.provider) {
           case 'changeset': {
             await loadChangesetData(changelog, context)

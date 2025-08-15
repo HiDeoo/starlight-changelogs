@@ -10,6 +10,7 @@ const baseConfig = {
   provider: 'changeset',
   base: 'test',
   changelog: '../../../fixtures/changeset/changelog-github-starlight.md',
+  enabled: true,
   pagefind: false,
   pageSize: 5,
   title: 'Test',

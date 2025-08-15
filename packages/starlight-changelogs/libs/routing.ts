@@ -14,6 +14,8 @@ export async function getChangelogsStaticPaths() {
   const paths = []
 
   for (const changelog of config) {
+    if (!changelog.enabled) continue
+
     for (const localeKey of Object.keys(context.locales ?? { root: undefined })) {
       const locale = localeKey === 'root' ? undefined : localeKey
 

@@ -11,6 +11,16 @@ export const ProviderBaseConfigSchema = z.object({
    */
   base: z.string().transform((value) => stripLeadingAndTrailingSlash(value)),
   /**
+   * Defines whether this specific changelog is enabled.
+   *
+   * When set to `false`, changelog data will not be loaded and no changelog pages or sidebar links will be generated
+   * for this changelog.
+   * This can be useful to disable a changelog depending on some environment variable that may not always be available.
+   *
+   * @default true
+   */
+  enabled: z.boolean().default(true),
+  /**
    * Defines whether the changelog pages should be indexed by Pagefind, Starlight's default site search provider.
    *
    * @default true
@@ -56,6 +66,7 @@ export const ProviderBaseConfigSchema = z.object({
 
 export const SerializedProviderBaseConfigSchema = ProviderBaseConfigSchema.pick({
   base: true,
+  enabled: true,
   pagefind: true,
   pageSize: true,
   title: true,
