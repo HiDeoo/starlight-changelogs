@@ -48,6 +48,8 @@ function updateSidebar(url: URL, items: StarlightRouteData['sidebar'], locale: L
       )
     }
 
+    if (!loaderConfig.enabled) continue
+
     if (config.type === 'recent') {
       const baseEntries = entries.filter((entry) => entry.data.base === config.base)
       updatedItems.push(
