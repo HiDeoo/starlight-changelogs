@@ -1,5 +1,13 @@
 # starlight-changelogs
 
+## 0.2.0
+
+### Minor Changes
+
+- [#8](https://github.com/HiDeoo/starlight-changelogs/pull/8) [`0c258b7`](https://github.com/HiDeoo/starlight-changelogs/commit/0c258b7539f0eef75947c3c2d71178c29d055de4) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Adds a new `enabled` provider option, defaulting to `true`, to control whether a changelog is enabled or not.
+
+  When set to `false`, changelog data will not be loaded and no changelog pages or sidebar links will be generated for this changelog. This can be useful to disable a changelog depending on some environment variable that may not always be available.
+
 ## 0.1.1
 
 ### Patch Changes
