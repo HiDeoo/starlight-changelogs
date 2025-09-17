@@ -103,7 +103,7 @@ function parseGitHubReleaseVersion(
 ): VersionDataEntry | undefined {
   if (release.draft || release.prerelease) return
 
-  let title = release.name
+  let title = release.name ?? release.tag_name
 
   if (config.process) {
     const processedTitle = config.process({ title })
@@ -132,9 +132,10 @@ const GitHubApiReleasesSchema = z
     body: z.string(),
     draft: z.boolean(),
     html_url: z.string(),
-    name: z.string(),
+    name: z.string().nullable(),
     prerelease: z.boolean(),
     published_at: z.string().datetime(),
+    tag_name: z.string(),
   })
   .array()
 
