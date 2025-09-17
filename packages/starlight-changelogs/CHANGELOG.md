@@ -1,5 +1,13 @@
 # starlight-changelogs
 
+## 0.2.1
+
+### Patch Changes
+
+- [#13](https://github.com/HiDeoo/starlight-changelogs/pull/13) [`c0f65d1`](https://github.com/HiDeoo/starlight-changelogs/commit/c0f65d1231d67009a2730f89501ba0a0642b0ad9) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Fixes an issue with the GitHub provider and releases that don't have a name set.
+
+  When a release doesn't have a name, the tag name will now be used as a fallback for the version title.
+
 ## 0.2.0
 
 ### Minor Changes
