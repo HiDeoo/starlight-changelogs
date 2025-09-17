@@ -174,3 +174,31 @@ describe('cache', () => {
     expect(store.values().length).toBe(30)
   })
 })
+
+describe('`null` release name', async () => {
+  const fixture = await import('../../../fixtures/github/whiskers.json')
+
+  beforeAll(async () => {
+    store.clear()
+
+    server.use(
+      http.get('https://api.github.com/repos/hideoo/starlight-blog/releases', () => HttpResponse.json(fixture.default)),
+    )
+
+    await loadGitHubData(baseConfig, mockLoaderContext(store))
+  })
+
+  test('loads all versions', () => {
+    expect(store.values().length).toBe(14)
+  })
+
+  test('uses the tag name when the release name is `null`', () => {
+    const versions = store.values()
+
+    expect(fixture.default[3]?.name).toBeNull()
+
+    expect(versions[3]?.id).toBe('test/version/v2-3-0')
+    expect(versions[3]?.data.title).toBe('v2.3.0')
+    expect(versions[3]?.data.title).toBe(fixture.default[3]?.tag_name)
+  })
+})
