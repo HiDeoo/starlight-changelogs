@@ -2,6 +2,7 @@ import { getConditionalHeaders, storeConditionalHeaders } from '@ascorbic/loader
 import type { LoaderContext } from 'astro/loaders'
 import { z } from 'astro/zod'
 
+import { fetchFromLoader } from '../libs/net'
 import { throwPluginError } from '../libs/plugin'
 import type { VersionDataEntry } from '../loader/schema'
 import { slugifyVersion } from '../loader/utils'
@@ -54,7 +55,10 @@ async function syncData(
   }
 }
 
-async function fetchGitHubReleases(config: GitHubProviderConfig, { meta }: LoaderContext): Promise<GitHubApiResult> {
+async function fetchGitHubReleases(
+  config: GitHubProviderConfig,
+  { logger, meta }: LoaderContext,
+): Promise<GitHubApiResult> {
   let page: string | null = '1'
   const entries: VersionDataEntry[] = []
 
@@ -68,7 +72,10 @@ async function fetchGitHubReleases(config: GitHubProviderConfig, { meta }: Loade
     headers.set('X-GitHub-Api-Version', '2022-11-28')
     if (config.token) headers.set('Authorization', `Bearer ${config.token}`)
 
-    const response = await fetch(url, { headers: getConditionalHeaders({ init: headers, meta }) })
+    const result = await fetchFromLoader(url, getConditionalHeaders({ init: headers, meta }), logger)
+    if (!result.ok) return { modified: true, entries: [] }
+
+    const response = result.response
 
     if (response.status === 304) return { modified: false }
     if (!response.ok) throwPluginError(`Failed to fetch GitHub data: ${response.status} - ${response.statusText}`)

@@ -10,6 +10,7 @@ import { toMarkdown } from 'mdast-util-to-markdown'
 import { toString } from 'mdast-util-to-string'
 import { CONTINUE, SKIP, visit } from 'unist-util-visit'
 
+import { fetchFromLoader } from '../libs/net'
 import { throwPluginError } from '../libs/plugin'
 import type { VersionDataEntry } from '../loader/schema'
 import { slugifyVersion } from '../loader/utils'
@@ -55,7 +56,10 @@ export async function loadChangesetData(config: ChangesetProviderConfig, context
   })
 }
 
-async function getChangelogContent(pathOrUrl: string | URL, { meta }: LoaderContext): Promise<ChangelogContent> {
+async function getChangelogContent(
+  pathOrUrl: string | URL,
+  { logger, meta }: LoaderContext,
+): Promise<ChangelogContent> {
   if (typeof pathOrUrl === 'string') {
     if (!existsSync(pathOrUrl)) throwPluginError(`The provided changelog file path at ${pathOrUrl} does not exist.`)
 
@@ -66,7 +70,10 @@ async function getChangelogContent(pathOrUrl: string | URL, { meta }: LoaderCont
 
   const headers = new Headers()
 
-  const response = await fetch(pathOrUrl, { headers: getConditionalHeaders({ init: headers, meta }) })
+  const result = await fetchFromLoader(pathOrUrl, getConditionalHeaders({ init: headers, meta }), logger)
+  if (!result.ok) return { modified: true, content: '' }
+
+  const response = result.response
 
   if (response.status === 304) return { modified: false }
   if (!response.ok)
