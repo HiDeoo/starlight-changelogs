@@ -1,5 +1,11 @@
 # starlight-changelogs
 
+## 0.2.3
+
+### Patch Changes
+
+- [#19](https://github.com/HiDeoo/starlight-changelogs/pull/19) [`1994049`](https://github.com/HiDeoo/starlight-changelogs/commit/19940492630db66a45ebb8aad07f520dc2013d53) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Setups trusted publishing using OpenID Connect (OIDC) authentication — no code changes.
+
 ## 0.2.2
 
 ### Patch Changes
