@@ -1,6 +1,6 @@
 name: autofix.ci
 
-ppermissions: {}
+permissions: {}
 
 on:
   push:
