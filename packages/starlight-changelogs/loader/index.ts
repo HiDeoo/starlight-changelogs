@@ -5,6 +5,7 @@ import { throwPluginError } from '../libs/plugin'
 import { saveLoaderConfig, serializeLoaderConfig } from '../loader/config'
 import { loadChangesetData } from '../providers/changeset'
 import { loadGitHubData } from '../providers/github'
+import { loadKeepAChangelogData } from '../providers/keep-a-changelog'
 
 import { StarlightChangelogsLoaderConfigSchema, type StarlightChangelogsLoaderUserConfig } from './config'
 import { VersionEntrySchema } from './schema'
@@ -39,6 +40,10 @@ export function changelogsLoader(userConfig: StarlightChangelogsLoaderUserConfig
           }
           case 'github': {
             await loadGitHubData(changelog, context)
+            break
+          }
+          case 'keep-a-changelog': {
+            await loadKeepAChangelogData(changelog, context)
             break
           }
           default: {

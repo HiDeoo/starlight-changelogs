@@ -106,11 +106,13 @@ function parseMarkdown(config: MarkdownProviderConfig, content: string) {
 
   function addEntry(version: MarkdownVersion) {
     const parsedVersion = parseMarkdownVersion(config, version)
-    if (parsedVersion) entries.push(parsedVersion)
+    if (!parsedVersion) return
+    if (config.markdown.ignoredVersions?.includes(parsedVersion.title)) return
+    entries.push(parsedVersion)
   }
 
   visit(tree, (node) => {
-    if (node.type === 'heading' && node.depth === 2) {
+    if (node.type === 'heading' && node.depth === config.markdown.versionHeadingLevel) {
       if (version) addEntry(version)
       version = { title: toString(node).trim(), nodes: [] }
       return SKIP
@@ -131,8 +133,10 @@ function parseMarkdown(config: MarkdownProviderConfig, content: string) {
 function parseMarkdownVersion(config: MarkdownProviderConfig, version: MarkdownVersion): VersionDataEntry | undefined {
   let title = version.title
 
-  if (config.process) {
-    const processedTitle = config.process({ title })
+  const process = config.process ?? config.markdown.process
+
+  if (process) {
+    const processedTitle = process({ title })
     if (!processedTitle) return
     title = processedTitle
   }
@@ -149,7 +153,7 @@ function parseMarkdownVersion(config: MarkdownProviderConfig, version: MarkdownV
   }
 }
 
-interface MarkdownProviderConfig extends z.output<typeof ProviderBaseConfigSchema> {
+export interface MarkdownProviderConfig extends z.output<typeof ProviderBaseConfigSchema> {
   /**
    * The path or URL of the Markdown changelog file to load.
    *
@@ -157,6 +161,19 @@ interface MarkdownProviderConfig extends z.output<typeof ProviderBaseConfigSchem
    * When using a URL, it should point to a raw file that contains the changelog, e.g. a GitHub raw URL.
    */
   changelog: string
+  /** Markdown-specific configuration options for parsing the changelog. */
+  markdown: {
+    /** Version titles to ignore when parsing the changelog (applied after `process` function). */
+    ignoredVersions?: string[]
+    /**
+     * An optional default function called if no `process` function is defined in the main provider configuration.
+     *
+     * @see ProviderBaseConfigSchema
+     */
+    process?: z.output<typeof ProviderBaseConfigSchema>['process']
+    /** The heading level used to indicate version entries in the changelog. */
+    versionHeadingLevel: number
+  }
   /** The provider used for the associated changelog. */
   provider: VersionDataEntry['provider']
 }

@@ -1,7 +1,7 @@
 import type { LoaderContext } from 'astro/loaders'
 import { z } from 'astro/zod'
 
-import { loadMarkdownData } from './markdown'
+import { loadMarkdownData, type MarkdownProviderConfig } from './markdown'
 
 import { ProviderBaseConfigSchema } from '.'
 
@@ -17,10 +17,11 @@ export const ChangesetProviderConfigSchema = ProviderBaseConfigSchema.extend({
   provider: z.literal('changeset'),
 })
 
-const provider = { name: 'changeset', label: 'Changeset' } as const
+const provider: MarkdownProviderConfig['provider'] = { name: 'changeset', label: 'Changeset' }
+const markdown: MarkdownProviderConfig['markdown'] = { versionHeadingLevel: 2 }
 
 export async function loadChangesetData(config: ChangesetProviderConfig, context: LoaderContext) {
-  await loadMarkdownData({ ...config, provider }, context)
+  await loadMarkdownData({ ...config, markdown, provider }, context)
 }
 
 type ChangesetProviderConfig = z.output<typeof ChangesetProviderConfigSchema>

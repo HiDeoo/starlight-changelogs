@@ -34,7 +34,7 @@ export default defineConfig({
         },
         {
           label: 'Providers',
-          items: ['providers/changesets', 'providers/github'],
+          items: ['providers/changesets', 'providers/github', 'providers/keep-a-changelog'],
         },
         {
           label: 'Guides',

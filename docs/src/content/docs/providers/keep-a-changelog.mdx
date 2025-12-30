@@ -1,0 +1,122 @@
+---
+title: Keep a Changelog
+description: Learn how to display changelogs using the Keep a Changelog format with the Starlight Changelogs plugin.
+---
+
+The Starlight Changelogs plugin uses Astro’s [content collections](https://docs.astro.build/en/guides/content-collections/), which are configured in the `src/content.config.ts` file.
+The provided `changelogsLoader()` loader can be used to load one or more changelog files from different providers, including [Keep a Changelog](https://keepachangelog.com).
+
+[Unreleased versions](https://keepachangelog.com/en/1.1.0/#effort) are ignored and release dates are stripped from version titles by default.
+
+Changelog files using the Keep a Changelog format can be loaded by using the `provider: 'keep-a-changelog'` option.
+
+```ts title="src/content.config.ts" {10-13}
+import { docsLoader } from '@astrojs/starlight/loaders'
+import { docsSchema } from '@astrojs/starlight/schema'
+import { defineCollection } from 'astro:content'
+import { changelogsLoader } from 'starlight-changelogs/loader'
+
+export const collections = {
+  docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
+  changelogs: defineCollection({
+    loader: changelogsLoader([
+      {
+        provider: 'keep-a-changelog',
+        // Changelog options go here.
+      },
+    ]),
+  }),
+}
+```
+
+## Provider configuration
+
+The Keep a Changelog provider accepts the following configuration options:
+
+### `provider`
+
+**Required**  
+**Type:** `'keep-a-changelog'`
+
+Defines the provider to use for loading the changelog file.
+This should always be set to `'keep-a-changelog'` for the Keep a Changelog provider.
+
+```ts
+changelogsLoader([
+  {
+    provider: 'keep-a-changelog',
+  },
+])
+```
+
+import {
+  ProviderBase,
+  ProviderEnabled,
+  ProviderPagefind,
+  ProviderPageSize,
+  ProviderProcess,
+  ProviderTitle,
+} from '../../../partials/index.astro'
+
+<ProviderBase>
+
+### `base`
+
+</ProviderBase>
+
+### `changelog`
+
+**Required**  
+**Type:** `string`
+
+Defines the path or URL of the changelog file using the Keep a Changelog format to load.
+
+When using a path, it should be relative to the root of the Starlight project.
+
+```ts
+changelogsLoader([
+  {
+    changelog: '../packages/my-packages/CHANGELOG.md',
+  },
+])
+```
+
+When using a URL, it should point to a raw file that contains the changelog, e.g. a GitHub raw URL.
+
+```ts
+changelogsLoader([
+  {
+    changelog: 'https://raw.githubusercontent.com/olivierlacan/keep-a-changelog/refs/heads/main/CHANGELOG.md',
+  },
+])
+```
+
+<ProviderTitle>
+
+### `title`
+
+</ProviderTitle>
+
+<ProviderEnabled>
+
+### `enabled`
+
+</ProviderEnabled>
+
+<ProviderPageSize>
+
+### `pageSize`
+
+</ProviderPageSize>
+
+<ProviderPagefind>
+
+### `pagefind`
+
+</ProviderPagefind>
+
+<ProviderProcess>
+
+### `process`
+
+</ProviderProcess>
