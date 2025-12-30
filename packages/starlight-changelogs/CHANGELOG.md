@@ -1,5 +1,11 @@
 # starlight-changelogs
 
+## 0.3.0
+
+### Minor Changes
+
+- [#23](https://github.com/HiDeoo/starlight-changelogs/pull/23) [`5fc72d9`](https://github.com/HiDeoo/starlight-changelogs/commit/5fc72d942d55b99d1ab682bae6b077894427a707) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Adds the [Keep a Changelog provider](https://starlight-changelogs.netlify.app/providers/keep-a-changelog/) to load changelog files using the [Keep a Changelog](https://keepachangelog.com) format.
+
 ## 0.2.3
 
 ### Patch Changes
