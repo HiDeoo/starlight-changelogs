@@ -1,13 +1,12 @@
 ---
-title: GitHub
-description: Learn how to display changelogs generated from GitHub releases with the Starlight Changelogs plugin.
+title: Gitea
+description: Learn how to display changelogs generated from Gitea releases with the Starlight Changelogs plugin.
 ---
 
 The Starlight Changelogs plugin uses Astro’s [content collections](https://docs.astro.build/en/guides/content-collections/), which are configured in the `src/content.config.ts` file.
-The provided `changelogsLoader()` loader can be used to load one or more changelog files from different providers, including [GitHub releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases).
+The provided `changelogsLoader()` loader can be used to load one or more changelog files from different providers, including [Gitea releases](https://docs.gitea.com/administration/config-cheat-sheet?_highlight=releases#repository---release-repositoryrelease).
 
-GitHub releases can be loaded by using the `provider: 'github'` option.
-Note that the GitHub API can return a maximum of 1000 releases so if you have more versions than this limit, you will need to use another provider.
+Gitea releases can be loaded by using the `provider: 'gitea'` option.
 
 ```ts title="src/content.config.ts" {10-13}
 import { docsLoader } from '@astrojs/starlight/loaders'
@@ -20,7 +19,7 @@ export const collections = {
   changelogs: defineCollection({
     loader: changelogsLoader([
       {
-        provider: 'github',
+        provider: 'gitea',
         // Changelog options go here.
       },
     ]),
@@ -30,20 +29,20 @@ export const collections = {
 
 ## Provider configuration
 
-The GitHub provider accepts the following configuration options:
+The Gitea provider accepts the following configuration options:
 
 ### `provider`
 
 **Required**  
-**Type:** `'github'`
+**Type:** `'gitea'`
 
 Defines the provider to use for loading the releases.
-This should always be set to `'github'` for the GitHub provider.
+This should always be set to `'gitea'` for the Gitea provider.
 
 ```ts
 changelogsLoader([
   {
-    provider: 'github',
+    provider: 'gitea',
   },
 ])
 ```
@@ -68,7 +67,7 @@ import {
 **Required**  
 **Type:** `string`
 
-The owner of the GitHub repository containing releases to load.
+The owner of the Gitea repository containing releases to load.
 
 ```ts
 changelogsLoader([
@@ -83,12 +82,27 @@ changelogsLoader([
 **Required**  
 **Type:** `string`
 
-The name of the GitHub repository containing releases to load.
+The name of the Gitea repository containing releases to load.
 
 ```ts
 changelogsLoader([
   {
-    repo: 'starlight-changelogs',
+    repo: 'my-project',
+  },
+])
+```
+
+### `api`
+
+**Type:** `string`  
+**Default:** `'https://gitea.com/api/v1'`
+
+The Gitea API endpoint URL to use for loading releases.
+
+```ts
+changelogsLoader([
+  {
+    api: 'https://gitea.your.host/api/v1',
   },
 ])
 ```
@@ -97,14 +111,14 @@ changelogsLoader([
 
 **Type:** `string`
 
-An optional GitHub fine-grained access token to use for loading releases which can be used to access private repositories or to increase the rate limit for public repositories.
+An optional [Gitea API token](https://docs.gitea.com/development/api-usage#generating-and-listing-api-tokens) to use for loading releases which can be used to access private repositories.
 
-The token should have the [`Contents` repository permission (read)](https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#list-releases--fine-grained-access-tokens).
+The token should have the `repository` permission (read).
 
 ```ts
 changelogsLoader([
   {
-    token: import.meta.env.GH_API_TOKEN,
+    token: import.meta.env.GITEA_API_TOKEN,
   },
 ])
 ```

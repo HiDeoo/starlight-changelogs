@@ -46,6 +46,7 @@
     "changelogs",
     "changesets",
     "github",
+    "gitea",
     "release",
     "documentation",
     "astro"
