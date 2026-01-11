@@ -1,6 +1,6 @@
 {
   "name": "starlight-changelogs",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "license": "MIT",
   "description": "Starlight plugin to display changelogs alongside your project documentation.",
   "author": "HiDeoo <github@hideoo.dev> (https://hideoo.dev)",
