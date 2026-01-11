@@ -1,5 +1,15 @@
 # starlight-changelogs
 
+## 0.4.0
+
+### Minor Changes
+
+- [#26](https://github.com/HiDeoo/starlight-changelogs/pull/26) [`09b6afa`](https://github.com/HiDeoo/starlight-changelogs/commit/09b6afaa92765709edbb9a3877e9f1b536417b94) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Adds support for Gitea releases.
+
+### Patch Changes
+
+- [#29](https://github.com/HiDeoo/starlight-changelogs/pull/29) [`7e2135a`](https://github.com/HiDeoo/starlight-changelogs/commit/7e2135a71e89b6d3304df3dfd08c1bf9ea66e1b2) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Fixes an issue with the GitHub provider where release without a body would cause an error.
+
 ## 0.3.0
 
 ### Minor Changes
