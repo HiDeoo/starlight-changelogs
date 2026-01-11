@@ -21,6 +21,15 @@ export const GiteaProviderConfigSchema = ProviderBaseConfigSchema.extend({
   owner: z.string(),
   /** The type of provider used to load the changelog, `gitea` in this case. */
   provider: z.literal('gitea'),
+  /**
+   * An optional label to use for the provider instead of the default one.
+   *
+   * This can be useful when using a provider with a Gitea-compatible API like Codeberg. Such label is used in some
+   * parts of the UI to link to the provider website.
+   *
+   * @default 'Gitea'
+   */
+  providerLabel: z.string().default('Gitea'),
   /** The name of the Gitea repository containing releases to load. */
   repo: z.string(),
   /**
@@ -130,7 +139,7 @@ function parseGiteaReleaseVersion(
     base: config.base,
     date: release.published_at ? new Date(release.published_at) : undefined,
     link: release.html_url,
-    provider,
+    provider: config.providerLabel ? { ...provider, label: config.providerLabel } : provider,
     slug,
     title,
   }

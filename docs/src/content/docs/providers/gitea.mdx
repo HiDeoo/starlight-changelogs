@@ -152,3 +152,21 @@ changelogsLoader([
 ### `process`
 
 </ProviderProcess>
+
+### `providerLabel`
+
+**Type:** `string`  
+**Default:** `'Gitea'`
+
+An optional label to use for the provider instead of the default one.
+
+This can be useful when using a provider with a Gitea-compatible API like Codeberg.
+Such label is used in some parts of the UI to link to the provider website.
+
+```ts
+changelogsLoader([
+  {
+    providerLabel: 'Codeberg',
+  },
+])
+```

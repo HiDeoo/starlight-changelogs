@@ -11,6 +11,7 @@ const server = setupServer()
 
 const baseConfig = {
   provider: 'gitea',
+  providerLabel: 'Gitea',
   api: 'https://gitea.com/api/v1',
   base: 'test',
   owner: 'gitea',
