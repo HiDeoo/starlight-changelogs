@@ -1,0 +1,172 @@
+---
+title: Gitea
+description: Learn how to display changelogs generated from Gitea releases with the Starlight Changelogs plugin.
+---
+
+The Starlight Changelogs plugin uses Astro’s [content collections](https://docs.astro.build/en/guides/content-collections/), which are configured in the `src/content.config.ts` file.
+The provided `changelogsLoader()` loader can be used to load one or more changelog files from different providers, including [Gitea releases](https://docs.gitea.com/administration/config-cheat-sheet?_highlight=releases#repository---release-repositoryrelease).
+
+Gitea releases can be loaded by using the `provider: 'gitea'` option.
+
+```ts title="src/content.config.ts" {10-13}
+import { docsLoader } from '@astrojs/starlight/loaders'
+import { docsSchema } from '@astrojs/starlight/schema'
+import { defineCollection } from 'astro:content'
+import { changelogsLoader } from 'starlight-changelogs/loader'
+
+export const collections = {
+  docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
+  changelogs: defineCollection({
+    loader: changelogsLoader([
+      {
+        provider: 'gitea',
+        // Changelog options go here.
+      },
+    ]),
+  }),
+}
+```
+
+## Provider configuration
+
+The Gitea provider accepts the following configuration options:
+
+### `provider`
+
+**Required**  
+**Type:** `'gitea'`
+
+Defines the provider to use for loading the releases.
+This should always be set to `'gitea'` for the Gitea provider.
+
+```ts
+changelogsLoader([
+  {
+    provider: 'gitea',
+  },
+])
+```
+
+import {
+  ProviderBase,
+  ProviderEnabled,
+  ProviderPagefind,
+  ProviderPageSize,
+  ProviderProcess,
+  ProviderTitle,
+} from '../../../partials/index.astro'
+
+<ProviderBase>
+
+### `base`
+
+</ProviderBase>
+
+### `owner`
+
+**Required**  
+**Type:** `string`
+
+The owner of the Gitea repository containing releases to load.
+
+```ts
+changelogsLoader([
+  {
+    owner: 'hideoo',
+  },
+])
+```
+
+### `repo`
+
+**Required**  
+**Type:** `string`
+
+The name of the Gitea repository containing releases to load.
+
+```ts
+changelogsLoader([
+  {
+    repo: 'my-project',
+  },
+])
+```
+
+### `api`
+
+**Type:** `string`  
+**Default:** `'https://gitea.com/api/v1'`
+
+The Gitea API endpoint URL to use for loading releases.
+
+```ts
+changelogsLoader([
+  {
+    api: 'https://gitea.your.host/api/v1',
+  },
+])
+```
+
+### `token`
+
+**Type:** `string`
+
+An optional [Gitea API token](https://docs.gitea.com/development/api-usage#generating-and-listing-api-tokens) to use for loading releases which can be used to access private repositories.
+
+The token should have the `repository` permission (read).
+
+```ts
+changelogsLoader([
+  {
+    token: import.meta.env.GITEA_API_TOKEN,
+  },
+])
+```
+
+<ProviderTitle>
+
+### `title`
+
+</ProviderTitle>
+
+<ProviderEnabled>
+
+### `enabled`
+
+</ProviderEnabled>
+
+<ProviderPageSize>
+
+### `pageSize`
+
+</ProviderPageSize>
+
+<ProviderPagefind>
+
+### `pagefind`
+
+</ProviderPagefind>
+
+<ProviderProcess>
+
+### `process`
+
+</ProviderProcess>
+
+### `providerLabel`
+
+**Type:** `string`  
+**Default:** `'Gitea'`
+
+An optional label to use for the provider instead of the default one.
+
+This can be useful when using a provider with a Gitea-compatible API like Codeberg.
+Such label is used in some parts of the UI to link to the provider website.
+
+```ts
+changelogsLoader([
+  {
+    providerLabel: 'Codeberg',
+  },
+])
+```
