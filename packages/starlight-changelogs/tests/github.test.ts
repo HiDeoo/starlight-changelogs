@@ -202,3 +202,30 @@ describe('`null` release name', async () => {
     expect(versions[3]?.data.title).toBe(fixture.default[3]?.tag_name)
   })
 })
+
+describe('`null` release body', async () => {
+  const fixture = await import('../../../fixtures/github/null-body.json')
+
+  beforeAll(async () => {
+    store.clear()
+
+    server.use(
+      http.get('https://api.github.com/repos/hideoo/starlight-blog/releases', () => HttpResponse.json(fixture.default)),
+    )
+
+    await loadGitHubData(baseConfig, mockLoaderContext(store))
+  })
+
+  test('loads all versions', () => {
+    expect(store.values().length).toBe(2)
+  })
+
+  test('uses an empty string when the release name is `null`', () => {
+    const versions = store.values()
+
+    expect(fixture.default[1]?.body).toBeNull()
+
+    expect(versions[1]?.id).toBe('test/version/starlight-blog-0-23-2')
+    expect(versions[1]?.body).toBe('')
+  })
+})

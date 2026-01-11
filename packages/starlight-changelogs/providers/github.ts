@@ -136,7 +136,10 @@ const GitHubApiResponseNextPageRegex = /(?<=<)(?:[\S]*?)[&|?]page=(\d+)(?:[\S]*?
 
 const GitHubApiReleasesSchema = z
   .object({
-    body: z.string(),
+    body: z
+      .string()
+      .nullable()
+      .transform((val) => val ?? ''),
     draft: z.boolean(),
     html_url: z.string(),
     name: z.string().nullable(),
