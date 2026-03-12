@@ -55,7 +55,7 @@ async function syncData(pathOrUrl: string | URL, config: MarkdownProviderConfig,
       const existingEntry = store.get(id)
 
       const digest = generateDigest({ id, content: body })
-      if (existingEntry && existingEntry.digest === digest) continue
+      if (existingEntry?.digest === digest) continue
 
       const parsedData = await parseData({ id, data })
 
@@ -104,16 +104,18 @@ function parseMarkdown(config: MarkdownProviderConfig, content: string) {
 
   let version: MarkdownVersion | undefined
 
-  function addEntry(version: MarkdownVersion) {
-    const parsedVersion = parseMarkdownVersion(config, version)
+  function addEntry(version: MarkdownVersion, index: number) {
+    const parsedVersion = parseMarkdownVersion(config, version, index)
     if (!parsedVersion) return
     if (config.markdown.ignoredVersions?.includes(parsedVersion.title)) return
     entries.push(parsedVersion)
   }
 
+  let versionIndex = 0
+
   visit(tree, (node) => {
     if (node.type === 'heading' && node.depth === config.markdown.versionHeadingLevel) {
-      if (version) addEntry(version)
+      if (version) addEntry(version, versionIndex++)
       version = { title: toString(node).trim(), nodes: [] }
       return SKIP
     }
@@ -125,12 +127,16 @@ function parseMarkdown(config: MarkdownProviderConfig, content: string) {
     return SKIP
   })
 
-  if (version) addEntry(version)
+  if (version) addEntry(version, versionIndex)
 
   return entries
 }
 
-function parseMarkdownVersion(config: MarkdownProviderConfig, version: MarkdownVersion): VersionDataEntry | undefined {
+function parseMarkdownVersion(
+  config: MarkdownProviderConfig,
+  version: MarkdownVersion,
+  index: number,
+): VersionDataEntry | undefined {
   let title = version.title
 
   const process = config.process ?? config.markdown.process
@@ -147,6 +153,7 @@ function parseMarkdownVersion(config: MarkdownProviderConfig, version: MarkdownV
     id,
     body: toMarkdown({ type: 'root', children: version.nodes as RootContent[] }),
     base: config.base,
+    index,
     provider: config.provider,
     slug,
     title,

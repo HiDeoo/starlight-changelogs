@@ -89,7 +89,7 @@ async function fetchGitHubReleases(
       if (!page) storeConditionalHeaders({ headers: response.headers, meta })
 
       for (const release of parsedData) {
-        const parsedVersion = parseGitHubReleaseVersion(config, release)
+        const parsedVersion = parseGitHubReleaseVersion(config, release, entries.length)
         if (parsedVersion) entries.push(parsedVersion)
       }
     } catch (error) {
@@ -107,6 +107,7 @@ function getGitHubApiResponseNextPage(response: Response): string | null {
 function parseGitHubReleaseVersion(
   config: GitHubProviderConfig,
   release: GitHubApiReleases[number],
+  index: number,
 ): VersionDataEntry | undefined {
   if (release.draft || release.prerelease) return
 
@@ -125,6 +126,7 @@ function parseGitHubReleaseVersion(
     body: release.body,
     base: config.base,
     date: release.published_at ? new Date(release.published_at) : undefined,
+    index,
     link: release.html_url,
     provider,
     slug,
@@ -144,7 +146,7 @@ const GitHubApiReleasesSchema = z
     html_url: z.string(),
     name: z.string().nullable(),
     prerelease: z.boolean(),
-    published_at: z.string().datetime(),
+    published_at: z.iso.datetime(),
     tag_name: z.string(),
   })
   .array()

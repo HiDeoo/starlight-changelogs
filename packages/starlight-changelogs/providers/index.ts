@@ -44,14 +44,15 @@ export const ProviderBaseConfigSchema = z.object({
    * for multiple packages, and only changes for a specific package should be shown in the changelog.
    */
   process: z
-    .function()
-    .args(
-      z.object({
-        /** The version title found in the changelog. */
-        title: z.string(),
-      }),
-    )
-    .returns(z.union([z.string(), z.undefined(), z.void()]))
+    .function({
+      input: [
+        z.object({
+          /** The version title found in the changelog. */
+          title: z.string(),
+        }),
+      ],
+      output: z.union([z.string(), z.undefined(), z.void()]),
+    })
     .optional(),
   /**
    * The title of the changelog.
@@ -61,7 +62,7 @@ export const ProviderBaseConfigSchema = z.object({
    *
    * @default 'Changelog'
    */
-  title: z.union([z.string(), z.record(z.string())]).default('Changelog'),
+  title: z.union([z.string(), z.record(z.string(), z.string())]).default('Changelog'),
 })
 
 export const SerializedProviderBaseConfigSchema = ProviderBaseConfigSchema.pick({
