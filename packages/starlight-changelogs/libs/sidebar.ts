@@ -22,7 +22,7 @@ const sidebarLinkConfigSchema = z
        * The value can be a string, or for multilingual sites, an object with values for each different locale. When
        * using the object form, the keys must be BCP-47 tags (e.g. `en`, `fr`, or `zh-CN`).
        */
-      label: z.union([z.string(), z.record(z.string())]),
+      label: z.union([z.string(), z.record(z.string(), z.string())]),
     }),
     sidebarLinkBaseConfigSchema.extend({
       /** The type of link, `all` in this case to link to the changelog latest version. */
@@ -33,7 +33,7 @@ const sidebarLinkConfigSchema = z
        * The value can be a string, or for multilingual sites, an object with values for each different locale. When
        * using the object form, the keys must be BCP-47 tags (e.g. `en`, `fr`, or `zh-CN`).
        */
-      label: z.union([z.string(), z.record(z.string())]),
+      label: z.union([z.string(), z.record(z.string(), z.string())]),
     }),
     sidebarLinkBaseConfigSchema.extend({
       /** The type of links, `recent` in this case to link to multiple recent versions. */

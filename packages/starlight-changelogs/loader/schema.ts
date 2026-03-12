@@ -5,8 +5,10 @@ export const VersionEntrySchema = z.object({
   base: z.string(),
   /** An optional date for the version entry, if available. */
   date: z.date().optional(),
+  /** An index used to define the order of the version entries, with `0` being the latest version. */
+  index: z.number(),
   /** An optional link to the version source for remote providers, e.g. GitHub. */
-  link: z.string().url().optional(),
+  link: z.url().optional(),
   /** The provider used for the associated changelog. */
   provider: z.object({
     /** The name of the provider. */

@@ -1,14 +1,14 @@
 import { defineRouteMiddleware, type StarlightRouteData } from '@astrojs/starlight/route-data'
 import { AstroError } from 'astro/errors'
-import { getCollection } from 'astro:content'
 import { getLoaderConfig } from 'virtual:starlight-changelogs/config'
 
+import { getChangelogs } from './libs/data'
 import { getI18nLabel, getPathWithLocale, type Locale } from './libs/i18n'
 import { getLink } from './libs/link'
 import { stripLeadingAndTrailingSlash } from './libs/path'
 import type { SidebarLinkConfig } from './libs/sidebar'
 
-const entries = await getCollection('changelogs')
+const entries = await getChangelogs()
 
 export const onRequest = defineRouteMiddleware(({ locals, url }) => {
   const { starlightRoute } = locals

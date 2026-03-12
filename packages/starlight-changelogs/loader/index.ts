@@ -1,4 +1,5 @@
 import type { Loader } from 'astro/loaders'
+import { z } from 'astro/zod'
 import { setLoaderConfig } from 'virtual:starlight-changelogs/config'
 
 import { throwPluginError } from '../libs/plugin'
@@ -11,7 +12,7 @@ import { loadKeepAChangelogData } from '../providers/keep-a-changelog'
 import { StarlightChangelogsLoaderConfigSchema, type StarlightChangelogsLoaderUserConfig } from './config'
 import { VersionEntrySchema } from './schema'
 
-export function changelogsLoader(userConfig: StarlightChangelogsLoaderUserConfig): Loader {
+export function changelogsLoader(userConfig: StarlightChangelogsLoaderUserConfig) {
   const parsedConfig = StarlightChangelogsLoaderConfigSchema.safeParse(userConfig)
 
   return {
@@ -20,9 +21,10 @@ export function changelogsLoader(userConfig: StarlightChangelogsLoaderUserConfig
       const { config: astroConfig } = context
 
       if (!parsedConfig.success) {
-        throwPluginError(
-          `The provided starlight-changelogs loader configuration is invalid.\n${parsedConfig.error.issues.map((issue) => issue.message).join('\n')}`,
-        )
+        throwPluginError(`Invalid starlight-changelogs loader configuration:
+
+${z.prettifyError(parsedConfig.error)}
+`)
       }
 
       const config = parsedConfig.data
@@ -61,5 +63,5 @@ export function changelogsLoader(userConfig: StarlightChangelogsLoaderUserConfig
       }
     },
     schema: VersionEntrySchema,
-  }
+  } satisfies Loader
 }

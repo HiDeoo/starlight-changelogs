@@ -16,7 +16,7 @@ export const GiteaProviderConfigSchema = ProviderBaseConfigSchema.extend({
    *
    * @default 'https://gitea.com/api/v1'
    */
-  api: z.string().url().default('https://gitea.com/api/v1').transform(stripTrailingSlash),
+  api: z.url().default('https://gitea.com/api/v1').transform(stripTrailingSlash),
   /** The owner of the Gitea repository containing releases to load. */
   owner: z.string(),
   /** The type of provider used to load the changelog, `gitea` in this case. */
@@ -102,7 +102,7 @@ async function fetchGiteaReleases(
       if (!page) storeConditionalHeaders({ headers: response.headers, meta })
 
       for (const release of parsedData) {
-        const parsedVersion = parseGiteaReleaseVersion(config, release)
+        const parsedVersion = parseGiteaReleaseVersion(config, release, entries.length)
         if (parsedVersion) entries.push(parsedVersion)
       }
     } catch (error) {
@@ -120,6 +120,7 @@ function getGiteaApiResponseNextPage(response: Response): string | null {
 function parseGiteaReleaseVersion(
   config: GiteaProviderConfig,
   release: GiteaApiReleases[number],
+  index: number,
 ): VersionDataEntry | undefined {
   if (release.draft || release.prerelease) return
 
@@ -138,6 +139,7 @@ function parseGiteaReleaseVersion(
     body: release.body,
     base: config.base,
     date: release.published_at ? new Date(release.published_at) : undefined,
+    index,
     link: release.html_url,
     provider: config.providerLabel ? { ...provider, label: config.providerLabel } : provider,
     slug,
@@ -154,7 +156,7 @@ const GiteaApiReleasesSchema = z
     html_url: z.string(),
     name: z.string().nullable(),
     prerelease: z.boolean(),
-    published_at: z.string().datetime({ offset: true }),
+    published_at: z.iso.datetime({ offset: true }),
     tag_name: z.string(),
   })
   .array()

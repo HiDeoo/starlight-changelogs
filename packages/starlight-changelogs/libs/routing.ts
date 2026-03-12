@@ -1,10 +1,10 @@
 import type { GetStaticPathsResult } from 'astro'
-import { getCollection, type CollectionEntry } from 'astro:content'
 import { getLoaderConfig } from 'virtual:starlight-changelogs/config'
 import context from 'virtual:starlight-changelogs/context'
 
 import type { ProviderBaseConfig } from '../providers'
 
+import { getChangelogs, type ChangelogsCollectionEntry } from './data'
 import { getPathWithLocale, type Locale } from './i18n'
 import { getLink, type PaginationLinks } from './link'
 
@@ -42,7 +42,7 @@ export async function getChangelogsStaticPaths() {
 }
 
 async function getVersionEntries(changelog: ProviderBaseConfig, locale: Locale): Promise<ChangelogEntry[]> {
-  const entries = await getCollection('changelogs', ({ data }) => data.base === changelog.base)
+  const entries = await getChangelogs(({ data }) => data.base === changelog.base)
 
   return entries.map((entry, index) => {
     const prevEntry = entries[index - 1]
@@ -184,15 +184,15 @@ export function getVersionsPath(changelog: ProviderBaseConfig, locale: Locale, i
   return index ? `${getPathWithLocale(changelog.base, locale)}/${index + 1}` : getPathWithLocale(changelog.base, locale)
 }
 
-export function getVersionPath(entry: CollectionEntry<'changelogs'>, locale: Locale) {
+export function getVersionPath(entry: ChangelogsCollectionEntry, locale: Locale) {
   return getPathWithLocale(entry.id, locale)
 }
 
-export function getComparePath(entry: CollectionEntry<'changelogs'>, locale: Locale) {
+export function getComparePath(entry: ChangelogsCollectionEntry, locale: Locale) {
   return getPathWithLocale(`${entry.id}...latest`, locale)
 }
 
-type ChangelogEntry = CollectionEntry<'changelogs'> & {
+type ChangelogEntry = ChangelogsCollectionEntry & {
   latest: boolean
   pagination: PaginationLinks
   compare: {
