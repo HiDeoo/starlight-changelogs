@@ -1,5 +1,15 @@
 # starlight-changelogs
 
+## 0.5.0
+
+### Minor Changes
+
+- [#31](https://github.com/HiDeoo/starlight-changelogs/pull/31) [`1de638d`](https://github.com/HiDeoo/starlight-changelogs/commit/1de638dc72c16bb0b9d2e94879c707c74da1ea5a) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Adds support for Astro v6, drops support for Astro v5.
+
+  ⚠️ **BREAKING CHANGE:** The minimum supported version of Starlight is now `0.38.0`.
+
+  Please follow the [upgrade guide](https://github.com/withastro/starlight/releases/tag/%40astrojs%2Fstarlight%400.38.0) to update your project.
+
 ## 0.4.0
 
 ### Minor Changes
