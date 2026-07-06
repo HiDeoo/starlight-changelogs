@@ -42,7 +42,7 @@ export function mockLoaderContext(store: ReturnType<typeof mockStore>): LoaderCo
     config: {
       root: new URL('.', import.meta.url),
     } as AstroConfig,
-    generateDigest: () => 'mock-digest',
+    generateDigest: (data: unknown) => JSON.stringify(data),
     meta: mockMeta(),
     parseData: ({ data }: { data: unknown }) => Promise.resolve(data),
     renderMarkdown: (body: string) => Promise.resolve({ html: body }),
