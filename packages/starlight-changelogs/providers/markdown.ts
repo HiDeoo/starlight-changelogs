@@ -49,12 +49,17 @@ async function syncData(pathOrUrl: string | URL, config: MarkdownProviderConfig,
     const result = await getChangelogContent(pathOrUrl, context)
     if (!result.modified) return
     const entries = parseMarkdown(config, result.content)
+    const entryIds = new Set(entries.map(({ id }) => id))
+
+    for (const entry of store.values()) {
+      if (entry.data['base'] === config.base && !entryIds.has(entry.id)) store.delete(entry.id)
+    }
 
     for (const entry of entries) {
       const { id, body, ...data } = entry
       const existingEntry = store.get(id)
 
-      const digest = generateDigest({ id, content: body })
+      const digest = generateDigest({ id, content: body, data })
       if (existingEntry?.digest === digest) continue
 
       const parsedData = await parseData({ id, data })
