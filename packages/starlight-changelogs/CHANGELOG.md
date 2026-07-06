@@ -1,5 +1,11 @@
 # starlight-changelogs
 
+## 0.5.1
+
+### Patch Changes
+
+- [#38](https://github.com/HiDeoo/starlight-changelogs/pull/38) [`9f252a1`](https://github.com/HiDeoo/starlight-changelogs/commit/9f252a151b47c2b6256402c0f5a21752cd1eeef1) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Fixes a potential changelog version ordering issue.
+
 ## 0.5.0
 
 ### Minor Changes
