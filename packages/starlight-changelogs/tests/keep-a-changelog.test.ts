@@ -16,6 +16,11 @@ describe('fs', () => {
         base: 'test',
         changelog: '../../../fixtures/keep-a-changelog/keep-a-changelog.md',
         enabled: true,
+        extractDate: ({ title }) => {
+          const date = /\d{4}-\d{2}-\d{2}$/.exec(title)?.[0]
+
+          return date ? new Date(`${date}T00:00:00`) : undefined
+        },
         pagefind: false,
         pageSize: 5,
         title: 'Test',
@@ -48,6 +53,12 @@ describe('fs', () => {
 
     expect(versions[3]?.id).toBe('test/version/0-3-0')
     expect(versions[3]?.data.title).toBe('0.3.0')
+  })
+
+  test('extracts release dates from the original version titles', () => {
+    const version = store.values()[0]
+
+    expect(version?.data.date).toEqual(new Date('2023-03-05T00:00:00'))
   })
 
   test('loads the first version', () => {

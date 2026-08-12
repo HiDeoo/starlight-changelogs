@@ -13,6 +13,20 @@ export const KeepAChangelogProviderConfigSchema = ProviderBaseConfigSchema.exten
    * When using a URL, it should point to a raw file that contains the changelog, e.g. a GitHub raw URL.
    */
   changelog: z.string(),
+  /**
+   * An optional function called for every version entry to extract its release date from the original version title.
+   */
+  extractDate: z
+    .function({
+      input: [
+        z.object({
+          /** The original version title found in the changelog. */
+          title: z.string(),
+        }),
+      ],
+      output: z.union([z.date(), z.undefined()]),
+    })
+    .optional(),
   /** The type of provider used to load the changelog, `keep-a-changelog` in this case. */
   provider: z.literal('keep-a-changelog'),
 })

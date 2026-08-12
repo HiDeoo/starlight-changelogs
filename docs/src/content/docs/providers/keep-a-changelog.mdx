@@ -35,7 +35,7 @@ The Keep a Changelog provider accepts the following configuration options:
 
 ### `provider`
 
-**Required**  
+**Required**
 **Type:** `'keep-a-changelog'`
 
 Defines the provider to use for loading the changelog file.
@@ -66,7 +66,7 @@ import {
 
 ### `changelog`
 
-**Required**  
+**Required**
 **Type:** `string`
 
 Defines the path or URL of the changelog file using the Keep a Changelog format to load.
@@ -87,6 +87,27 @@ When using a URL, it should point to a raw file that contains the changelog, e.g
 changelogsLoader([
   {
     changelog: 'https://raw.githubusercontent.com/olivierlacan/keep-a-changelog/refs/heads/main/CHANGELOG.md',
+  },
+])
+```
+
+### `extractDate`
+
+**Type:** `({ title }: { title: string }) => Date | undefined`
+
+An optional function called for every version entry to extract its release date from the original version title.
+The function receives the original title before release dates are stripped from version titles by default.
+
+For example, the following function extracts ISO 8601 dates from standard Keep a Changelog version titles:
+
+```ts
+changelogsLoader([
+  {
+    extractDate: ({ title }) => {
+      const date = title.match(/\d{4}-\d{2}-\d{2}$/)?.[0]
+
+      return date ? new Date(`${date}T00:00:00`) : undefined
+    },
   },
 ])
 ```
