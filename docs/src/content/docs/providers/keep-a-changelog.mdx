@@ -6,7 +6,8 @@ description: Learn how to display changelogs using the Keep a Changelog format w
 The Starlight Changelogs plugin uses Astro’s [content collections](https://docs.astro.build/en/guides/content-collections/), which are configured in the `src/content.config.ts` file.
 The provided `changelogsLoader()` loader can be used to load one or more changelog files from different providers, including [Keep a Changelog](https://keepachangelog.com).
 
-[Unreleased versions](https://keepachangelog.com/en/1.1.0/#effort) are ignored and release dates are stripped from version titles by default.
+[Unreleased versions](https://keepachangelog.com/en/1.1.0/#effort) are ignored.
+Release dates are automatically extracted from [standard version headings](https://keepachangelog.com/en/1.1.0/) and stripped from version titles.
 
 Changelog files using the Keep a Changelog format can be loaded by using the `provider: 'keep-a-changelog'` option.
 
@@ -87,27 +88,6 @@ When using a URL, it should point to a raw file that contains the changelog, e.g
 changelogsLoader([
   {
     changelog: 'https://raw.githubusercontent.com/olivierlacan/keep-a-changelog/refs/heads/main/CHANGELOG.md',
-  },
-])
-```
-
-### `extractDate`
-
-**Type:** `({ title }: { title: string }) => Date | undefined`
-
-An optional function called for every version entry to extract its release date from the original version title.
-The function receives the original title before release dates are stripped from version titles by default.
-
-For example, the following function extracts ISO 8601 dates from standard Keep a Changelog version titles:
-
-```ts
-changelogsLoader([
-  {
-    extractDate: ({ title }) => {
-      const date = title.match(/\d{4}-\d{2}-\d{2}$/)?.[0]
-
-      return date ? new Date(`${date}T00:00:00`) : undefined
-    },
   },
 ])
 ```

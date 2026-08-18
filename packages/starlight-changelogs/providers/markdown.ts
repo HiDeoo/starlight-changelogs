@@ -112,6 +112,7 @@ function parseMarkdown(config: MarkdownProviderConfig, content: string) {
   function addEntry(version: MarkdownVersion, index: number) {
     const parsedVersion = parseMarkdownVersion(config, version, index)
     if (!parsedVersion) return
+    if (config.markdown.ignoredVersions?.includes(parsedVersion.title)) return
     entries.push(parsedVersion)
   }
 
@@ -151,9 +152,7 @@ function parseMarkdownVersion(
     title = processedTitle
   }
 
-  if (config.markdown.ignoredVersions?.includes(title)) return
-
-  const date = config.extractDate?.({ title: version.title })
+  const date = config.markdown.getDate?.(version.title)
   const [id, slug] = slugifyVersion(config, title)
 
   return {
@@ -176,10 +175,10 @@ export interface MarkdownProviderConfig extends z.output<typeof ProviderBaseConf
    * When using a URL, it should point to a raw file that contains the changelog, e.g. a GitHub raw URL.
    */
   changelog: string
-  /** An optional function called to extract a release date from the original version title. */
-  extractDate?: ((context: { title: string }) => Date | undefined) | undefined
   /** Markdown-specific configuration options for parsing the changelog. */
   markdown: {
+    /** An optional function called to get a release date from the original version title. */
+    getDate?: (title: string) => Date | undefined
     /** Version titles to ignore when parsing the changelog (applied after `process` function). */
     ignoredVersions?: string[]
     /**
