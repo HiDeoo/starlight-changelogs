@@ -9,15 +9,24 @@ export async function fetchFromLoader(
 
   try {
     response = await fetch(url, { headers })
+
+    if (import.meta.env.DEV && response.status >= 400) {
+      throw new Error(response.statusText ? `${response.status} - ${response.statusText}` : String(response.status))
+    }
   } catch (error) {
     if (!import.meta.env.DEV) throw error
 
-    logger.error(`Failed to fetch data from ${url} with the following error:`)
-    logger.error(error instanceof Error ? error.message : String(error))
-    logger.error('Continuing without changelog data for now, but make sure the URL is correct and accessible.')
+    logger.warn(
+      `Failed to fetch data from ${url} with the following error:
+  ${error instanceof Error ? error.message : String(error)}
+  Using cached data if available, so changelog data may be missing or outdated.
+  Production builds will fail until the changelog data is available again.`,
+    )
+
+    return { ok: false }
   }
 
-  return response ? { ok: true, response } : { ok: false }
+  return { ok: true, response }
 }
 
 type LoaderResult = { ok: true; response: Response } | { ok: false }

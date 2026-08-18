@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
-import { beforeAll, afterEach, afterAll, describe, expect, test } from 'vitest'
+import { beforeAll, afterEach, afterAll, describe, expect, test, vi } from 'vitest'
 
 import { loadGiteaData } from '../providers/gitea'
 
@@ -23,8 +23,13 @@ const baseConfig = {
 } as const
 
 beforeAll(() => server.listen())
-afterEach(() => server.resetHandlers())
+afterEach(() => {
+  server.resetHandlers()
+  vi.unstubAllEnvs()
+})
 afterAll(() => server.close())
+
+const giteaUrl = 'https://gitea.com/api/v1/repos/gitea/tea/releases'
 
 describe('api', () => {
   beforeAll(async () => {
@@ -33,7 +38,7 @@ describe('api', () => {
     const fixture = await import('../../../fixtures/gitea/tea.json')
 
     server.use(
-      http.get('https://gitea.com/api/v1/repos/gitea/tea/releases', ({ request }) => {
+      http.get(giteaUrl, ({ request }) => {
         const url = new URL(request.url)
 
         expect(url.searchParams.get('page')).toBe('1')
@@ -116,7 +121,7 @@ describe('api - auth', () => {
     const fixture = await import('../../../fixtures/gitea/tea.json')
 
     server.use(
-      http.get('https://gitea.com/api/v1/repos/gitea/tea/releases', ({ request }) => {
+      http.get(giteaUrl, ({ request }) => {
         const url = new URL(request.url)
 
         expect(url.searchParams.get('page')).toBe('1')
@@ -131,5 +136,33 @@ describe('api - auth', () => {
 
   test('loads all versions with auth', () => {
     expect(store.values().length).toBe(19)
+  })
+})
+
+describe('api - error', () => {
+  test('does not throw on fetch failure in development', async () => {
+    vi.stubEnv('DEV', true)
+
+    store.clear()
+
+    const context = mockLoaderContext(store)
+    const fixture = await import('../../../fixtures/gitea/tea.json')
+
+    let unavailable = false
+
+    server.use(
+      http.get(giteaUrl, () =>
+        unavailable ? new HttpResponse(null, { status: 503 }) : HttpResponse.json(fixture.default),
+      ),
+    )
+
+    await loadGiteaData(baseConfig, context)
+
+    const entries = store.values()
+
+    unavailable = true
+    await loadGiteaData(baseConfig, context)
+
+    expect(store.values()).toEqual(entries)
   })
 })

@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
-import { beforeAll, afterEach, afterAll, describe, expect, test } from 'vitest'
+import { beforeAll, afterEach, afterAll, describe, expect, test, vi } from 'vitest'
 
 import { loadGitHubData } from '../providers/github'
 
@@ -21,8 +21,13 @@ const baseConfig = {
 } as const
 
 beforeAll(() => server.listen())
-afterEach(() => server.resetHandlers())
+afterEach(() => {
+  server.resetHandlers()
+  vi.unstubAllEnvs()
+})
 afterAll(() => server.close())
+
+const githubUrl = 'https://api.github.com/repos/hideoo/starlight-blog/releases'
 
 describe('api', () => {
   beforeAll(async () => {
@@ -31,7 +36,7 @@ describe('api', () => {
     const fixture = await import('../../../fixtures/github/starlight-blog.json')
 
     server.use(
-      http.get('https://api.github.com/repos/hideoo/starlight-blog/releases', ({ request }) => {
+      http.get(githubUrl, ({ request }) => {
         const url = new URL(request.url)
 
         expect(url.searchParams.get('page')).toBe('1')
@@ -120,7 +125,7 @@ describe('api - auth', () => {
     const fixture = await import('../../../fixtures/github/starlight-blog.json')
 
     server.use(
-      http.get('https://api.github.com/repos/hideoo/starlight-blog/releases', ({ request }) => {
+      http.get(githubUrl, ({ request }) => {
         const url = new URL(request.url)
 
         expect(url.searchParams.get('page')).toBe('1')
@@ -138,6 +143,34 @@ describe('api - auth', () => {
   })
 })
 
+describe('api - error', () => {
+  test('does not throw on fetch failure in development', async () => {
+    vi.stubEnv('DEV', true)
+
+    store.clear()
+
+    const context = mockLoaderContext(store)
+    const fixture = await import('../../../fixtures/github/starlight-blog.json')
+
+    let unavailable = false
+
+    server.use(
+      http.get(githubUrl, () =>
+        unavailable ? new HttpResponse(null, { status: 503 }) : HttpResponse.json(fixture.default),
+      ),
+    )
+
+    await loadGitHubData(baseConfig, context)
+
+    const entries = store.values()
+
+    unavailable = true
+    await loadGitHubData(baseConfig, context)
+
+    expect(store.values()).toEqual(entries)
+  })
+})
+
 describe('cache', () => {
   let requestCount = 0
 
@@ -147,7 +180,7 @@ describe('cache', () => {
     const fixture = await import('../../../fixtures/github/starlight-blog.json')
 
     server.use(
-      http.get('https://api.github.com/repos/hideoo/starlight-blog/releases', () => {
+      http.get(githubUrl, () => {
         requestCount++
 
         return requestCount === 1
@@ -181,9 +214,7 @@ describe('`null` release name', async () => {
   beforeAll(async () => {
     store.clear()
 
-    server.use(
-      http.get('https://api.github.com/repos/hideoo/starlight-blog/releases', () => HttpResponse.json(fixture.default)),
-    )
+    server.use(http.get(githubUrl, () => HttpResponse.json(fixture.default)))
 
     await loadGitHubData(baseConfig, mockLoaderContext(store))
   })
@@ -209,9 +240,7 @@ describe('`null` release body', async () => {
   beforeAll(async () => {
     store.clear()
 
-    server.use(
-      http.get('https://api.github.com/repos/hideoo/starlight-blog/releases', () => HttpResponse.json(fixture.default)),
-    )
+    server.use(http.get(githubUrl, () => HttpResponse.json(fixture.default)))
 
     await loadGitHubData(baseConfig, mockLoaderContext(store))
   })
