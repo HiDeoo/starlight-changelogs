@@ -86,7 +86,7 @@ async function getChangelogContent(
   const headers = new Headers()
 
   const result = await fetchFromLoader(pathOrUrl, getConditionalHeaders({ init: headers, meta }), logger)
-  if (!result.ok) return { modified: true, content: '' }
+  if (!result.ok) return { modified: false }
 
   const response = result.response
 
