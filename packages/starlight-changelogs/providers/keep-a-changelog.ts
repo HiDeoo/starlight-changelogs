@@ -20,14 +20,15 @@ export const KeepAChangelogProviderConfigSchema = ProviderBaseConfigSchema.exten
 const provider: MarkdownProviderConfig['provider'] = { name: 'keep-a-changelog', label: 'Keep a Changelog' }
 const versionHeadingRegex = /^(?<version>.+) - (?<date>\d{4}-\d{2}-\d{2})$/
 const markdown: MarkdownProviderConfig['markdown'] = {
-  getDate(title) {
-    const date = versionHeadingRegex.exec(title)?.groups?.['date']
-
-    return date ? new Date(`${date}T00:00:00`) : undefined
-  },
   ignoredVersions: ['Unreleased'],
   process({ title }) {
-    return versionHeadingRegex.exec(title)?.groups?.['version'] ?? title
+    const match = versionHeadingRegex.exec(title)
+    const date = match?.groups?.['date']
+
+    return {
+      title: match?.groups?.['version'] ?? title,
+      ...(date ? { date: new Date(`${date}T00:00:00`) } : {}),
+    }
   },
   versionHeadingLevel: 2,
 }

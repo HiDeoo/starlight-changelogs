@@ -144,7 +144,7 @@ function parseMarkdownVersion(
 ): VersionDataEntry | undefined {
   let title = version.title
 
-  const process = config.process ?? config.markdown.process
+  const process = config.process
 
   if (process) {
     const processedTitle = process({ title })
@@ -152,14 +152,16 @@ function parseMarkdownVersion(
     title = processedTitle
   }
 
-  const date = config.markdown.getDate?.(version.title)
+  const processed = config.markdown.process?.({ title: version.title })
+  if (!process) title = processed?.title ?? title
+
   const [id, slug] = slugifyVersion(config, title)
 
   return {
     id,
     body: toMarkdown({ type: 'root', children: version.nodes as RootContent[] }),
     base: config.base,
-    ...(date ? { date } : {}),
+    ...(processed?.date ? { date: processed.date } : {}),
     index,
     provider: config.provider,
     slug,
@@ -177,16 +179,10 @@ export interface MarkdownProviderConfig extends z.output<typeof ProviderBaseConf
   changelog: string
   /** Markdown-specific configuration options for parsing the changelog. */
   markdown: {
-    /** An optional function called to get a release date from the original version title. */
-    getDate?: (title: string) => Date | undefined
     /** Version titles to ignore when parsing the changelog (applied after `process` function). */
     ignoredVersions?: string[]
-    /**
-     * An optional default function called if no `process` function is defined in the main provider configuration.
-     *
-     * @see ProviderBaseConfigSchema
-     */
-    process?: z.output<typeof ProviderBaseConfigSchema>['process']
+    /** An optional function called to process data from the original version title. */
+    process?: (context: { title: string }) => MarkdownProcessResult
     /** The heading level used to indicate version entries in the changelog. */
     versionHeadingLevel: number
   }
@@ -195,6 +191,11 @@ export interface MarkdownProviderConfig extends z.output<typeof ProviderBaseConf
 }
 
 type ChangelogContent = { modified: false } | { modified: true; content: string }
+
+interface MarkdownProcessResult {
+  date?: Date
+  title: string
+}
 
 interface MarkdownVersion {
   title: string
