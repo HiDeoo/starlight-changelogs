@@ -2,4 +2,4 @@
 'starlight-changelogs': minor
 ---
 
-Automatically extracts release dates from Keep a Changelog version headings.
+Extracts release dates from version headings when using the Keep a Changelog provider.
