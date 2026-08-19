@@ -1,5 +1,13 @@
 # starlight-changelogs
 
+## 0.6.0
+
+### Minor Changes
+
+- [#41](https://github.com/HiDeoo/starlight-changelogs/pull/41) [`1b93b64`](https://github.com/HiDeoo/starlight-changelogs/commit/1b93b6416068d2d80c1435e6db45ee02dc06eb73) Thanks [@jonahsnider](https://github.com/jonahsnider)! - Extracts release dates from version headings when using the Keep a Changelog provider.
+
+- [#42](https://github.com/HiDeoo/starlight-changelogs/pull/42) [`8c2b812`](https://github.com/HiDeoo/starlight-changelogs/commit/8c2b8122b381ac42026056ba04fb1b403f80dd61) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Prevents remote changelog fetch failures, e.g. during a provider outage, from interrupting local development by reusing any available cached changelog data. Production builds remain unchanged and will still fail if the changelog data cannot be fetched.
+
 ## 0.5.1
 
 ### Patch Changes
