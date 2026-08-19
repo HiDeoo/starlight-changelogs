@@ -6,7 +6,8 @@ description: Learn how to display changelogs using the Keep a Changelog format w
 The Starlight Changelogs plugin uses Astro’s [content collections](https://docs.astro.build/en/guides/content-collections/), which are configured in the `src/content.config.ts` file.
 The provided `changelogsLoader()` loader can be used to load one or more changelog files from different providers, including [Keep a Changelog](https://keepachangelog.com).
 
-[Unreleased versions](https://keepachangelog.com/en/1.1.0/#effort) are ignored and release dates are stripped from version titles by default.
+[Unreleased versions](https://keepachangelog.com/en/1.1.0/#effort) are ignored.
+Release dates using the ISO 8601 `YYYY-MM-DD` format are automatically extracted from [standard version headings](https://keepachangelog.com/en/1.1.0/#confusing-dates) and stripped from version titles.
 
 Changelog files using the Keep a Changelog format can be loaded by using the `provider: 'keep-a-changelog'` option.
 

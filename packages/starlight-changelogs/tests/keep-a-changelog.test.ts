@@ -50,6 +50,12 @@ describe('fs', () => {
     expect(versions[3]?.data.title).toBe('0.3.0')
   })
 
+  test('extracts release dates from standard version headings', () => {
+    const version = store.values()[0]
+
+    expect(version?.data.date).toEqual(new Date('2023-03-05T00:00:00'))
+  })
+
   test('loads the first version', () => {
     const version = store.values().at(-1)
 
