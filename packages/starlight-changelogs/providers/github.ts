@@ -73,7 +73,7 @@ async function fetchGitHubReleases(
     if (config.token) headers.set('Authorization', `Bearer ${config.token}`)
 
     const result = await fetchFromLoader(url, getConditionalHeaders({ init: headers, meta }), logger)
-    if (!result.ok) return { modified: true, entries: [] }
+    if (!result.ok) return { modified: false }
 
     const response = result.response
 
