@@ -119,7 +119,7 @@ function parseMarkdown(config: MarkdownProviderConfig, content: string) {
   let versionIndex = 0
 
   visit(tree, (node) => {
-    if (node.type === 'heading' && node.depth === config.markdown.versionHeadingLevel) {
+    if (node.type === 'heading' && isVersionHeading(config, node.depth, toString(node).trim())) {
       if (version) addEntry(version, versionIndex++)
       version = { title: toString(node).trim(), nodes: [] }
       return SKIP
@@ -135,6 +135,14 @@ function parseMarkdown(config: MarkdownProviderConfig, content: string) {
   if (version) addEntry(version, versionIndex)
 
   return entries
+}
+
+function isVersionHeading(config: MarkdownProviderConfig, depth: number, title: string) {
+  const levels = Array.isArray(config.markdown.versionHeadingLevel)
+    ? config.markdown.versionHeadingLevel
+    : [config.markdown.versionHeadingLevel]
+
+  return levels.includes(depth) && (config.markdown.isVersionHeading?.({ title }) ?? true)
 }
 
 function parseMarkdownVersion(
@@ -181,10 +189,12 @@ export interface MarkdownProviderConfig extends z.output<typeof ProviderBaseConf
   markdown: {
     /** Version titles to ignore when parsing the changelog (applied after `process` function). */
     ignoredVersions?: string[]
+    /** An optional function used to identify version headings when multiple heading levels are supported. */
+    isVersionHeading?: (context: { title: string }) => boolean
     /** An optional function called to process data from the original version title. */
     process?: (context: { title: string }) => MarkdownProcessResult
-    /** The heading level used to indicate version entries in the changelog. */
-    versionHeadingLevel: number
+    /** The heading level or levels used to indicate version entries in the changelog. */
+    versionHeadingLevel: number | number[]
   }
   /** The provider used for the associated changelog. */
   provider: VersionDataEntry['provider']

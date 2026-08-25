@@ -34,7 +34,13 @@ export default defineConfig({
         },
         {
           label: 'Providers',
-          items: ['providers/changesets', 'providers/github', 'providers/gitea', 'providers/keep-a-changelog'],
+          items: [
+            'providers/changesets',
+            'providers/conventional-changelog',
+            'providers/github',
+            'providers/gitea',
+            'providers/keep-a-changelog',
+          ],
         },
         {
           label: 'Guides',
