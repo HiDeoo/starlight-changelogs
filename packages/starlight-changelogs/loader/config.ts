@@ -5,6 +5,7 @@ import { z } from 'astro/zod'
 
 import { SerializedProviderBaseConfigSchema, type ProviderBaseConfig } from '../providers'
 import { ChangesetProviderConfigSchema } from '../providers/changeset'
+import { ConventionalChangelogProviderConfigSchema } from '../providers/conventional-changelog'
 import { GiteaProviderConfigSchema } from '../providers/gitea'
 import { GitHubProviderConfigSchema } from '../providers/github'
 import { KeepAChangelogProviderConfigSchema } from '../providers/keep-a-changelog'
@@ -12,6 +13,7 @@ import { KeepAChangelogProviderConfigSchema } from '../providers/keep-a-changelo
 export const StarlightChangelogsLoaderConfigSchema = z
   .discriminatedUnion('provider', [
     ChangesetProviderConfigSchema,
+    ConventionalChangelogProviderConfigSchema,
     GiteaProviderConfigSchema,
     GitHubProviderConfigSchema,
     KeepAChangelogProviderConfigSchema,

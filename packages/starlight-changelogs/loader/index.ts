@@ -5,6 +5,7 @@ import { setLoaderConfig } from 'virtual:starlight-changelogs/config'
 import { throwPluginError } from '../libs/plugin'
 import { saveLoaderConfig, serializeLoaderConfig } from '../loader/config'
 import { loadChangesetData } from '../providers/changeset'
+import { loadConventionalChangelogData } from '../providers/conventional-changelog'
 import { loadGiteaData } from '../providers/gitea'
 import { loadGitHubData } from '../providers/github'
 import { loadKeepAChangelogData } from '../providers/keep-a-changelog'
@@ -39,6 +40,10 @@ ${z.prettifyError(parsedConfig.error)}
         switch (changelog.provider) {
           case 'changeset': {
             await loadChangesetData(changelog, context)
+            break
+          }
+          case 'conventional-changelog': {
+            await loadConventionalChangelogData(changelog, context)
             break
           }
           case 'gitea': {

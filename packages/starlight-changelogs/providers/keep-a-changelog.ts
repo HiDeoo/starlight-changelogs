@@ -21,6 +21,7 @@ const provider: MarkdownProviderConfig['provider'] = { name: 'keep-a-changelog',
 const versionHeadingRegex = /^(?<version>.+) - (?<date>\d{4}-\d{2}-\d{2})$/
 const markdown: MarkdownProviderConfig['markdown'] = {
   ignoredVersions: ['Unreleased'],
+  isVersionHeading: ({ depth }) => depth === 2,
   process({ title }) {
     const match = versionHeadingRegex.exec(title)
     const date = match?.groups?.['date']
@@ -30,7 +31,6 @@ const markdown: MarkdownProviderConfig['markdown'] = {
       ...(date ? { date: new Date(`${date}T00:00:00`) } : {}),
     }
   },
-  versionHeadingLevel: 2,
 }
 
 export async function loadKeepAChangelogData(config: KeepAChangelogProviderConfig, context: LoaderContext) {
