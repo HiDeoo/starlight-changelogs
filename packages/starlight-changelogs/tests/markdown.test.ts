@@ -7,7 +7,7 @@ import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest'
 
-import { loadMarkdownData } from '../providers/markdown'
+import { loadMarkdownData, type MarkdownProviderConfig } from '../providers/markdown'
 
 import { mockLoaderContext, mockStore } from './utils'
 
@@ -20,14 +20,14 @@ afterEach(() => {
 })
 afterAll(() => server.close())
 
-const baseConfig = {
+const baseConfig: Omit<MarkdownProviderConfig, 'changelog'> = {
   provider: { name: 'test', label: 'Test' },
   base: 'test',
   enabled: true,
   pagefind: false,
   pageSize: 5,
   title: 'Test',
-  markdown: { versionHeadingLevel: 2 },
+  markdown: { isVersionHeading: ({ depth }) => depth === 2 },
 }
 
 describe('fs', () => {

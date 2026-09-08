@@ -30,3 +30,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * initial release
+
+## 0.0.1 "The "great" release" (2024-12-01)
+
+### Features
+
+* first preview

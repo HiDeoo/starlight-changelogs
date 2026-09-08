@@ -22,10 +22,12 @@ const provider: MarkdownProviderConfig['provider'] = {
   label: 'Conventional Changelog',
 }
 const versionHeadingRegex =
-  /^(?<version>v?\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?)(?: "[^"]*")?(?: \((?<date>\d{4}-\d{2}-\d{2})\))?$/
+  /^(?<version>v?\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?)(?: ".*")?(?: \((?<date>\d{4}-\d{2}-\d{2})\))?$/
 const markdown: MarkdownProviderConfig['markdown'] = {
-  isVersionHeading({ title }) {
-    return matchVersionHeading(title) !== null
+  isVersionHeading({ depth, title }) {
+    // Heading levels vary by preset and version from 1 to 3.
+    // https://conventional-changelog.js.org/conventional-changelog/#available-presets
+    return depth <= 3 && matchVersionHeading(title) !== null
   },
   process({ title }) {
     const match = matchVersionHeading(title)
@@ -36,7 +38,6 @@ const markdown: MarkdownProviderConfig['markdown'] = {
       ...(date ? { date: new Date(`${date}T00:00:00`) } : {}),
     }
   },
-  versionHeadingLevel: [1, 2, 3],
 }
 
 function matchVersionHeading(title: string) {

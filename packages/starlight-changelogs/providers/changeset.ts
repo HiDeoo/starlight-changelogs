@@ -18,7 +18,7 @@ export const ChangesetProviderConfigSchema = ProviderBaseConfigSchema.extend({
 })
 
 const provider: MarkdownProviderConfig['provider'] = { name: 'changeset', label: 'Changeset' }
-const markdown: MarkdownProviderConfig['markdown'] = { versionHeadingLevel: 2 }
+const markdown: MarkdownProviderConfig['markdown'] = { isVersionHeading: ({ depth }) => depth === 2 }
 
 export async function loadChangesetData(config: ChangesetProviderConfig, context: LoaderContext) {
   await loadMarkdownData({ ...config, markdown, provider }, context)

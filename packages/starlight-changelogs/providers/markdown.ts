@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { getConditionalHeaders, storeConditionalHeaders } from '@ascorbic/loader-utils'
 import type { LoaderContext } from 'astro/loaders'
 import type { z } from 'astro/zod'
-import type { Node, RootContent } from 'mdast'
+import type { Heading, Node, RootContent } from 'mdast'
 import { fromMarkdown } from 'mdast-util-from-markdown'
 import { toMarkdown } from 'mdast-util-to-markdown'
 import { toString } from 'mdast-util-to-string'
@@ -119,10 +119,14 @@ function parseMarkdown(config: MarkdownProviderConfig, content: string) {
   let versionIndex = 0
 
   visit(tree, (node) => {
-    if (node.type === 'heading' && isVersionHeading(config, node.depth, toString(node).trim())) {
-      if (version) addEntry(version, versionIndex++)
-      version = { title: toString(node).trim(), nodes: [] }
-      return SKIP
+    if (node.type === 'heading') {
+      const title = toString(node).trim()
+
+      if (config.markdown.isVersionHeading({ depth: node.depth, title })) {
+        if (version) addEntry(version, versionIndex++)
+        version = { title, nodes: [] }
+        return SKIP
+      }
     }
 
     if (!version) return CONTINUE
@@ -135,14 +139,6 @@ function parseMarkdown(config: MarkdownProviderConfig, content: string) {
   if (version) addEntry(version, versionIndex)
 
   return entries
-}
-
-function isVersionHeading(config: MarkdownProviderConfig, depth: number, title: string) {
-  const levels = Array.isArray(config.markdown.versionHeadingLevel)
-    ? config.markdown.versionHeadingLevel
-    : [config.markdown.versionHeadingLevel]
-
-  return levels.includes(depth) && (config.markdown.isVersionHeading?.({ title }) ?? true)
 }
 
 function parseMarkdownVersion(
@@ -189,18 +185,21 @@ export interface MarkdownProviderConfig extends z.output<typeof ProviderBaseConf
   markdown: {
     /** Version titles to ignore when parsing the changelog (applied after `process` function). */
     ignoredVersions?: string[]
-    /** An optional function used to identify version headings when multiple heading levels are supported. */
-    isVersionHeading?: (context: { title: string }) => boolean
+    /** A function used to identify version headings. */
+    isVersionHeading: (context: MarkdownHeading) => boolean
     /** An optional function called to process data from the original version title. */
     process?: (context: { title: string }) => MarkdownProcessResult
-    /** The heading level or levels used to indicate version entries in the changelog. */
-    versionHeadingLevel: number | number[]
   }
   /** The provider used for the associated changelog. */
   provider: VersionDataEntry['provider']
 }
 
 type ChangelogContent = { modified: false } | { modified: true; content: string }
+
+interface MarkdownHeading {
+  depth: Heading['depth']
+  title: string
+}
 
 interface MarkdownProcessResult {
   date?: Date

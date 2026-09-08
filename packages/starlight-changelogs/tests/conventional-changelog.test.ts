@@ -25,7 +25,14 @@ describe('fs', () => {
   })
 
   test('loads versions across supported heading levels', () => {
-    expect(store.values().map((version) => version.data.title)).toEqual(['2.0.0', '1.1.0', '1.0.2', '1.0.1', '1.0.0'])
+    expect(store.values().map((version) => version.data.title)).toEqual([
+      '2.0.0',
+      '1.1.0',
+      '1.0.2',
+      '1.0.1',
+      '1.0.0',
+      '0.0.1',
+    ])
   })
 
   test('extracts release dates', () => {
