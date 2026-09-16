@@ -35,10 +35,9 @@ export async function loadMarkdownData(config: MarkdownProviderConfig, context: 
 
   watcher?.add(path)
   watcher?.on('change', async (changedPath) => {
-    if (changedPath === path) {
-      logger.info(`Reloading data from ${path}`)
-      await syncData(path, config, context)
-    }
+    if (changedPath !== path) return
+    logger.info(`Reloading data from ${path}`)
+    await syncData(path, config, context)
   })
 }
 
@@ -51,7 +50,8 @@ async function syncData(pathOrUrl: string | URL, config: MarkdownProviderConfig,
     const entries = parseMarkdown(config, result.content)
     const entryIds = new Set(entries.map(({ id }) => id))
 
-    for (const entry of store.values()) {
+    const storedEntries = store.values()
+    for (const entry of storedEntries) {
       if (entry.data['base'] === config.base && !entryIds.has(entry.id)) store.delete(entry.id)
     }
 
@@ -165,7 +165,7 @@ function parseMarkdownVersion(
     id,
     body: toMarkdown({ type: 'root', children: version.nodes as RootContent[] }),
     base: config.base,
-    ...(processed?.date ? { date: processed.date } : {}),
+    ...(processed?.date && { date: processed.date }),
     index,
     provider: config.provider,
     slug,

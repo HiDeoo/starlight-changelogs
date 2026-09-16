@@ -35,7 +35,7 @@ const markdown: MarkdownProviderConfig['markdown'] = {
 
     return {
       title: match?.groups?.['version'] ?? title,
-      ...(date ? { date: new Date(`${date}T00:00:00`) } : {}),
+      ...(date && { date: new Date(`${date}T00:00:00`) }),
     }
   },
 }

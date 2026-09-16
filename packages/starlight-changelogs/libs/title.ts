@@ -16,6 +16,7 @@ export function getChangelogTitle(changelog: ProviderBaseConfig, locale: Locale)
 
 export function getSiteTitle(lang: string | undefined): string {
   if (typeof context.title === 'string') return context.title
-  if (lang && context.title[lang]) return context.title[lang]
+  const localizedTitle = lang ? context.title[lang] : undefined
+  if (localizedTitle) return localizedTitle
   return context.title[getDefaultLang()] as string
 }
