@@ -95,7 +95,9 @@ function getChangelogsSidebarLinkConfig(link: SidebarLink, locale: Locale): Chan
   if (type === 'recent') {
     const count = Number(link.attrs['data-sl-changelogs-link-count'])
     return { base, count, type }
-  } else if (type === 'all' || type === 'latest') {
+  }
+
+  if (type === 'all' || type === 'latest') {
     let label = link.label
 
     try {

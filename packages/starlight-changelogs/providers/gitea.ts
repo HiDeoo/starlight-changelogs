@@ -57,7 +57,8 @@ async function syncData(
   { parseData, renderMarkdown, store }: LoaderContext,
 ) {
   // Delete all existing entries in the store for this provider/base combination
-  for (const entry of store.values()) {
+  const storedEntries = store.values()
+  for (const entry of storedEntries) {
     if (entry.data['base'] === config.base) store.delete(entry.id)
   }
 

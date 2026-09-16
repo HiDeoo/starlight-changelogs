@@ -5,34 +5,36 @@ import type { DataEntry } from 'astro:content'
 import type { VersionEntry } from '../loader/schema'
 
 export function mockStore() {
+  const data = new Map<string, MockEntry>()
+
   return {
-    data: new Map<string, MockEntry>(),
+    data,
     addModuleImport() {
       // Skip in tests
     },
     clear() {
-      this.data.clear()
+      data.clear()
     },
     delete(id: string) {
-      this.data.delete(id)
+      data.delete(id)
     },
     entries() {
-      return this.data.entries()
+      return data.entries()
     },
     get(id: string) {
-      return this.data.get(id)
+      return data.get(id)
     },
     has(id: string) {
-      return this.data.has(id)
+      return data.has(id)
     },
     keys() {
-      return this.data.keys()
+      return data.keys()
     },
     set(entry: MockEntry) {
-      this.data.set(entry.id, entry)
+      data.set(entry.id, entry)
     },
     values(): MockEntry[] {
-      return [...this.data.values()]
+      return data.values().toArray()
     },
   }
 }
@@ -52,22 +54,24 @@ export function mockLoaderContext(store: ReturnType<typeof mockStore>): LoaderCo
 }
 
 function mockMeta() {
+  const data = new Map<string, unknown>()
+
   return {
-    data: new Map<string, unknown>(),
+    data,
     clear() {
-      this.data.clear()
+      data.clear()
     },
     delete(key: string) {
-      this.data.delete(key)
+      data.delete(key)
     },
     get(key: string) {
-      return this.data.get(key)
+      return data.get(key)
     },
     has(key: string) {
-      return this.data.has(key)
+      return data.has(key)
     },
     set(key: string, value: unknown) {
-      this.data.set(key, value)
+      data.set(key, value)
     },
   }
 }
