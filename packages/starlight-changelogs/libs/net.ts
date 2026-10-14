@@ -29,4 +29,18 @@ export async function fetchFromLoader(
   return { ok: true, response }
 }
 
+export function getChangelogMeta(meta: LoaderContext['meta'], base: string): LoaderContext['meta'] {
+  return {
+    delete: (key) => meta.delete(scopeKey(base, key)),
+    get: (key) => meta.get(scopeKey(base, key)),
+    has: (key) => meta.has(scopeKey(base, key)),
+    set: (key, value) => meta.set(scopeKey(base, key), value),
+  }
+}
+
+function scopeKey(base: string, key: string) {
+  // The meta store is shared by all changelogs so each changelog needs its own keys.
+  return `${base}:${key}`
+}
+
 type LoaderResult = { ok: true; response: Response } | { ok: false }

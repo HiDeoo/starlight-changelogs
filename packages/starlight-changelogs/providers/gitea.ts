@@ -2,7 +2,7 @@ import { getConditionalHeaders, storeConditionalHeaders } from '@ascorbic/loader
 import type { LoaderContext } from 'astro/loaders'
 import { z } from 'astro/zod'
 
-import { fetchFromLoader } from '../libs/net'
+import { fetchFromLoader, getChangelogMeta } from '../libs/net'
 import { stripTrailingSlash } from '../libs/path'
 import { throwPluginError } from '../libs/plugin'
 import type { VersionDataEntry } from '../loader/schema'
@@ -77,6 +77,7 @@ async function fetchGiteaReleases(
 ): Promise<GiteaApiResult> {
   let page: string | null = '1'
   const entries: VersionDataEntry[] = []
+  const changelogMeta = getChangelogMeta(meta, config.base)
 
   while (page) {
     const url = new URL(`${config.api}/repos/${config.owner}/${config.repo}/releases`)
@@ -87,7 +88,7 @@ async function fetchGiteaReleases(
     headers.set('Accept', 'application/json')
     if (config.token) headers.set('Authorization', `token ${config.token}`)
 
-    const result = await fetchFromLoader(url, getConditionalHeaders({ init: headers, meta }), logger)
+    const result = await fetchFromLoader(url, getConditionalHeaders({ init: headers, meta: changelogMeta }), logger)
     if (!result.ok) return { modified: false }
 
     const response = result.response
@@ -100,7 +101,7 @@ async function fetchGiteaReleases(
       const data: unknown = await response.json()
       const parsedData = GiteaApiReleasesSchema.parse(data)
 
-      if (!page) storeConditionalHeaders({ headers: response.headers, meta })
+      if (!page) storeConditionalHeaders({ headers: response.headers, meta: changelogMeta })
 
       for (const release of parsedData) {
         const parsedVersion = parseGiteaReleaseVersion(config, release, entries.length)
