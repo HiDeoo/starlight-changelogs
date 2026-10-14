@@ -14,7 +14,13 @@ export function getChangelogTitle(changelog: ProviderBaseConfig, locale: Locale)
   return title
 }
 
-export function getSiteTitle(lang: string | undefined): string {
+export function getPageTitle(pageTitle: string, changelogTitle: string, lang: string | undefined): string {
+  const title = `${pageTitle} ${context.titleDelimiter} ${changelogTitle} ${context.titleDelimiter} ${getSiteTitle(lang)}`
+  // Escape the title as Starlight inserts head content as raw HTML.
+  return title.replaceAll('&', '&amp;').replaceAll('<', '&lt;')
+}
+
+function getSiteTitle(lang: string | undefined): string {
   if (typeof context.title === 'string') return context.title
   const localizedTitle = lang ? context.title[lang] : undefined
   if (localizedTitle) return localizedTitle
