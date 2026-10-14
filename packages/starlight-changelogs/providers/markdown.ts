@@ -10,7 +10,7 @@ import { toMarkdown } from 'mdast-util-to-markdown'
 import { toString } from 'mdast-util-to-string'
 import { CONTINUE, SKIP, visit } from 'unist-util-visit'
 
-import { fetchFromLoader } from '../libs/net'
+import { fetchFromLoader, getChangelogMeta } from '../libs/net'
 import { throwPluginError } from '../libs/plugin'
 import type { VersionDataEntry } from '../loader/schema'
 import { slugifyVersion } from '../loader/utils'
@@ -45,7 +45,7 @@ async function syncData(pathOrUrl: string | URL, config: MarkdownProviderConfig,
   const { generateDigest, parseData, renderMarkdown, store } = context
 
   try {
-    const result = await getChangelogContent(pathOrUrl, context)
+    const result = await getChangelogContent(pathOrUrl, config.base, context)
     if (!result.modified) return
     const entries = parseMarkdown(config, result.content)
     const entryIds = new Set(entries.map(({ id }) => id))
@@ -73,6 +73,7 @@ async function syncData(pathOrUrl: string | URL, config: MarkdownProviderConfig,
 
 async function getChangelogContent(
   pathOrUrl: string | URL,
+  base: string,
   { logger, meta }: LoaderContext,
 ): Promise<ChangelogContent> {
   if (typeof pathOrUrl === 'string') {
@@ -83,9 +84,10 @@ async function getChangelogContent(
     return { modified: true, content }
   }
 
+  const changelogMeta = getChangelogMeta(meta, base)
   const headers = new Headers()
 
-  const result = await fetchFromLoader(pathOrUrl, getConditionalHeaders({ init: headers, meta }), logger)
+  const result = await fetchFromLoader(pathOrUrl, getConditionalHeaders({ init: headers, meta: changelogMeta }), logger)
   if (!result.ok) return { modified: false }
 
   const response = result.response
@@ -96,7 +98,7 @@ async function getChangelogContent(
 
   try {
     const content = await response.text()
-    storeConditionalHeaders({ headers: response.headers, meta })
+    storeConditionalHeaders({ headers: response.headers, meta: changelogMeta })
     return { modified: true, content }
   } catch (error) {
     throwPluginError(`Failed to parse data from ${pathOrUrl}`, error)

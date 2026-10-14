@@ -258,3 +258,40 @@ describe('`null` release body', async () => {
     expect(versions[1]?.body).toBe('')
   })
 })
+
+describe('multiple changelogs from the same repository', async () => {
+  let cacheHitCount = 0
+  const fixture = await import('../../../fixtures/github/starlight-blog.json')
+
+  beforeAll(async () => {
+    store.clear()
+
+    server.use(
+      http.get(githubUrl, ({ request }) => {
+        if (request.headers.get('If-None-Match') === '"etag"') {
+          cacheHitCount++
+          return new HttpResponse(null, { status: 304 })
+        }
+
+        return HttpResponse.json(fixture.default, { headers: { ETag: '"etag"' } })
+      }),
+    )
+
+    const context = mockLoaderContext(store)
+
+    await loadGitHubData({ ...baseConfig, base: 'test-1' }, context)
+    await loadGitHubData({ ...baseConfig, base: 'test-2' }, context)
+    await loadGitHubData({ ...baseConfig, base: 'test-1' }, context)
+  })
+
+  test('uses cache for each changelog', () => {
+    expect(cacheHitCount).toBe(1)
+  })
+
+  test('loads all versions for each changelog', () => {
+    const entries = store.values()
+
+    expect(entries.filter(({ data }) => data.base === 'test-1')).toHaveLength(30)
+    expect(entries.filter(({ data }) => data.base === 'test-2')).toHaveLength(30)
+  })
+})

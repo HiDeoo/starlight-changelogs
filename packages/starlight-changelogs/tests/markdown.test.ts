@@ -132,4 +132,35 @@ describe('url', () => {
 
     expect(store.values()).toEqual(entries)
   })
+
+  test('uses a separate cache for each changelog with the same URL', async () => {
+    const url = 'https://example.com/CHANGELOG.md'
+
+    const store = mockStore()
+    const context = mockLoaderContext(store)
+
+    let cacheHitCount = 0
+
+    server.use(
+      http.get(url, ({ request }) => {
+        if (request.headers.get('If-None-Match') === '"etag"') {
+          cacheHitCount++
+          return new HttpResponse(null, { status: 304 })
+        }
+
+        return HttpResponse.text('## 1.0.0\n\n- Adds feature.', { headers: { ETag: '"etag"' } })
+      }),
+    )
+
+    await loadMarkdownData({ ...baseConfig, base: 'test-1', changelog: url }, context)
+    await loadMarkdownData({ ...baseConfig, base: 'test-2', changelog: url }, context)
+    await loadMarkdownData({ ...baseConfig, base: 'test-1', changelog: url }, context)
+
+    const entries = store.values()
+
+    expect(cacheHitCount).toBe(1)
+
+    expect(entries.filter(({ data }) => data.base === 'test-1')).toHaveLength(1)
+    expect(entries.filter(({ data }) => data.base === 'test-2')).toHaveLength(1)
+  })
 })
