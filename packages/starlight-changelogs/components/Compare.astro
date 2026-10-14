@@ -1,11 +1,10 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import { render } from 'astro:content'
-import context from 'virtual:starlight-changelogs/context'
 
 import { getLink } from '../libs/link'
 import { getVersionPath, getVersionsPath, type CompareProps } from '../libs/routing'
-import { getChangelogTitle, getSiteTitle } from '../libs/title'
+import { getChangelogTitle, getPageTitle } from '../libs/title'
 
 import Title from './Title.astro'
 import Toolbar from './Toolbar.astro'
@@ -17,6 +16,7 @@ const { changelog, entries, entry, locale, versions } = Astro.props
 const changelogTitle = getChangelogTitle(changelog, locale)
 const compareTitle = Astro.locals.t('starlightChangelogs.compare.title', {
   version: entry.data.title,
+  interpolation: { escapeValue: false },
 })
 ---
 
@@ -25,7 +25,7 @@ const compareTitle = Astro.locals.t('starlightChangelogs.compare.title', {
     head: [
       {
         tag: 'title',
-        content: `${compareTitle} ${context.titleDelimiter} ${changelogTitle} ${context.titleDelimiter} ${getSiteTitle(Astro.currentLocale)}`,
+        content: getPageTitle(compareTitle, changelogTitle, Astro.currentLocale),
       },
     ],
     next: entry.compare.pagination.next,

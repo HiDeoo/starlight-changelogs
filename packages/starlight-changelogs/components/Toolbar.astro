@@ -38,7 +38,10 @@ const { backLink, compareLink, link, versions } = Astro.props
         )}
         {link && (
           <LinkButton href={link.href} variant="secondary" icon="external" iconPlacement="start">
-            {Astro.locals.t('starlightChangelogs.version.open', { provider: link.provider })}
+            {Astro.locals.t('starlightChangelogs.version.open', {
+              provider: link.provider,
+              interpolation: { escapeValue: false },
+            })}
           </LinkButton>
         )}
       </div>
