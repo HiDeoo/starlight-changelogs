@@ -1,5 +1,13 @@
 # starlight-changelogs
 
+## 0.7.1
+
+### Patch Changes
+
+- [#51](https://github.com/HiDeoo/starlight-changelogs/pull/51) [`3de1e89`](https://github.com/HiDeoo/starlight-changelogs/commit/3de1e89d51f133820a3d32cec925138e224ed915) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Fixes an issue where multiple changelogs from the same monorepo could result in some changelogs being empty.
+
+- [#49](https://github.com/HiDeoo/starlight-changelogs/pull/49) [`15793d7`](https://github.com/HiDeoo/starlight-changelogs/commit/15793d7a51516c8aae166e3973815f1539e2310b) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Fixes an issue where special characters in version titles were not always displayed correctly.
+
 ## 0.7.0
 
 ### Minor Changes
