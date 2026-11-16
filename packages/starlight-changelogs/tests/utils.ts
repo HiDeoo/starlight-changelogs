@@ -39,9 +39,13 @@ export function mockStore() {
   }
 }
 
-export function mockLoaderContext(store: ReturnType<typeof mockStore>): LoaderContext {
+export function mockLoaderContext(
+  store: ReturnType<typeof mockStore>,
+  markdownConfig: Partial<AstroConfig['markdown']> = {},
+): LoaderContext {
   return {
     config: {
+      markdown: { gfm: true, ...markdownConfig },
       root: new URL('.', import.meta.url),
     } as AstroConfig,
     generateDigest: (data: unknown) => JSON.stringify(data),

@@ -3,6 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 
+import type { AstroConfig } from 'astro'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest'
@@ -33,7 +34,7 @@ const baseConfig: Omit<MarkdownProviderConfig, 'changelog'> = {
 describe('fs', () => {
   const store = mockStore()
 
-  async function loadChangelog(content: string) {
+  async function loadChangelog(content: string, markdown?: Partial<AstroConfig['markdown']>) {
     const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'starlight-changelogs-'))
     const changelog = path.join(dir, 'CHANGELOG.md')
 
@@ -45,7 +46,7 @@ describe('fs', () => {
           ...baseConfig,
           changelog: pathToFileURL(changelog).href,
         },
-        mockLoaderContext(store),
+        mockLoaderContext(store, markdown),
       )
     } finally {
       await fs.rm(dir, { force: true, recursive: true })
@@ -94,6 +95,66 @@ describe('fs', () => {
     const versions = store.values().toSorted((a, b) => a.data.index - b.data.index)
 
     expect(versions[0]?.data.title).toBe('1.0.0-pre.2')
+  })
+
+  test('preserves original Markdown', async () => {
+    store.clear()
+
+    await loadChangelog('## 1.0.0\n\n- [x] Done\n- ~~Removed~~ feature\n')
+
+    expect(store.values()[0]?.body).toMatchInlineSnapshot(`
+      "- [x] Done
+      - ~~Removed~~ feature"
+    `)
+  })
+
+  test('appends referenced definitions located somewhere else in the changelog', async () => {
+    store.clear()
+
+    await loadChangelog(
+      '## 1.0.1\n\n- Fix [#4] and add a note[^1]\n\n## 1.0.0\n\n- Fix [#3]\n\n[#3]: https://example.com/3\n[#4]: https://example.com/4\n[unused]: https://example.com/unused\n[^1]: Note referencing [#3] and [#4].\n',
+    )
+
+    const versions = store.values().toSorted((a, b) => a.data.index - b.data.index)
+
+    expect(versions[0]?.body).toMatchInlineSnapshot(`
+      "- Fix [#4] and add a note[^1]
+
+      [#4]: https://example.com/4
+
+      [^1]: Note referencing [#3] and [#4].
+
+      [#3]: https://example.com/3"
+    `)
+
+    expect(versions[1]?.body).toMatchInlineSnapshot(`
+      "- Fix [#3]
+
+      [#3]: https://example.com/3
+      [#4]: https://example.com/4
+      [unused]: https://example.com/unused
+      [^1]: Note referencing [#3] and [#4]."
+    `)
+  })
+
+  test('respects the GFM configuration', async () => {
+    const content = '## 1.0.1\n\n- Note[^1]\n\n## 1.0.0\n\n- Fix\n\n[^1]: Footnote content.\n'
+
+    store.clear()
+
+    await loadChangelog(content, { gfm: true })
+
+    expect(store.values()[0]?.body).toMatchInlineSnapshot(`
+      "- Note[^1]
+
+      [^1]: Footnote content."
+    `)
+
+    store.clear()
+
+    await loadChangelog(content, { gfm: false })
+
+    expect(store.values()[0]?.body).toMatchInlineSnapshot(`"- Note[^1]"`)
   })
 })
 

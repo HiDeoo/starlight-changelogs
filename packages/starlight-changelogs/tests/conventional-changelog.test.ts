@@ -61,8 +61,7 @@ describe('fs', () => {
     expect(store.values()[3]?.body).toMatchInlineSnapshot(`
       "### Bug Fixes
 
-      * fix an issue
-      "
+      * fix an issue"
     `)
   })
 })
