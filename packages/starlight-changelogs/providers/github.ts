@@ -5,7 +5,7 @@ import { z } from 'astro/zod'
 import { fetchFromLoader, getChangelogMeta } from '../libs/net'
 import { throwPluginError } from '../libs/plugin'
 import type { VersionDataEntry } from '../loader/schema'
-import { slugifyVersion } from '../loader/utils'
+import { renderVersion, slugifyVersion } from '../loader/utils'
 
 import { ProviderBaseConfigSchema } from '.'
 
@@ -52,7 +52,7 @@ async function syncData(
 
     const parsedData = await parseData({ id, data })
 
-    store.set({ id, body, data: parsedData, rendered: await renderMarkdown(body) })
+    store.set({ id, body, data: parsedData, rendered: await renderVersion(renderMarkdown, body, data.slug) })
   }
 }
 

@@ -4,16 +4,17 @@ import { fileURLToPath } from 'node:url'
 import { getConditionalHeaders, storeConditionalHeaders } from '@ascorbic/loader-utils'
 import type { LoaderContext } from 'astro/loaders'
 import type { z } from 'astro/zod'
-import type { Heading, Node, RootContent } from 'mdast'
+import type { Definition, FootnoteDefinition, Heading, Nodes, Root } from 'mdast'
 import { fromMarkdown } from 'mdast-util-from-markdown'
-import { toMarkdown } from 'mdast-util-to-markdown'
+import { gfmFromMarkdown } from 'mdast-util-gfm'
 import { toString } from 'mdast-util-to-string'
+import { gfm } from 'micromark-extension-gfm'
 import { CONTINUE, SKIP, visit } from 'unist-util-visit'
 
 import { fetchFromLoader, getChangelogMeta } from '../libs/net'
 import { throwPluginError } from '../libs/plugin'
 import type { VersionDataEntry } from '../loader/schema'
-import { slugifyVersion } from '../loader/utils'
+import { renderVersion, slugifyVersion } from '../loader/utils'
 
 import type { ProviderBaseConfigSchema } from '.'
 
@@ -42,12 +43,12 @@ export async function loadMarkdownData(config: MarkdownProviderConfig, context: 
 }
 
 async function syncData(pathOrUrl: string | URL, config: MarkdownProviderConfig, context: LoaderContext) {
-  const { generateDigest, parseData, renderMarkdown, store } = context
+  const { config: astroConfig, generateDigest, parseData, renderMarkdown, store } = context
 
   try {
     const result = await getChangelogContent(pathOrUrl, config.base, context)
     if (!result.modified) return
-    const entries = parseMarkdown(config, result.content)
+    const entries = parseMarkdown(config, result.content, astroConfig.markdown.gfm)
     const entryIds = new Set(entries.map(({ id }) => id))
 
     const storedEntries = store.values()
@@ -64,7 +65,7 @@ async function syncData(pathOrUrl: string | URL, config: MarkdownProviderConfig,
 
       const parsedData = await parseData({ id, data })
 
-      store.set({ id, body, data: parsedData, digest, rendered: await renderMarkdown(body) })
+      store.set({ id, body, data: parsedData, digest, rendered: await renderVersion(renderMarkdown, body, data.slug) })
     }
   } catch (error) {
     throwPluginError(`Failed to read the changelog file at ${pathOrUrl}`, error)
@@ -105,14 +106,18 @@ async function getChangelogContent(
   }
 }
 
-function parseMarkdown(config: MarkdownProviderConfig, content: string) {
+function parseMarkdown(config: MarkdownProviderConfig, content: string, isGfmEnabled: boolean) {
   const entries: VersionDataEntry[] = []
-  const tree = fromMarkdown(content)
+  const tree = fromMarkdown(
+    content,
+    isGfmEnabled ? { extensions: [gfm()], mdastExtensions: [gfmFromMarkdown()] } : undefined,
+  )
+  const source: MarkdownSource = { content, definitions: getDefinitions(tree) }
 
   let version: MarkdownVersion | undefined
 
   function addEntry(version: MarkdownVersion, index: number) {
-    const parsedVersion = parseMarkdownVersion(config, version, index)
+    const parsedVersion = parseMarkdownVersion(config, source, version, index)
     if (!parsedVersion) return
     if (config.markdown.ignoredVersions?.includes(parsedVersion.title)) return
     entries.push(parsedVersion)
@@ -145,6 +150,7 @@ function parseMarkdown(config: MarkdownProviderConfig, content: string) {
 
 function parseMarkdownVersion(
   config: MarkdownProviderConfig,
+  source: MarkdownSource,
   version: MarkdownVersion,
   index: number,
 ): VersionDataEntry | undefined {
@@ -165,7 +171,7 @@ function parseMarkdownVersion(
 
   return {
     id,
-    body: toMarkdown({ type: 'root', children: version.nodes as RootContent[] }),
+    body: getVersionBody(source, version.nodes),
     base: config.base,
     ...(processed?.date && { date: processed.date }),
     index,
@@ -173,6 +179,80 @@ function parseMarkdownVersion(
     slug,
     title,
   }
+}
+
+function getVersionBody({ content, definitions }: MarkdownSource, nodes: Nodes[]) {
+  const first = nodes[0]
+  const last = nodes.at(-1)
+  if (!first || !last) return ''
+
+  const bodyChunks = [getRawMarkdown(content, first, last)]
+  const references: string[] = []
+  const bodyDefinitions = new Set<string>()
+
+  function collectReferencesAndDefinitions(node: Nodes) {
+    visit(node, (child) => {
+      switch (child.type) {
+        case 'imageReference':
+        case 'linkReference': {
+          references.push(getDefinitionKey('definition', child.identifier))
+          break
+        }
+        case 'footnoteReference': {
+          references.push(getDefinitionKey('footnoteDefinition', child.identifier))
+          break
+        }
+        case 'definition':
+        case 'footnoteDefinition': {
+          bodyDefinitions.add(getDefinitionKey(child.type, child.identifier))
+          break
+        }
+      }
+    })
+  }
+
+  for (const node of nodes) {
+    collectReferencesAndDefinitions(node)
+  }
+
+  for (const reference of references) {
+    if (bodyDefinitions.has(reference)) continue
+
+    const definition = definitions.get(reference)
+    if (!definition) continue
+
+    bodyChunks.push(getRawMarkdown(content, definition))
+
+    collectReferencesAndDefinitions(definition)
+  }
+
+  // Make sure all definitions appended are not a continuation of the previous content.
+  return bodyChunks.join('\n\n')
+}
+
+function getRawMarkdown(content: string, first: Nodes, last: Nodes = first) {
+  const start = first.position?.start.offset
+  const end = last.position?.end.offset
+  if (start === undefined || end === undefined) return ''
+
+  // Slice from the start of the line containing the first node to preserve its indentation.
+  return content.slice(content.lastIndexOf('\n', start - 1) + 1, end)
+}
+
+function getDefinitions(tree: Root) {
+  const definitions = new Map<string, MarkdownDefinition>()
+
+  visit(tree, (node) => {
+    if (node.type !== 'definition' && node.type !== 'footnoteDefinition') return
+    const key = getDefinitionKey(node.type, node.identifier)
+    if (!definitions.has(key)) definitions.set(key, node)
+  })
+
+  return definitions
+}
+
+function getDefinitionKey(type: MarkdownDefinition['type'], identifier: string) {
+  return `${type}:${identifier}`
 }
 
 export interface MarkdownProviderConfig extends z.output<typeof ProviderBaseConfigSchema> {
@@ -198,6 +278,8 @@ export interface MarkdownProviderConfig extends z.output<typeof ProviderBaseConf
 
 type ChangelogContent = { modified: false } | { modified: true; content: string }
 
+type MarkdownDefinition = Definition | FootnoteDefinition
+
 interface MarkdownHeading {
   depth: Heading['depth']
   title: string
@@ -208,7 +290,12 @@ interface MarkdownProcessResult {
   title: string
 }
 
+interface MarkdownSource {
+  content: string
+  definitions: Map<string, MarkdownDefinition>
+}
+
 interface MarkdownVersion {
   title: string
-  nodes: Node[]
+  nodes: Nodes[]
 }
