@@ -1,5 +1,13 @@
 # starlight-changelogs
 
+## 0.7.2
+
+### Patch Changes
+
+- [#53](https://github.com/HiDeoo/starlight-changelogs/pull/53) [`ffe5f32`](https://github.com/HiDeoo/starlight-changelogs/commit/ffe5f323fcfcb5709dcfa8bd55438124f019e82f) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Fixes an issue with some GitHub Flavored Markdown syntax in changelog files being displayed as plain text.
+
+- [#53](https://github.com/HiDeoo/starlight-changelogs/pull/53) [`ffe5f32`](https://github.com/HiDeoo/starlight-changelogs/commit/ffe5f323fcfcb5709dcfa8bd55438124f019e82f) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Fixes an issue with reference-style links and footnotes in changelog files potentially being ignored.
+
 ## 0.7.1
 
 ### Patch Changes
